@@ -1,0 +1,5 @@
+# Copy to local.properties (git-ignored). Android Studio fills sdk.dir automatically.
+sdk.dir=C\:\\Users\\<you>\\AppData\\Local\\Android\\Sdk
+
+# HealthOS Core API base URL, must end with "/". Defaults to http://10.0.2.2:8000/ (emulator -> laptop).
+HEALTHOS_BASE_URL=https://api.<your-domain>/

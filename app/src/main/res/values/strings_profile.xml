@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_contacts_subtitle">Những người này nhận SMS và email khi bạn bấm SOS hoặc khi phát hiện té ngã.</string>
+    <string name="profile_contacts_empty">Chưa có người liên hệ khẩn cấp. SOS và cảnh báo té ngã sẽ không gửi được cho ai.</string>
+    <string name="profile_contacts_add_action">Thêm người liên hệ</string>
+    <string name="profile_contacts_edit_action">Chỉnh sửa</string>
+    <string name="profile_contacts_max_hint">Tối đa %1$d người liên hệ.</string>
+    <string name="profile_contacts_none_on_save">Danh sách trống: sau khi lưu, SOS sẽ không có ai để báo tin.</string>
+    <string name="profile_contact_error_required">Không được để trống.</string>
+    <string name="profile_contact_error_too_long">Nội dung quá dài.</string>
+    <string name="profile_contact_error_phone">Số điện thoại không hợp lệ (8–15 chữ số, có thể bắt đầu bằng +).</string>
+    <string name="profile_contact_error_email">Email không hợp lệ.</string>
+</resources>

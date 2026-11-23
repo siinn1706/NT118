@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="safety_sos_notif_starting">Đang chuẩn bị SOS…</string>
+    <string name="safety_sos_notif_manual_title">SOS khẩn cấp đang đếm ngược</string>
+    <string name="safety_sos_notif_countdown_body">Tự động gửi cảnh báo lúc %1$s nếu bạn không hủy.</string>
+    <string name="safety_sos_notif_dispatching_title">Đang gửi cảnh báo SOS</string>
+    <string name="safety_sos_action_send_now">Gửi ngay</string>
+    <string name="safety_sos_result_title">Kết quả cảnh báo SOS</string>
+    <string name="safety_sos_sms_summary">SMS đã gửi: %1$d/%2$d người thân</string>
+    <string name="safety_sos_contacts_not_refreshed">Không tải được danh bạ mới từ máy chủ; đã dùng danh bạ lưu trên máy.</string>
+    <string name="safety_sos_no_location">Không lấy được vị trí GPS.</string>
+    <string name="safety_sos_sms_label">SMS: %1$s</string>
+    <string name="safety_sos_email_label">Email: %1$s</string>
+    <string name="safety_status_sending">Đang gửi…</string>
+    <string name="safety_status_delivered">Đã nhận</string>
+    <string name="safety_status_email_queued">Đã xếp hàng gửi</string>
+    <string name="safety_status_email_pending">Đang chờ</string>
+    <string name="safety_sos_perm_sms_missing">Chưa cấp quyền gửi SMS: SOS chỉ gửi email qua máy chủ.</string>
+    <string name="safety_sos_perm_location_missing">Chưa cấp quyền vị trí: tin nhắn SOS sẽ không kèm vị trí.</string>
+    <string name="safety_sos_perm_open_settings">Mở cài đặt</string>
+    <string name="safety_fall_needs_notifications">Cần quyền thông báo để bạn có thể hủy cảnh báo té ngã. Hãy cấp quyền rồi bật lại.</string>
+</resources>

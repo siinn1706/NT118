@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_unexpected_response">Máy chủ trả về dữ liệu không đọc được. Thử lại sau.</string>
+    <string name="error_forbidden">Bạn không có quyền thực hiện thao tác này.</string>
+    <string name="error_not_found">Không tìm thấy dữ liệu yêu cầu.</string>
+    <string name="error_conflict">Dữ liệu đã thay đổi hoặc bị trùng. Tải lại rồi thử lại.</string>
+    <string name="error_payload_too_large">Tệp quá lớn để tải lên.</string>
+    <string name="error_unsupported_media">Định dạng tệp không được hỗ trợ.</string>
+    <string name="error_validation">Thông tin chưa hợp lệ. Kiểm tra lại các trường đã nhập.</string>
+    <string name="error_rate_limited">Bạn thao tác quá nhanh. Vui lòng đợi một chút rồi thử lại.</string>
+    <string name="error_server">Máy chủ đang gặp sự cố. Thử lại sau ít phút.</string>
+    <string name="error_invalid_credentials">Tên đăng nhập hoặc mật khẩu không đúng.</string>
+    <string name="error_account_locked">Tài khoản tạm bị khóa do đăng nhập sai nhiều lần. Thử lại sau.</string>
+    <string name="error_account_banned">Tài khoản đã bị khóa.</string>
+    <string name="error_account_pending_deletion">Tài khoản đang chờ xóa.</string>
+    <string name="error_account_not_found_email">Không có tài khoản nào dùng email này.</string>
+    <string name="error_email_taken">Email đã được sử dụng.</string>
+    <string name="error_username_taken">Tên đăng nhập đã được sử dụng.</string>
+    <string name="error_password_breached">Mật khẩu này đã từng bị lộ. Hãy chọn mật khẩu khác.</string>
+    <string name="error_otp_invalid">Mã OTP không đúng hoặc đã hết hạn.</string>
+    <string name="error_otp_locked">Nhập sai OTP quá nhiều lần. Hãy yêu cầu mã mới.</string>
+    <string name="error_otp_required">Cần xác thực OTP trước khi tiếp tục.</string>
+    <string name="error_mfa_invalid">Mã xác thực không đúng.</string>
+    <string name="error_mfa_expired">Phiên xác thực đã hết hạn. Đăng nhập lại.</string>
+    <string name="error_mfa_locked">Nhập sai mã xác thực quá nhiều lần. Đăng nhập lại.</string>
+    <string name="error_too_many_tokens">Đã có quá nhiều mã QR đang hoạt động. Dùng lại mã hiện có hoặc thử lại sau.</string>
+</resources>

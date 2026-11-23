@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="meds_status_due">Đến giờ uống</string>
+    <string name="meds_status_cancelled">Đã hủy</string>
+    <string name="meds_status_unknown">Không rõ</string>
+    <string name="meds_refill_warning_days">Sắp hết thuốc (còn khoảng %1$d ngày)</string>
+    <string name="meds_refill_warning_now">Thuốc đã hết hoặc sắp hết, hãy mua thêm</string>
+    <string name="meds_error_time_format">Giờ uống cần theo định dạng HH:mm (ví dụ 08:30).</string>
+    <string name="meds_error_name_required">Vui lòng nhập tên thuốc.</string>
+    <string name="meds_error_dose_time_required">Cần ít nhất 1 khung giờ uống thuốc.</string>
+    <string name="meds_notifications_disabled">Thông báo đang tắt nên bạn sẽ không nhận được nhắc uống thuốc.</string>
+    <string name="meds_adherence_taken">Đã uống: %1$d</string>
+    <string name="meds_adherence_skipped">Bỏ qua: %1$d</string>
+    <string name="meds_adherence_missed">Lỡ: %1$d</string>
+    <string name="meds_form_dosage_placeholder">500mg, 1 viên…</string>
+    <string name="meds_form_note_placeholder">Uống sau ăn…</string>
+</resources>

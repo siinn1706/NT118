@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="meals_error_photo_unreadable">Không đọc được ảnh đã chọn.</string>
+    <string name="meals_error_capture_failed">Không chụp được ảnh. Vui lòng thử lại.</string>
+    <string name="meals_error_analysis_failed">Không nhận diện được món ăn trong ảnh. Bạn có thể chụp lại hoặc nhập thủ công.</string>
+    <string name="meals_error_analysis_timeout">Hết thời gian phân tích (60 giây). Bạn có thể nhập thủ công.</string>
+    <string name="meals_error_name_required">Vui lòng nhập tên món ăn.</string>
+    <string name="meals_info_saved_offline">Đã lưu ngoại tuyến, sẽ tự đồng bộ khi có mạng.</string>
+    <string name="meals_macro_protein">Đạm: %1$dg</string>
+    <string name="meals_macro_carbs">Tinh bột: %1$dg</string>
+    <string name="meals_macro_fat">Chất béo: %1$dg</string>
+</resources>

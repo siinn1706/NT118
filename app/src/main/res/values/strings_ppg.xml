@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ppg_camera_error">Không thể mở camera sau. Hãy đóng các ứng dụng đang dùng camera rồi thử lại.</string>
+    <string name="ppg_signal_timeout">Tín hiệu chưa đủ rõ sau 30 giây. Hãy đặt nhẹ đầu ngón tay che kín camera sau và đèn flash rồi thử lại.</string>
+</resources>

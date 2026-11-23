@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_stream_failed">Phản hồi của Trợ lý AI bị gián đoạn.</string>
+    <string name="chat_reply_failed">Không nhận được phản hồi từ Trợ lý AI.</string>
+    <string name="chat_reply_failed_label">Chưa hoàn tất · Bấm Thử lại bên dưới</string>
+    <string name="chat_attachment_unreadable">Không đọc được ảnh đính kèm.</string>
+    <string name="chat_reminder_created">Đã tạo nhắc nhở lúc %1$s.</string>
+    <string name="chat_empty_reply">Trợ lý AI không trả về nội dung.</string>
+    <string name="chat_voice_unavailable">Thiết bị không hỗ trợ nhận diện giọng nói.</string>
+    <string name="chat_voice_no_match">Chưa nghe rõ. Hãy nói lại gần micro hơn.</string>
+    <string name="chat_voice_network">Nhận diện giọng nói cần kết nối mạng.</string>
+    <string name="chat_voice_failed">Không nhận diện được giọng nói. Thử lại sau.</string>
+</resources>

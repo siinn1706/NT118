@@ -1,0 +1,407 @@
+package vn.uit.healthos.feature.chat
+
+import android.content.Context
+import android.net.Uri
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import vn.uit.healthos.R
+import vn.uit.healthos.core.network.ApiResult
+import vn.uit.healthos.core.network.SseException
+import vn.uit.healthos.core.network.toUiText
+import vn.uit.healthos.core.ui.UiText
+import vn.uit.healthos.feature.meals.ImageDownscaler
+import java.util.UUID
+import javax.inject.Inject
+
+data class ReminderDraftUi(
+    val title: String,
+    val time: String = "08:00",
+    val type: String = "medicine",
+    val repeat: String = "daily",
+    val note: String = "",
+)
+
+data class ChatUiState(
+    val conversationId: String? = null,
+    val messages: List<ChatMessageUi> = emptyList(),
+    val hasMoreHistory: Boolean = false,
+    val nextCursor: String? = null,
+    val inputText: String = "",
+    val pendingAttachment: ChatAttachmentDto? = null,
+    val uploadingImage: Boolean = false,
+    val loading: Boolean = false,
+    val loadingMore: Boolean = false,
+    val isStreaming: Boolean = false,
+    val emergencyBannerVisible: Boolean = false,
+    val errorMessage: UiText? = null,
+    val infoMessage: UiText? = null,
+    val retryAvailable: Boolean = false,
+    val reminderDraft: ReminderDraftUi? = null,
+    val savingReminder: Boolean = false,
+)
+
+@HiltViewModel
+class ChatViewModel @Inject constructor(
+    private val repository: ChatRepository,
+    private val json: Json,
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(ChatUiState(loading = true))
+    val state: StateFlow<ChatUiState> = _state.asStateFlow()
+
+    private var streamJob: Job? = null
+    private var failedSend: PendingSend? = null
+
+    init {
+        loadConversation()
+    }
+
+    fun loadConversation() {
+        viewModelScope.launch {
+            _state.update { it.copy(loading = true, errorMessage = null) }
+            val conv = when (val res = repository.getOrCreateAiConversation()) {
+                is ApiResult.Success -> res.data
+                is ApiResult.Failure -> {
+                    _state.update { it.copy(loading = false, errorMessage = res.error.toUiText()) }
+                    return@launch
+                }
+            }
+            when (val msgsRes = repository.getMessages(conv.id, limit = 30)) {
+                is ApiResult.Success -> {
+                    val chronological = msgsRes.data.data.reversed().map { it.toUi() }
+                    val hasEmergency = chronological.lastOrNull()?.isEmergency == true
+                    _state.update {
+                        it.copy(
+                            conversationId = conv.id,
+                            messages = chronological,
+                            hasMoreHistory = msgsRes.data.hasMore,
+                            nextCursor = msgsRes.data.nextCursor,
+                            emergencyBannerVisible = hasEmergency,
+                            loading = false,
+                        )
+                    }
+                }
+                is ApiResult.Failure -> {
+                    _state.update {
+                        it.copy(conversationId = conv.id, loading = false, errorMessage = msgsRes.error.toUiText())
+                    }
+                }
+            }
+        }
+    }
+
+    fun loadMoreHistory() {
+        val s = _state.value
+        val convId = s.conversationId ?: return
+        val cursor = s.nextCursor ?: return
+        if (s.loadingMore || !s.hasMoreHistory) return
+        viewModelScope.launch {
+            _state.update { it.copy(loadingMore = true) }
+            when (val res = repository.getMessages(convId, before = cursor, limit = 30)) {
+                is ApiResult.Success -> {
+                    val older = res.data.data.reversed().map { it.toUi() }
+                    _state.update { cur ->
+                        cur.copy(
+                            messages = older + cur.messages,
+                            hasMoreHistory = res.data.hasMore,
+                            nextCursor = res.data.nextCursor,
+                            loadingMore = false,
+                        )
+                    }
+                }
+                is ApiResult.Failure -> _state.update { it.copy(loadingMore = false) }
+            }
+        }
+    }
+
+    fun onInputChange(value: String) {
+        _state.update { it.copy(inputText = value, errorMessage = null, infoMessage = null) }
+    }
+
+    fun attachPhoto(context: Context, uri: Uri) {
+        viewModelScope.launch {
+            _state.update { it.copy(uploadingImage = true, errorMessage = null) }
+            val bytes = ImageDownscaler.downscaleToJpegBytes(context, uri)
+            if (bytes == null) {
+                _state.update {
+                    it.copy(uploadingImage = false, errorMessage = UiText.Res(R.string.chat_attachment_unreadable))
+                }
+                return@launch
+            }
+            when (val res = repository.uploadImage(bytes)) {
+                is ApiResult.Success -> _state.update {
+                    it.copy(uploadingImage = false, pendingAttachment = res.data)
+                }
+                is ApiResult.Failure -> _state.update {
+                    it.copy(uploadingImage = false, errorMessage = res.error.toUiText())
+                }
+            }
+        }
+    }
+
+    fun clearAttachment() {
+        _state.update { it.copy(pendingAttachment = null) }
+    }
+
+    fun sendPrompt(overrideText: String? = null) {
+        val current = _state.value
+        val convId = current.conversationId ?: return
+        if (current.isStreaming) return
+
+        val attachment = current.pendingAttachment
+        val text = (overrideText ?: current.inputText).trim()
+        if (text.isBlank() && attachment == null) return
+
+        val userMessage = ChatMessageUi(
+            id = "local-u-${UUID.randomUUID()}",
+            isUser = true,
+            content = text.ifBlank { "Đã gửi hình ảnh" },
+            attachmentUrls = listOfNotNull(attachment?.url),
+        )
+        val body = SendMessageBody(
+            content = text.ifBlank { "Phân tích hình ảnh này giúp tôi." },
+            contentType = if (attachment != null && text.isBlank()) "image" else "text",
+            clientMessageId = UUID.randomUUID().toString(),
+            attachments = listOfNotNull(attachment).takeIf { it.isNotEmpty() },
+            locale = "vi",
+        )
+
+        failedSend = null
+        _state.update {
+            it.copy(
+                inputText = if (overrideText == null) "" else it.inputText,
+                pendingAttachment = null,
+                messages = it.messages + userMessage,
+                errorMessage = null,
+                retryAvailable = false,
+            )
+        }
+        startStream(convId, body)
+    }
+
+    fun stopStreaming() {
+        streamJob?.cancel()
+        streamJob = null
+        _state.update { s ->
+            s.copy(
+                isStreaming = false,
+                messages = s.messages.map { if (it.isStreaming) it.copy(isStreaming = false) else it },
+            )
+        }
+    }
+
+    /**
+     * Re-streams the failed request with the same `client_message_id`: the server returns the
+     * already-persisted user message instead of inserting a duplicate, so only the failed
+     * assistant bubble is replaced locally.
+     */
+    fun retryLastFailed() {
+        val pending = failedSend ?: return
+        val current = _state.value
+        val convId = current.conversationId ?: return
+        if (current.isStreaming) return
+
+        failedSend = null
+        _state.update { s ->
+            s.copy(
+                messages = s.messages.filterNot { it.id == pending.assistantTempId },
+                errorMessage = null,
+                retryAvailable = false,
+            )
+        }
+        startStream(convId, pending.body)
+    }
+
+    private fun startStream(convId: String, body: SendMessageBody) {
+        val assistantTempId = "local-a-${UUID.randomUUID()}"
+        _state.update {
+            it.copy(
+                messages = it.messages + ChatMessageUi(
+                    id = assistantTempId,
+                    isUser = false,
+                    content = "",
+                    isStreaming = true,
+                ),
+                isStreaming = true,
+            )
+        }
+
+        streamJob?.cancel()
+        streamJob = viewModelScope.launch {
+            val assembler = ChatStreamAssembler(json)
+            var failed = false
+            repository.streamReply(convId, body)
+                .catch { exc ->
+                    if (exc is CancellationException) throw exc
+                    if (!failed) {
+                        failed = true
+                        val error = (exc as? SseException)?.toApiError()?.toUiText()
+                        markStreamFailed(assistantTempId, body, assembler, error)
+                    }
+                }
+                .collect { sse ->
+                    if (failed) return@collect
+                    val frame = assembler.consume(sse)
+                    if (frame is ChatStreamFrame.Error) {
+                        failed = true
+                        markStreamFailed(assistantTempId, body, assembler)
+                        return@collect
+                    }
+                    val liveText = assembler.currentText()
+                    _state.update { s ->
+                        s.copy(
+                            emergencyBannerVisible = s.emergencyBannerVisible || assembler.emergencyDetected,
+                            messages = s.messages.map { msg ->
+                                if (msg.id == assistantTempId) {
+                                    msg.copy(
+                                        content = liveText,
+                                        isEmergency = assembler.emergencyDetected,
+                                        isStreaming = !assembler.completed,
+                                    )
+                                } else {
+                                    msg
+                                }
+                            },
+                        )
+                    }
+                }
+
+            if (failed) return@launch
+            if (!assembler.completed) {
+                markStreamFailed(assistantTempId, body, assembler)
+                return@launch
+            }
+
+            val finalText = assembler.currentText()
+            val finalId = assembler.assistantMessageId ?: assistantTempId
+            val isEmergency = assembler.emergencyDetected || EmergencyDetector.isEmergencyText(finalText)
+            _state.update { s ->
+                s.copy(
+                    isStreaming = false,
+                    emergencyBannerVisible = s.emergencyBannerVisible || isEmergency,
+                    messages = s.messages.map { msg ->
+                        if (msg.id == assistantTempId) {
+                            msg.copy(
+                                id = finalId,
+                                content = finalText,
+                                isStreaming = false,
+                                isEmergency = isEmergency,
+                            )
+                        } else {
+                            msg
+                        }
+                    },
+                )
+            }
+        }
+    }
+
+    /**
+     * Ends the stream, keeps the server's `display_text` (or the partial reply) in the bubble, and arms Retry.
+     * [error] describes a transport failure; without one the screen shows the generic interruption text.
+     */
+    private fun markStreamFailed(
+        assistantTempId: String,
+        body: SendMessageBody,
+        assembler: ChatStreamAssembler,
+        error: UiText? = null,
+    ) {
+        failedSend = PendingSend(body = body, assistantTempId = assistantTempId)
+        val content = assembler.error?.displayText ?: assembler.currentText()
+        _state.update { s ->
+            s.copy(
+                isStreaming = false,
+                retryAvailable = true,
+                errorMessage = error,
+                messages = s.messages.map { msg ->
+                    if (msg.id == assistantTempId) {
+                        msg.copy(content = content, isStreaming = false, isError = true)
+                    } else {
+                        msg
+                    }
+                },
+            )
+        }
+    }
+
+    fun openQuickReminder(answerContent: String) {
+        val firstLine = answerContent.lineSequence()
+            .map { it.replace("*", "").replace("#", "").trim() }
+            .firstOrNull { it.isNotBlank() }
+            ?.take(80)
+            ?: "Nhắc nhở từ Bác sĩ AI"
+        _state.update {
+            it.copy(
+                reminderDraft = ReminderDraftUi(
+                    title = firstLine,
+                    time = "08:00",
+                    type = "medicine",
+                    repeat = "daily",
+                    note = answerContent.take(300),
+                ),
+            )
+        }
+    }
+
+    fun updateReminderDraft(draft: ReminderDraftUi) {
+        _state.update { it.copy(reminderDraft = draft) }
+    }
+
+    fun dismissReminderDraft() {
+        _state.update { it.copy(reminderDraft = null) }
+    }
+
+    fun saveQuickReminder() {
+        val draft = _state.value.reminderDraft ?: return
+        if (draft.title.isBlank()) return
+        viewModelScope.launch {
+            _state.update { it.copy(savingReminder = true) }
+            val res = repository.createQuickReminder(
+                QuickReminderCreateBody(
+                    type = draft.type,
+                    title = draft.title.trim(),
+                    time = draft.time.trim(),
+                    repeat = draft.repeat,
+                    note = draft.note.trim().ifBlank { null },
+                ),
+            )
+            when (res) {
+                is ApiResult.Success -> _state.update {
+                    it.copy(
+                        savingReminder = false,
+                        reminderDraft = null,
+                        infoMessage = UiText.Res(R.string.chat_reminder_created, listOf(res.data.time)),
+                    )
+                }
+                is ApiResult.Failure -> _state.update {
+                    it.copy(savingReminder = false, errorMessage = res.error.toUiText())
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        streamJob?.cancel()
+        super.onCleared()
+    }
+
+    private data class PendingSend(val body: SendMessageBody, val assistantTempId: String)
+
+    private fun ChatMessageDto.toUi(): ChatMessageUi = ChatMessageUi(
+        id = id,
+        isUser = senderKind.equals("user", ignoreCase = true),
+        content = content,
+        attachmentUrls = attachments.orEmpty().map { it.url },
+        isEmergency = EmergencyDetector.isEmergencyMessage(this),
+    )
+}
