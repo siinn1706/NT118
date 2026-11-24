@@ -92,6 +92,13 @@ data class AuthMeDto(
     @SerialName("onboarding_status") val onboardingStatus: String = "pending",
 )
 
+/** Short-lived ticket that authenticates the realtime socket's first frame. */
+@Serializable
+data class WsTicketDto(
+    @SerialName("ws_ticket") val wsTicket: String,
+    @SerialName("expires_in_seconds") val expiresInSeconds: Int = 0,
+)
+
 interface AuthApi {
     @POST("v1/auth/login")
     suspend fun login(@Body body: LoginBody): DataEnvelope<JsonElement>
@@ -119,6 +126,9 @@ interface AuthApi {
 
     @GET("v1/auth/me")
     suspend fun me(): DataEnvelope<AuthMeDto>
+
+    @GET("v1/auth/ws-ticket")
+    suspend fun wsTicket(): DataEnvelope<WsTicketDto>
 }
 
 @Module
