@@ -30,6 +30,8 @@ import vn.uit.healthos.R
 @Serializable data object PpgRoute
 @Serializable data object SettingsRoute
 @Serializable data object DesignGalleryRoute
+@Serializable data object FriendsRoute
+@Serializable data object LeaderboardRoute
 
 enum class TopLevelDestination(
     val route: Any,
