@@ -11,11 +11,15 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import vn.uit.healthos.core.data.outbox.OutboxRepository
+import vn.uit.healthos.core.time.localDayTicker
 import java.time.Instant
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
@@ -30,6 +34,11 @@ class StepCounterRepository @Inject constructor(
 ) {
     fun observeRecentDays(limit: Int = 7): Flow<List<DailyStepEntity>> =
         dao.observeRecent(limit)
+
+    /** Steps counted on this phone today; switches to the new day's count at local midnight. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeTodaySteps(): Flow<Int> =
+        localDayTicker().flatMapLatest { day -> dao.observeDay(day.toString()).map { it?.steps ?: 0 } }
 
     /** Sensor readings are read-modify-write on the same row, so they must apply strictly in arrival order. */
     private val readingMutex = Mutex()
@@ -55,6 +64,15 @@ class StepCounterRepository @Inject constructor(
     }
 
     suspend fun enqueueTodaySync() = enqueueDaySync(todayIso())
+
+    /**
+     * Called when a different account signs in on this phone. The pedometer history belongs to the previous account,
+     * and so does the sensor anchor: dropping both makes the next reading start the new account's day at zero, so
+     * only steps taken after sign-in are counted and synced for it.
+     */
+    suspend fun resetForNewAccount() = readingMutex.withLock {
+        dao.deleteAll()
+    }
 
     /** Queues the day's total; a newer total for the same day replaces any still-pending one. */
     private suspend fun enqueueDaySync(date: String) {
