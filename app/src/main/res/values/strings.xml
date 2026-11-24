@@ -115,7 +115,7 @@
     <string name="onboarding_tdee_adjustment">Điều chỉnh mục tiêu</string>
     <string name="onboarding_tdee_bmi">Chỉ số BMI hiện tại</string>
     <string name="onboarding_emergency_title">Liên hệ khẩn cấp</string>
-    <string name="onboarding_emergency_subtitle">Thông tin người thân sẽ xuất hiện trên thẻ khẩn cấp và cảnh báo Safety Net.</string>
+    <string name="onboarding_emergency_subtitle">Thông tin người thân sẽ xuất hiện trên thẻ khẩn cấp và cảnh báo khẩn cấp.</string>
     <string name="onboarding_contact_number">Người liên hệ #%1$d</string>
     <string name="onboarding_contact_name">Họ tên người thân</string>
     <string name="onboarding_contact_relationship">Mối quan hệ (Bố, Mẹ, Bạn…)</string>
@@ -325,7 +325,7 @@
     <string name="safety_widget_card_btn">Thẻ khẩn cấp</string>
     <string name="safety_channel_monitor_name">Phát hiện té ngã</string>
     <string name="safety_channel_sos_name">Cảnh báo SOS khẩn cấp</string>
-    <string name="safety_monitor_notif_title">Safety Net đang bảo vệ bạn</string>
+    <string name="safety_monitor_notif_title">Chế độ An toàn đang bảo vệ bạn</string>
     <string name="safety_monitor_notif_active">Đang theo dõi cảm biến té ngã</string>
     <string name="safety_monitor_notif_test">Chế độ thử nghiệm (ngưỡng nhạy hơn)</string>
     <string name="safety_fall_alert_title">Phát hiện nghi ngờ té ngã!</string>
