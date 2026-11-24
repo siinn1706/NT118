@@ -47,6 +47,8 @@ import vn.uit.healthos.core.designsystem.glass.ScrollEdgeEffect
 import vn.uit.healthos.feature.auth.authGraph
 import vn.uit.healthos.feature.chat.chatGraph
 import vn.uit.healthos.feature.dev.devGraph
+import vn.uit.healthos.feature.friends.friendsGraph
+import vn.uit.healthos.feature.leaderboard.leaderboardGraph
 import vn.uit.healthos.feature.home.HomeNavigation
 import vn.uit.healthos.feature.home.homeGraph
 import vn.uit.healthos.feature.meals.SnapDestination
@@ -248,6 +250,8 @@ fun AppNavHost(
                         )
                         ppgGraph(onBack = back)
                         devGraph(onBack = back)
+                        friendsGraph(navController = navController)
+                        leaderboardGraph(onBack = back, onOpenSettings = { navController.navigate(SettingsRoute) })
                     }
                 }
             }
