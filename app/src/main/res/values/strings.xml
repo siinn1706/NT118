@@ -9,12 +9,13 @@
 
     <string name="feature_auth">Đăng nhập</string>
     <string name="feature_onboarding">Thiết lập hồ sơ</string>
-    <string name="feature_safety">Safety Net</string>
+    <string name="feature_safety">An toàn</string>
     <string name="feature_ppg">Đo nhịp tim</string>
-    <string name="feature_design_gallery">Design gallery</string>
+    <string name="feature_design_gallery">Thư viện giao diện</string>
 
     <string name="state_loading">Đang tải…</string>
     <string name="action_retry">Thử lại</string>
+    <string name="action_refresh">Làm mới</string>
     <string name="action_back">Quay lại</string>
     <string name="action_continue">Tiếp tục</string>
     <string name="action_cancel">Hủy</string>
@@ -75,6 +76,8 @@
     <string name="auth_error_invalid_mfa">Mã xác thực tối thiểu 6 ký tự</string>
 
     <!-- Onboarding -->
+    <string name="onboarding_appearance_title">Chọn màu cho ứng dụng</string>
+    <string name="onboarding_appearance_subtitle">Không bắt buộc. Bạn có thể đổi lại bất cứ lúc nào trong Cài đặt.</string>
     <string name="onboarding_step_progress">Bước %1$d / %2$d</string>
     <string name="onboarding_body_title">Chỉ số cơ thể</string>
     <string name="onboarding_body_subtitle">Giúp HealthOS tính toán BMR, BMI và nhu cầu năng lượng chính xác.</string>
@@ -114,7 +117,7 @@
     <string name="onboarding_tdee_adjustment">Điều chỉnh mục tiêu</string>
     <string name="onboarding_tdee_bmi">Chỉ số BMI hiện tại</string>
     <string name="onboarding_emergency_title">Liên hệ khẩn cấp</string>
-    <string name="onboarding_emergency_subtitle">Thông tin người thân sẽ xuất hiện trên thẻ khẩn cấp và cảnh báo Safety Net.</string>
+    <string name="onboarding_emergency_subtitle">Thông tin người thân sẽ xuất hiện trên thẻ khẩn cấp và cảnh báo khẩn cấp.</string>
     <string name="onboarding_contact_number">Người liên hệ #%1$d</string>
     <string name="onboarding_contact_name">Họ tên người thân</string>
     <string name="onboarding_contact_relationship">Mối quan hệ (Bố, Mẹ, Bạn…)</string>
@@ -140,7 +143,7 @@
     <string name="profile_safety_subtitle">Phát hiện té ngã, SOS và mã QR khẩn cấp</string>
     <string name="profile_ppg_subtitle">Đo nhịp tim bằng camera sau và đèn flash</string>
     <string name="profile_settings_title">Cài đặt</string>
-    <string name="profile_settings_subtitle">Giao diện, màu động và khóa sinh trắc học</string>
+    <string name="profile_settings_subtitle">Giao diện, màu nhấn, quyền riêng tư và widget</string>
     <string name="profile_gallery_subtitle">Kiểm tra bảng màu và thành phần UI</string>
     <string name="profile_emergency_contacts_section">Liên hệ khẩn cấp</string>
     <string name="profile_logout_action">Đăng xuất</string>
@@ -324,7 +327,7 @@
     <string name="safety_widget_card_btn">Thẻ khẩn cấp</string>
     <string name="safety_channel_monitor_name">Phát hiện té ngã</string>
     <string name="safety_channel_sos_name">Cảnh báo SOS khẩn cấp</string>
-    <string name="safety_monitor_notif_title">Safety Net đang bảo vệ bạn</string>
+    <string name="safety_monitor_notif_title">Chế độ An toàn đang bảo vệ bạn</string>
     <string name="safety_monitor_notif_active">Đang theo dõi cảm biến té ngã</string>
     <string name="safety_monitor_notif_test">Chế độ thử nghiệm (ngưỡng nhạy hơn)</string>
     <string name="safety_fall_alert_title">Phát hiện nghi ngờ té ngã!</string>
@@ -385,7 +388,7 @@
     <string name="accent_amber">Hổ phách</string>
     <string name="accent_forest">Xanh lá</string>
     <string name="accent_graphite">Than chì</string>
-    <string name="background_aurora">Cực quang</string>
+    <string name="background_aurora">Aurora</string>
     <string name="background_soft">Dịu</string>
     <string name="background_solid">Trơn</string>
     <string name="glass_show_password">Hiện mật khẩu</string>

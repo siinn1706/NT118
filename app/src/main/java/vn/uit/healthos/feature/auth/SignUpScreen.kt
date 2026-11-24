@@ -14,29 +14,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
-import androidx.compose.material.icons.rounded.Visibility
-import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
+import vn.uit.healthos.core.designsystem.component.GlassTextField
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 import vn.uit.healthos.core.ui.asString
@@ -53,8 +44,6 @@ fun SignUpScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
-
     DetailScaffold(
         title = stringResource(R.string.auth_sign_up_title),
         onBack = onBack,
@@ -63,8 +52,8 @@ fun SignUpScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
                 .imePadding()
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -77,59 +66,33 @@ fun SignUpScreen(
 
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.displayName,
                         onValueChange = onDisplayNameChange,
-                        label = { Text(stringResource(R.string.auth_name_label)) },
-                        singleLine = true,
-                        isError = state.fieldErrors.containsKey("name"),
-                        supportingText = state.fieldErrors["name"]?.let { { Text(authFieldErrorText(it)) } },
+                        label = stringResource(R.string.auth_name_label),
+                        errorText = state.fieldErrors["name"]?.let { authFieldErrorText(it) },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
                     )
 
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.username,
                         onValueChange = onUsernameChange,
-                        label = { Text(stringResource(R.string.auth_username_label)) },
-                        singleLine = true,
-                        isError = state.fieldErrors.containsKey("username") || state.usernameAvailable == false,
-                        supportingText = {
-                            when {
-                                state.fieldErrors.containsKey("username") ->
-                                    Text(authFieldErrorText(state.fieldErrors.getValue("username")))
-                                state.usernameAvailable == true ->
-                                    Text(
-                                        text = stringResource(R.string.auth_available),
-                                        color = LocalVitalColors.current.good,
-                                    )
-                                state.usernameAvailable == false ->
-                                    Text(stringResource(R.string.auth_error_already_taken))
-                            }
-                        },
+                        label = stringResource(R.string.auth_username_label),
+                        errorText = state.fieldErrors["username"]?.let { authFieldErrorText(it) }
+                            ?: if (state.usernameAvailable == false) stringResource(R.string.auth_error_already_taken) else null,
+                        supportingText = if (state.usernameAvailable == true) stringResource(R.string.auth_available) else null,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         modifier = Modifier.fillMaxWidth(),
                     )
 
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.email,
                         onValueChange = onEmailChange,
-                        label = { Text(stringResource(R.string.auth_email_label)) },
-                        singleLine = true,
-                        isError = state.fieldErrors.containsKey("email") || state.emailAvailable == false,
-                        supportingText = {
-                            when {
-                                state.fieldErrors.containsKey("email") ->
-                                    Text(authFieldErrorText(state.fieldErrors.getValue("email")))
-                                state.emailAvailable == true ->
-                                    Text(
-                                        text = stringResource(R.string.auth_available),
-                                        color = LocalVitalColors.current.good,
-                                    )
-                                state.emailAvailable == false ->
-                                    Text(stringResource(R.string.auth_error_already_taken))
-                            }
-                        },
+                        label = stringResource(R.string.auth_email_label),
+                        errorText = state.fieldErrors["email"]?.let { authFieldErrorText(it) }
+                            ?: if (state.emailAvailable == false) stringResource(R.string.auth_error_already_taken) else null,
+                        supportingText = if (state.emailAvailable == true) stringResource(R.string.auth_available) else null,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next,
@@ -137,28 +100,12 @@ fun SignUpScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
 
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.signUpPassword,
                         onValueChange = onPasswordChange,
-                        label = { Text(stringResource(R.string.auth_password_label)) },
-                        singleLine = true,
-                        isError = state.fieldErrors.containsKey("signUpPassword"),
-                        supportingText = state.fieldErrors["signUpPassword"]?.let {
-                            { Text(authFieldErrorText(it)) }
-                        },
-                        visualTransformation = if (passwordVisible) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        },
-                        trailingIcon = {
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Icon(
-                                    imageVector = if (passwordVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
-                                    contentDescription = stringResource(R.string.auth_toggle_password),
-                                )
-                            }
-                        },
+                        label = stringResource(R.string.auth_password_label),
+                        errorText = state.fieldErrors["signUpPassword"]?.let { authFieldErrorText(it) },
+                        isPassword = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Next,
@@ -168,20 +115,12 @@ fun SignUpScreen(
 
                     PasswordRulesView(checklist = state.signUpPasswordChecklist)
 
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.signUpConfirmPassword,
                         onValueChange = onConfirmPasswordChange,
-                        label = { Text(stringResource(R.string.auth_confirm_password_label)) },
-                        singleLine = true,
-                        isError = state.fieldErrors.containsKey("signUpConfirmPassword"),
-                        supportingText = state.fieldErrors["signUpConfirmPassword"]?.let {
-                            { Text(authFieldErrorText(it)) }
-                        },
-                        visualTransformation = if (passwordVisible) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        },
+                        label = stringResource(R.string.auth_confirm_password_label),
+                        errorText = state.fieldErrors["signUpConfirmPassword"]?.let { authFieldErrorText(it) },
+                        isPassword = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done,

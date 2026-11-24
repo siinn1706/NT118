@@ -1,12 +1,12 @@
 package vn.uit.healthos.feature.home.charts
 
+import vn.uit.healthos.core.designsystem.component.GlassSegmentedControl
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,18 +49,16 @@ fun WeeklyTrendChart(
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(
-                selected = selectedMetric == TrendMetric.STEPS,
-                onClick = { onSelectMetric(TrendMetric.STEPS) },
-                label = { Text(stringResource(R.string.home_metric_steps)) },
-            )
-            FilterChip(
-                selected = selectedMetric == TrendMetric.HEART_RATE,
-                onClick = { onSelectMetric(TrendMetric.HEART_RATE) },
-                label = { Text(stringResource(R.string.home_metric_hr)) },
-            )
-        }
+        val metrics = listOf(TrendMetric.STEPS, TrendMetric.HEART_RATE)
+        GlassSegmentedControl(
+            options = listOf(
+                stringResource(R.string.home_metric_steps),
+                stringResource(R.string.home_metric_hr),
+            ),
+            selectedIndex = metrics.indexOf(selectedMetric).coerceAtLeast(0),
+            onSelect = { onSelectMetric(metrics[it]) },
+            modifier = Modifier.fillMaxWidth(),
+        )
         Spacer(Modifier.height(12.dp))
 
         if (activePoints.size < 2) {

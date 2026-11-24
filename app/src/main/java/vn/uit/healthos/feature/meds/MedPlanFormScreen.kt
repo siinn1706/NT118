@@ -1,5 +1,12 @@
 package vn.uit.healthos.feature.meds
 
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.core.designsystem.component.GlassChip
+import vn.uit.healthos.core.designsystem.component.GlassTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -15,13 +22,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,44 +65,41 @@ fun MedPlanFormScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
                 .imePadding()
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
+                    GlassTextField(
                         value = form.name,
                         onValueChange = { v -> onUpdateForm { it.copy(name = v) } },
-                        label = { Text(stringResource(R.string.meds_name_label)) },
-                        singleLine = true,
+                        label = stringResource(R.string.meds_name_label),
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    OutlinedTextField(
+                    GlassTextField(
                         value = form.strength,
                         onValueChange = { v -> onUpdateForm { it.copy(strength = v) } },
-                        label = { Text(stringResource(R.string.meds_strength_label)) },
-                        placeholder = { Text(stringResource(R.string.meds_form_dosage_placeholder)) },
-                        singleLine = true,
+                        label = stringResource(R.string.meds_strength_label),
+                        placeholder = stringResource(R.string.meds_form_dosage_placeholder),
                         modifier = Modifier.fillMaxWidth(),
                     )
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         MED_FORMS.forEach { (key, resId) ->
-                            FilterChip(
-                                selected = form.form == key,
+                            GlassChip(
+                                label = stringResource(resId),
                                 onClick = { onUpdateForm { it.copy(form = key) } },
-                                label = { Text(stringResource(resId)) },
+                                selected = form.form == key,
                             )
                         }
                     }
-                    OutlinedTextField(
+                    GlassTextField(
                         value = form.instructions,
                         onValueChange = { v -> onUpdateForm { it.copy(instructions = v) } },
-                        label = { Text(stringResource(R.string.meds_instructions_label)) },
-                        placeholder = { Text(stringResource(R.string.meds_form_note_placeholder)) },
-                        singleLine = true,
+                        label = stringResource(R.string.meds_instructions_label),
+                        placeholder = stringResource(R.string.meds_form_note_placeholder),
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -111,31 +110,32 @@ fun MedPlanFormScreen(
                     Text(stringResource(R.string.meds_dose_times_label), style = MaterialTheme.typography.titleSmall)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         form.doseTimes.forEach { time ->
-                            InputChip(
-                                selected = true,
+                            val removable = form.doseTimes.size > 1
+                            val removeLabel = stringResource(R.string.meds_remove_time_cd, time)
+                            GlassChip(
+                                label = time,
                                 onClick = { onRemoveDoseTime(time) },
-                                label = { Text(time) },
-                                trailingIcon = if (form.doseTimes.size > 1) {
-                                    { Icon(Icons.Rounded.Close, contentDescription = null) }
+                                leadingIcon = if (removable) Icons.Rounded.Close else null,
+                                modifier = if (removable) {
+                                    Modifier.semantics { contentDescription = removeLabel }
                                 } else {
-                                    null
+                                    Modifier
                                 },
                             )
                         }
                     }
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        OutlinedTextField(
+                        GlassTextField(
                             value = form.newTimeInput,
                             onValueChange = { v -> onUpdateForm { it.copy(newTimeInput = v.take(5)) } },
-                            label = { Text(stringResource(R.string.meds_add_time_hint)) },
-                            singleLine = true,
+                            label = stringResource(R.string.meds_add_time_hint),
                             modifier = Modifier.weight(1f),
                         )
-                        IconButton(onClick = onAddDoseTime) {
-                            Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.meds_add_time_action))
+                        GlassIconButton(onClick = onAddDoseTime, contentDescription = stringResource(R.string.meds_add_time_action)) {
+                            Icon(Icons.Rounded.Add, contentDescription = null)
                         }
                     }
                 }
@@ -144,45 +144,35 @@ fun MedPlanFormScreen(
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        OutlinedTextField(
+                        GlassTextField(
                             value = form.startDate,
                             onValueChange = { v -> onUpdateForm { it.copy(startDate = v) } },
-                            label = { Text(stringResource(R.string.meds_start_date)) },
-                            singleLine = true,
+                            label = stringResource(R.string.meds_start_date),
                             modifier = Modifier.weight(1f),
                         )
-                        OutlinedTextField(
+                        GlassTextField(
                             value = form.endDate,
                             onValueChange = { v -> onUpdateForm { it.copy(endDate = v) } },
-                            label = { Text(stringResource(R.string.meds_end_date_optional)) },
-                            singleLine = true,
+                            label = stringResource(R.string.meds_end_date_optional),
                             modifier = Modifier.weight(1f),
                         )
                     }
-                    OutlinedTextField(
+                    GlassTextField(
                         value = form.refillSupplyText,
                         onValueChange = { v -> onUpdateForm { it.copy(refillSupplyText = v.filter(Char::isDigit)) } },
-                        label = { Text(stringResource(R.string.meds_refill_supply_label)) },
+                        label = stringResource(R.string.meds_refill_supply_label),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
 
             state.errorMessage?.let { err ->
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = err.asString(),
+                    tone = GlassBannerTone.Error,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = err.asString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
             }
 
             PrimaryButton(

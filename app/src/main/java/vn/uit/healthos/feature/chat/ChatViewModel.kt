@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,7 @@ import vn.uit.healthos.core.network.SseException
 import vn.uit.healthos.core.network.toUiText
 import vn.uit.healthos.core.ui.UiText
 import vn.uit.healthos.feature.meals.ImageDownscaler
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
@@ -54,6 +56,7 @@ data class ChatUiState(
 class ChatViewModel @Inject constructor(
     private val repository: ChatRepository,
     private val json: Json,
+    @param:ApplicationContext private val appContext: Context,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChatUiState(loading = true))
@@ -165,15 +168,15 @@ class ChatViewModel @Inject constructor(
         val userMessage = ChatMessageUi(
             id = "local-u-${UUID.randomUUID()}",
             isUser = true,
-            content = text.ifBlank { "Đã gửi hình ảnh" },
+            content = text.ifBlank { appContext.getString(R.string.chat_image_sent) },
             attachmentUrls = listOfNotNull(attachment?.url),
         )
         val body = SendMessageBody(
-            content = text.ifBlank { "Phân tích hình ảnh này giúp tôi." },
+            content = text.ifBlank { appContext.getString(R.string.chat_image_default_prompt) },
             contentType = if (attachment != null && text.isBlank()) "image" else "text",
             clientMessageId = UUID.randomUUID().toString(),
             attachments = listOfNotNull(attachment).takeIf { it.isNotEmpty() },
-            locale = "vi",
+            locale = ChatLocale.of(Locale.getDefault()),
         )
 
         failedSend = null
@@ -339,7 +342,7 @@ class ChatViewModel @Inject constructor(
             .map { it.replace("*", "").replace("#", "").trim() }
             .firstOrNull { it.isNotBlank() }
             ?.take(80)
-            ?: "Nhắc nhở từ Bác sĩ AI"
+            ?: appContext.getString(R.string.chat_reminder_default_title)
         _state.update {
             it.copy(
                 reminderDraft = ReminderDraftUi(

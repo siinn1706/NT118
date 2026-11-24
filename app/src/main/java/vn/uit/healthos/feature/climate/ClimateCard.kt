@@ -1,5 +1,7 @@
 package vn.uit.healthos.feature.climate
 
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Air
-import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -91,29 +91,11 @@ fun ClimateCard(
 
         if (advice.outdoorWarning != OutdoorWarning.NONE) {
             Spacer(Modifier.height(12.dp))
-            Surface(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = MaterialTheme.shapes.medium,
+            GlassBanner(
+                message = outdoorWarningText(advice.outdoorWarning),
+                tone = GlassBannerTone.Warning,
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.WarningAmber,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        modifier = Modifier.size(20.dp),
-                    )
-                    Text(
-                        text = outdoorWarningText(advice.outdoorWarning),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    )
-                }
-            }
+            )
         } else {
             Spacer(Modifier.height(10.dp))
             Row(

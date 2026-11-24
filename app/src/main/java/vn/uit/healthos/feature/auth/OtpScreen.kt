@@ -9,10 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +22,11 @@ import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
+import vn.uit.healthos.core.designsystem.component.GlassTextField
+import vn.uit.healthos.core.designsystem.component.PlainButton
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
-import vn.uit.healthos.core.designsystem.theme.tabular
 import vn.uit.healthos.core.ui.asString
 
 @Composable
@@ -44,6 +46,7 @@ fun OtpScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(padding)
                 .imePadding()
                 .padding(24.dp),
@@ -56,29 +59,20 @@ fun OtpScreen(
             )
 
             state.debugOtpHint?.let { devOtp ->
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = stringResource(R.string.auth_otp_dev_hint, devOtp),
+                    tone = GlassBannerTone.Info,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = stringResource(R.string.auth_otp_dev_hint, devOtp),
-                        style = MaterialTheme.typography.labelLarge.tabular(),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
             }
 
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.otpCode,
                         onValueChange = onCodeChange,
-                        label = { Text(stringResource(R.string.auth_otp_code_label)) },
-                        singleLine = true,
-                        isError = state.fieldErrors.containsKey("otp"),
-                        supportingText = state.fieldErrors["otp"]?.let { { Text(authFieldErrorText(it)) } },
+                        label = stringResource(R.string.auth_otp_code_label),
+                        errorText = state.fieldErrors["otp"]?.let { authFieldErrorText(it) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.NumberPassword,
                             imeAction = ImeAction.Done,
@@ -103,17 +97,16 @@ fun OtpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                TextButton(
+                val label = if (state.otpResendSeconds > 0) {
+                    stringResource(R.string.auth_resend_otp_wait, state.otpResendSeconds)
+                } else {
+                    stringResource(R.string.auth_resend_otp)
+                }
+                PlainButton(
+                    text = label,
                     onClick = onResend,
                     enabled = state.otpResendSeconds == 0 && !state.loading,
-                ) {
-                    val label = if (state.otpResendSeconds > 0) {
-                        stringResource(R.string.auth_resend_otp_wait, state.otpResendSeconds)
-                    } else {
-                        stringResource(R.string.auth_resend_otp)
-                    }
-                    Text(label)
-                }
+                )
             }
         }
     }

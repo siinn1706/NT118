@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vn.uit.healthos.core.data.session.AppPreferences
 import vn.uit.healthos.core.data.session.AppPreferencesRepository
+import vn.uit.healthos.core.designsystem.theme.AccentPreset
+import vn.uit.healthos.core.designsystem.theme.BackgroundStyle
 import vn.uit.healthos.core.designsystem.theme.ThemeMode
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.toUiText
@@ -25,6 +27,7 @@ data class ProfileUiState(
     val profile: UserProfileDto? = null,
     val healthGoal: HealthGoalDto? = null,
     val preferences: AppPreferences = AppPreferences(),
+    val leaderboardVisibility: LeaderboardVisibility = LeaderboardVisibility.Default,
     val loading: Boolean = false,
     val loggingOut: Boolean = false,
     val error: UiText? = null,
@@ -53,6 +56,11 @@ class ProfileViewModel @Inject constructor(
                 _state.update { it.copy(preferences = prefs) }
             }
         }
+        viewModelScope.launch {
+            profileRepository.leaderboardVisibility.collectLatest { visibility ->
+                _state.update { it.copy(leaderboardVisibility = visibility) }
+            }
+        }
         refresh()
     }
 
@@ -72,6 +80,30 @@ class ProfileViewModel @Inject constructor(
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
             profileRepository.setThemeMode(mode)
+        }
+    }
+
+    fun setAccentPreset(preset: AccentPreset) {
+        viewModelScope.launch {
+            profileRepository.setAccentPreset(preset)
+        }
+    }
+
+    fun setBackgroundStyle(style: BackgroundStyle) {
+        viewModelScope.launch {
+            profileRepository.setBackgroundStyle(style)
+        }
+    }
+
+    fun setReducedTransparency(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setReducedTransparency(enabled)
+        }
+    }
+
+    fun setLeaderboardVisibility(visibility: LeaderboardVisibility) {
+        viewModelScope.launch {
+            profileRepository.setLeaderboardVisibility(visibility)
         }
     }
 

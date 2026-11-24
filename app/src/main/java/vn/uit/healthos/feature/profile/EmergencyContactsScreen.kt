@@ -1,5 +1,11 @@
 package vn.uit.healthos.feature.profile
 
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.core.designsystem.component.GlassTextField
+import vn.uit.healthos.core.designsystem.component.SecondaryButton
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,12 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +65,8 @@ fun EmergencyContactsScreen(
                 onAddContact = onAddContact,
                 onRemoveContact = onRemoveContact,
                 onSave = onSave,
-                modifier = contentModifier,
+                contentPadding = padding,
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }
@@ -76,12 +79,14 @@ private fun ContactsForm(
     onAddContact: () -> Unit,
     onRemoveContact: (Int) -> Unit,
     onSave: () -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .imePadding()
             .verticalScroll(rememberScrollState())
+            .padding(contentPadding)
             .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
@@ -103,10 +108,13 @@ private fun ContactsForm(
         }
 
         if (state.contacts.size < MAX_EMERGENCY_CONTACTS) {
-            TextButton(onClick = onAddContact, enabled = !state.saving) {
-                Icon(Icons.Rounded.Add, contentDescription = null)
-                Text(stringResource(R.string.profile_contacts_add_action), modifier = Modifier.padding(start = 6.dp))
-            }
+            SecondaryButton(
+                text = stringResource(R.string.profile_contacts_add_action),
+                onClick = onAddContact,
+                enabled = !state.saving,
+                leadingIcon = Icons.Rounded.Add,
+                modifier = Modifier.fillMaxWidth(),
+            )
         } else {
             Text(
                 text = stringResource(R.string.profile_contacts_max_hint, MAX_EMERGENCY_CONTACTS),
@@ -154,10 +162,14 @@ private fun ContactCard(
                     text = stringResource(R.string.onboarding_contact_number, index + 1),
                     style = MaterialTheme.typography.titleSmall,
                 )
-                IconButton(onClick = onRemove, enabled = enabled) {
+                GlassIconButton(
+                    onClick = onRemove,
+                    contentDescription = stringResource(R.string.action_delete),
+                    enabled = enabled,
+                ) {
                     Icon(
                         Icons.Rounded.DeleteOutline,
-                        contentDescription = stringResource(R.string.action_delete),
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
                     )
                 }
@@ -208,25 +220,21 @@ private fun ContactField(
     @StringRes invalidMessage: Int = R.string.profile_contact_error_required,
     keyboardType: KeyboardType = KeyboardType.Text,
 ) {
-    OutlinedTextField(
+    val errorText = error?.let {
+        stringResource(
+            when (it) {
+                ContactFieldError.REQUIRED -> R.string.profile_contact_error_required
+                ContactFieldError.TOO_LONG -> R.string.profile_contact_error_too_long
+                ContactFieldError.INVALID -> invalidMessage
+            },
+        )
+    }
+    GlassTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(stringResource(label)) },
-        isError = error != null,
-        supportingText = if (error != null) {
-            {
-                val message = when (error) {
-                    ContactFieldError.REQUIRED -> R.string.profile_contact_error_required
-                    ContactFieldError.TOO_LONG -> R.string.profile_contact_error_too_long
-                    ContactFieldError.INVALID -> invalidMessage
-                }
-                Text(stringResource(message))
-            }
-        } else {
-            null
-        },
+        label = stringResource(label),
+        errorText = errorText,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        singleLine = true,
         enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -234,16 +242,9 @@ private fun ContactField(
 
 @Composable
 private fun ErrorBanner(message: UiText) {
-    Surface(
-        color = MaterialTheme.colorScheme.errorContainer,
-        shape = MaterialTheme.shapes.medium,
+    GlassBanner(
+        message = message.asString(),
+        tone = GlassBannerTone.Error,
         modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = message.asString(),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onErrorContainer,
-            modifier = Modifier.padding(12.dp),
-        )
-    }
+    )
 }

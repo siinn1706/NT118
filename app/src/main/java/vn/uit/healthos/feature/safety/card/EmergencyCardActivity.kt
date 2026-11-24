@@ -1,5 +1,17 @@
 package vn.uit.healthos.feature.safety.card
 
+import vn.uit.healthos.core.data.session.AppPreferencesRepository
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.feature.safety.SafetyGlassRoot
+import com.kyant.shapes.RoundedRectangle
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -23,7 +35,6 @@ import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.MedicalServices
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,8 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
-import vn.uit.healthos.core.designsystem.component.SecondaryButton
-import vn.uit.healthos.core.designsystem.theme.HealthOsTheme
 import vn.uit.healthos.feature.safety.SafetyLocalState
 import vn.uit.healthos.feature.safety.SafetyPreferences
 import javax.inject.Inject
@@ -52,6 +61,9 @@ class EmergencyCardActivity : ComponentActivity() {
     @Inject
     lateinit var safetyPreferences: SafetyPreferences
 
+    @Inject
+    lateinit var preferencesRepository: AppPreferencesRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setShowWhenLocked(true)
@@ -59,7 +71,7 @@ class EmergencyCardActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            HealthOsTheme {
+            SafetyGlassRoot(preferencesRepository, alert = false) {
                 val local by safetyPreferences.state.collectAsStateWithLifecycle(initialValue = SafetyLocalState())
                 EmergencyCardScreen(
                     local = local,
@@ -80,22 +92,25 @@ private fun EmergencyCardScreen(
         local.shareUrl?.let { QrGenerator.generate(it, sizePx = 560) }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background,
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 32.dp),
+                .systemBarsPadding()
+                .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            // Reads like a sheet: a glass close button at the top start, then the title.
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                GlassIconButton(onClick = onClose, contentDescription = stringResource(R.string.action_close)) {
+                    Icon(Icons.Rounded.Close, contentDescription = null)
+                }
                 Icon(
                     Icons.Rounded.MedicalServices,
                     contentDescription = null,
@@ -104,6 +119,7 @@ private fun EmergencyCardScreen(
                 Text(
                     text = stringResource(R.string.safety_card_title),
                     style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.semantics { heading() },
                 )
             }
 
@@ -143,10 +159,15 @@ private fun EmergencyCardScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
+                        // A solid white plate keeps the scan contrast whatever the frost behind it.
                         Image(
                             bitmap = qrBitmap.asImageBitmap(),
                             contentDescription = stringResource(R.string.safety_card_qr_cd),
-                            modifier = Modifier.size(220.dp),
+                            modifier = Modifier
+                                .clip(RoundedRectangle(16.dp))
+                                .background(Color.White)
+                                .padding(12.dp)
+                                .size(220.dp),
                         )
                         Text(
                             text = stringResource(R.string.safety_card_scan_hint),
@@ -171,12 +192,6 @@ private fun EmergencyCardScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-
-            SecondaryButton(
-                text = stringResource(R.string.action_close),
-                onClick = onClose,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
     }
 }

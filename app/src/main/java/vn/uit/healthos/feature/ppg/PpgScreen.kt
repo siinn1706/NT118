@@ -1,5 +1,8 @@
 package vn.uit.healthos.feature.ppg
 
+import vn.uit.healthos.core.designsystem.component.GlassProgressBar
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
 import android.Manifest
 import android.content.pm.PackageManager
 import android.hardware.camera2.CaptureRequest
@@ -33,9 +36,7 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Fingerprint
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -115,8 +116,8 @@ fun PpgScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -145,18 +146,11 @@ fun PpgScreen(
                     }
 
                     state.errorMessage?.let { err ->
-                        Surface(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = MaterialTheme.shapes.medium,
+                        GlassBanner(
+                            message = err.asString(),
+                            tone = GlassBannerTone.Error,
                             modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = err.asString(),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                modifier = Modifier.padding(12.dp),
-                            )
-                        }
+                        )
                     }
 
                     PrimaryButton(
@@ -219,9 +213,10 @@ fun PpgScreen(
                         },
                     )
 
-                    LinearProgressIndicator(
+                    GlassProgressBar(
                         progress = { state.progress },
                         modifier = Modifier.fillMaxWidth(),
+                        height = 8.dp,
                     )
                     Text(
                         text = stringResource(
@@ -276,28 +271,11 @@ fun PpgScreen(
                     }
 
                     if (state.saved) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = MaterialTheme.shapes.medium,
+                        GlassBanner(
+                            message = stringResource(R.string.ppg_saved_confirmation),
+                            tone = GlassBannerTone.Success,
                             modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                Icon(
-                                    Icons.Rounded.CheckCircle,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                )
-                                Text(
-                                    text = stringResource(R.string.ppg_saved_confirmation),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                )
-                            }
-                        }
+                        )
                     } else {
                         PrimaryButton(
                             text = stringResource(R.string.ppg_save_action),

@@ -9,7 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
+import vn.uit.healthos.core.designsystem.component.GlassTextField
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.ui.asString
 
@@ -39,6 +41,7 @@ fun MfaScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(padding)
                 .imePadding()
                 .padding(24.dp),
@@ -52,13 +55,11 @@ fun MfaScreen(
 
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.mfaCode,
                         onValueChange = onCodeChange,
-                        label = { Text(stringResource(R.string.auth_mfa_code_label)) },
-                        singleLine = true,
-                        isError = state.fieldErrors.containsKey("mfa"),
-                        supportingText = state.fieldErrors["mfa"]?.let { { Text(authFieldErrorText(it)) } },
+                        label = stringResource(R.string.auth_mfa_code_label),
+                        errorText = state.fieldErrors["mfa"]?.let { authFieldErrorText(it) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done,

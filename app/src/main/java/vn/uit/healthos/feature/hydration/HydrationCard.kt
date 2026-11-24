@@ -1,5 +1,7 @@
 package vn.uit.healthos.feature.hydration
 
+import vn.uit.healthos.core.designsystem.component.SecondaryButton
+import vn.uit.healthos.core.designsystem.component.GlassProgressBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,9 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.WaterDrop
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,10 +65,11 @@ fun HydrationCard(
                     }
                 }
             }
-            FilledTonalButton(onClick = onAddCup) {
-                Icon(Icons.Rounded.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                Text(stringResource(R.string.home_hydration_add_250))
-            }
+            SecondaryButton(
+                text = stringResource(R.string.home_hydration_add_250),
+                onClick = onAddCup,
+                leadingIcon = Icons.Rounded.Add,
+            )
         }
         Spacer(Modifier.height(12.dp))
         Row(
@@ -87,9 +88,10 @@ fun HydrationCard(
             )
         }
         Spacer(Modifier.height(8.dp))
-        LinearProgressIndicator(
+        GlassProgressBar(
             progress = { progress },
             modifier = Modifier.fillMaxWidth(),
+            height = 8.dp,
         )
     }
 }

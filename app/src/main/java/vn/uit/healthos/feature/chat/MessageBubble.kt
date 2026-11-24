@@ -23,11 +23,8 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.AlarmAdd
 import androidx.compose.material.icons.rounded.StopCircle
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,6 +40,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.core.designsystem.component.PlainButton
+import vn.uit.healthos.core.designsystem.glass.LocalInsideGlass
+import androidx.compose.foundation.background
 
 data class ChatMessageUi(
     val id: String,
@@ -87,7 +88,6 @@ fun MessageBubble(
             tint = containerColor,
             contentColor = contentColor,
             shape = bubbleShape,
-            style = if (message.isUser) GlassStyle.Control else GlassStyle.Material,
             modifier = Modifier.widthIn(max = 312.dp),
         ) {
             Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
@@ -130,28 +130,21 @@ fun MessageBubble(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier.padding(top = 4.dp),
                     ) {
-                        IconButton(
+                        GlassIconButton(
                             onClick = onToggleSpeak,
-                            modifier = Modifier.size(48.dp),
+                            contentDescription = stringResource(R.string.chat_speak_action),
                         ) {
                             Icon(
                                 imageVector = if (isSpeaking) Icons.Rounded.StopCircle else Icons.AutoMirrored.Rounded.VolumeUp,
-                                contentDescription = stringResource(R.string.chat_speak_action),
+                                contentDescription = null,
                                 modifier = Modifier.size(18.dp),
                             )
                         }
-                        TextButton(onClick = onCreateReminder) {
-                            Icon(
-                                Icons.Rounded.AlarmAdd,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                            )
-                            Text(
-                                text = stringResource(R.string.chat_create_reminder_action),
-                                style = MaterialTheme.typography.labelMedium,
-                                modifier = Modifier.padding(start = 4.dp),
-                            )
-                        }
+                        PlainButton(
+                            text = stringResource(R.string.chat_create_reminder_action),
+                            onClick = onCreateReminder,
+                            leadingIcon = Icons.Rounded.AlarmAdd,
+                        )
                     }
                 }
             }
@@ -206,23 +199,28 @@ private fun AnnotatedString.Builder.appendInlineMarkdown(line: String) {
     }
 }
 
-/** Chat bubble drawn as Liquid Glass: the assistant's bubbles are frosted, the user's are tinted with the brand. */
+/**
+ * Chat bubble: the assistant's bubbles are frosted Liquid Glass (controls inside become insets); the user's and
+ * emergency bubbles are an opaque tint, where glass would be invisible work.
+ */
 @Composable
 private fun BubbleSurface(
     tint: Color,
     contentColor: Color,
     shape: Shape,
-    style: GlassStyle,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = modifier.liquidGlass(
-            shape = shape,
-            style = style,
-            tint = if (tint.isSpecified) tint.copy(alpha = 0.94f) else Color.Unspecified,
-        ),
-    ) {
-        CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
+    val surface = if (tint.isSpecified) {
+        Modifier.clip(shape).background(tint)
+    } else {
+        Modifier.liquidGlass(shape = shape, style = GlassStyle.Material)
+    }
+    Box(modifier = modifier.then(surface)) {
+        CompositionLocalProvider(
+            LocalContentColor provides contentColor,
+            LocalInsideGlass provides true,
+            content = content,
+        )
     }
 }

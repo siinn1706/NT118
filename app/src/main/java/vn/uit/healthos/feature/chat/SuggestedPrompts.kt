@@ -4,13 +4,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.GlassChip
 
 @Composable
 fun SuggestedPrompts(
@@ -27,10 +26,7 @@ fun SuggestedPrompts(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         prompts.forEach { prompt ->
-            AssistChip(
-                onClick = { onSelectPrompt(prompt) },
-                label = { Text(prompt) },
-            )
+            GlassChip(label = prompt, onClick = { onSelectPrompt(prompt) })
         }
     }
 }

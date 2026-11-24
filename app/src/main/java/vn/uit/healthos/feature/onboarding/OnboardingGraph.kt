@@ -35,6 +35,7 @@ fun NavGraphBuilder.onboardingGraph(
             onContactChange = viewModel::onContactChange,
             onAddContact = viewModel::addContact,
             onRemoveContact = viewModel::removeContact,
+            onAccentChange = viewModel::onAccentChange,
             onPrevious = viewModel::previousStep,
             onNext = viewModel::nextStep,
             onComplete = viewModel::completeOnboarding,
