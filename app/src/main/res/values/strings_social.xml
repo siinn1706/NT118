@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Friends -->
+    <string name="friends_title">Bạn bè</string>
+    <string name="friends_segment_friends">Bạn bè</string>
+    <string name="friends_segment_requests">Lời mời</string>
+    <string name="friends_segment_requests_count">Lời mời (%1$d)</string>
+    <string name="friends_segment_search">Tìm bạn</string>
+    <string name="friends_online">Đang trực tuyến</string>
+    <string name="friends_offline">Ngoại tuyến</string>
+    <string name="friends_username">\@%1$s</string>
+    <string name="friends_no_messages">Chưa có tin nhắn. Nhấn để trò chuyện.</string>
+    <string name="friends_last_message_mine">Bạn: %1$s</string>
+    <plurals name="friends_unread">
+        <item quantity="other">%1$d tin chưa đọc</item>
+    </plurals>
+    <string name="friends_empty_title">Chưa có bạn bè</string>
+    <string name="friends_empty_body">Tìm bạn bằng username để gửi lời mời kết bạn và cùng thi đua số bước.</string>
+    <string name="friends_empty_action">Tìm bạn</string>
+    <string name="friends_requests_incoming">Lời mời đã nhận</string>
+    <string name="friends_requests_outgoing">Lời mời đã gửi</string>
+    <string name="friends_requests_empty">Không có lời mời nào đang chờ.</string>
+    <string name="friends_accept">Chấp nhận</string>
+    <string name="friends_decline">Từ chối</string>
+    <string name="friends_cancel_request">Hủy lời mời</string>
+    <string name="friends_search_label">Tìm bằng username</string>
+    <string name="friends_search_placeholder">Ví dụ: minhanh</string>
+    <string name="friends_search_hint">Nhập username chính xác hoặc phần đầu của username.</string>
+    <string name="friends_search_empty">Không tìm thấy ai có username bắt đầu bằng \"%1$s\".</string>
+    <string name="friends_search_clear">Xóa nội dung tìm kiếm</string>
+    <string name="friends_add">Kết bạn</string>
+    <string name="friends_request_sent_label">Đã gửi lời mời</string>
+    <string name="friends_already_label">Đã là bạn bè</string>
+    <string name="friends_incoming_label">Đã mời bạn kết bạn</string>
+    <string name="friends_unfriend">Hủy kết bạn</string>
+    <string name="friends_unfriend_named">Hủy kết bạn với %1$s</string>
+    <string name="friends_view_request">Xem lời mời</string>
+    <string name="social_refreshing">Đang làm mới</string>
+    <string name="friends_unfriend_title">Hủy kết bạn với %1$s?</string>
+    <string name="friends_unfriend_message">Hai bạn sẽ không còn thấy nhau trong danh sách bạn bè và bảng xếp hạng bạn bè. Bạn có thể gửi lại lời mời bất cứ lúc nào.</string>
+    <string name="friends_open_chat">Nhắn tin với %1$s</string>
+    <string name="friends_request_sent_to">Đã gửi lời mời kết bạn tới %1$s.</string>
+    <string name="friends_now_friends">Bạn và %1$s đã là bạn bè.</string>
+    <string name="friends_request_received">%1$s vừa gửi lời mời kết bạn.</string>
+    <string name="friends_unfriended">Đã hủy kết bạn với %1$s.</string>
+    <string name="friends_load_error_title">Không tải được danh sách bạn bè</string>
+    <string name="friends_error_self">Bạn không thể tự kết bạn với chính mình.</string>
+    <string name="friends_error_user_not_found">Không tìm thấy người dùng này.</string>
+    <string name="friends_error_already">Hai bạn đã là bạn bè.</string>
+    <string name="friends_error_request_exists">Lời mời kết bạn đã được gửi trước đó.</string>
+    <string name="friends_error_blocked">Không thể gửi lời mời tới người dùng này.</string>
+    <string name="friends_error_request_gone">Lời mời này không còn hiệu lực.</string>
+    <string name="friends_error_not_friend">Người này không còn trong danh sách bạn bè.</string>
+    <string name="friends_error_rate_limited">Bạn đã gửi quá nhiều lời mời. Hãy thử lại sau ít phút.</string>
+
+    <!-- Direct messages -->
+    <string name="dm_input_label">Tin nhắn</string>
+    <string name="dm_input_placeholder">Nhắn cho %1$s…</string>
+    <string name="dm_send">Gửi tin nhắn</string>
+    <string name="dm_status_pending">Đang gửi</string>
+    <string name="dm_status_failed">Chưa gửi được. Nhấn để gửi lại.</string>
+    <string name="dm_typing">%1$s đang nhập…</string>
+    <string name="dm_load_older">Xem tin nhắn cũ hơn</string>
+    <string name="dm_empty">Hãy gửi lời chào tới %1$s.</string>
+    <string name="dm_offline_banner">Đang ngoại tuyến. Tin nhắn mới sẽ tự gửi khi có mạng.</string>
+    <string name="dm_load_error">Không tải được tin nhắn mới. Đang hiển thị tin nhắn đã lưu trên máy.</string>
+    <string name="dm_message_mine">Bạn lúc %1$s: %2$s</string>
+    <string name="dm_message_peer">%1$s lúc %2$s: %3$s</string>
+
+    <!-- Leaderboard -->
+    <string name="leaderboard_title">Bảng xếp hạng</string>
+    <string name="leaderboard_period_today">Hôm nay</string>
+    <string name="leaderboard_period_week">Tuần</string>
+    <string name="leaderboard_scope_friends">Bạn bè</string>
+    <string name="leaderboard_scope_global">Mọi người</string>
+    <string name="leaderboard_steps">%1$s bước</string>
+    <string name="leaderboard_rank">#%1$d</string>
+    <string name="leaderboard_you">Bạn</string>
+    <string name="leaderboard_you_row">Bạn, hạng %1$d, %2$s bước</string>
+    <string name="leaderboard_entry">Hạng %1$d: %2$s, %3$s bước</string>
+    <string name="leaderboard_updated">Cập nhật lúc %1$s</string>
+    <string name="leaderboard_updated_cached">Dữ liệu lưu lúc %1$s. Kéo xuống để tải lại.</string>
+    <string name="leaderboard_range_week">Từ %1$s đến %2$s</string>
+    <string name="leaderboard_visibility_off_title">Bạn đang ẩn khỏi bảng xếp hạng</string>
+    <string name="leaderboard_visibility_off">Bật hiển thị trong Cài đặt để bạn bè thấy số bước của bạn.</string>
+    <string name="leaderboard_visibility_not_global">Bạn đang chỉ hiển thị với bạn bè nên không có tên trong bảng Mọi người.</string>
+    <string name="leaderboard_open_settings">Mở Cài đặt</string>
+    <string name="leaderboard_empty_friends">Chưa có ai trong bảng. Kết bạn để cùng thi đua số bước.</string>
+    <string name="leaderboard_empty_global">Chưa có ai trên bảng xếp hạng chung trong khoảng thời gian này.</string>
+    <string name="leaderboard_load_error">Không tải được bảng xếp hạng.</string>
+</resources>

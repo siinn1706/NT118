@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import vn.uit.healthos.core.data.outbox.OutboxRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,11 +25,16 @@ class SessionEvents @Inject constructor() {
 class SessionRepository @Inject constructor(
     private val tokenStore: TokenStore,
     private val events: SessionEvents,
+    private val outboxRepository: OutboxRepository,
 ) {
     val isSignedIn: Flow<Boolean> = tokenStore.tokens.map { it != null }.distinctUntilChanged()
     val expired: SharedFlow<Unit> = events.expired
 
-    suspend fun signIn(tokens: SessionTokens) = tokenStore.save(tokens)
+    /** Saves the session, then resumes the outbox: items held while signed out (an SOS email, say) go out now. */
+    suspend fun signIn(tokens: SessionTokens) {
+        tokenStore.save(tokens)
+        outboxRepository.scheduleSync()
+    }
 
     suspend fun signOut() = tokenStore.clear()
 }

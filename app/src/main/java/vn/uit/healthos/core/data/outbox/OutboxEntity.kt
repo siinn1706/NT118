@@ -15,4 +15,10 @@ data class OutboxEntity(
     @ColumnInfo(name = "last_error") val lastError: String? = null,
     /** Items sharing a key supersede each other: enqueueing a new one drops the older pending ones. */
     @ColumnInfo(name = "dedupe_key") val dedupeKey: String? = null,
+    /**
+     * The account that queued the item. It is only ever sent while that account is signed in, so an item kept across
+     * a sign-out (see [OutboxRetention]) can never be delivered under someone else's session. Null for items queued
+     * while signed out and for rows written before the column existed; those go out under whoever signs in.
+     */
+    @ColumnInfo(name = "owner_user_id") val ownerUserId: String? = null,
 )
