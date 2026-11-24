@@ -5,7 +5,7 @@ import uuid
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import Boolean, Date, DateTime, Enum as SAEnum, Float, ForeignKey, Index, Integer, String, Text, Time, UniqueConstraint, func, text
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Enum as SAEnum, Float, ForeignKey, Index, Integer, String, Text, Time, UniqueConstraint, func, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -1672,6 +1672,10 @@ class UserPreference(Base):
     accent_color: Mapped[str | None] = mapped_column(String(7), nullable=True)
     locale: Mapped[str] = mapped_column(String(2), default="en", nullable=False)
     appearance: Mapped[dict[str, Any] | None] = mapped_column(JSONB, default=dict, nullable=False)
+    # Who may see this user on the steps leaderboard: 'off' | 'friends' | 'global'.
+    leaderboard_visibility: Mapped[str] = mapped_column(
+        String(10), default="friends", server_default=text("'friends'"), nullable=False,
+    )
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False,
     )
@@ -1679,6 +1683,13 @@ class UserPreference(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False,
     )
     user: Mapped["User"] = relationship(back_populates="preferences")
+
+    __table_args__ = (
+        CheckConstraint(
+            "leaderboard_visibility IN ('off', 'friends', 'global')",
+            name="ck_user_preferences_leaderboard_visibility",
+        ),
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
