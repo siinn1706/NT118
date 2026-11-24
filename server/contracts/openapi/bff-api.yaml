@@ -1,0 +1,1005 @@
+openapi: "3.1.0"
+info:
+  title: HealthOS BFF API
+  version: "1.0.0"
+  description: |
+    BFF (Backend For Frontend) API — Next.js Route Handlers.
+    Base URL: http://localhost:3000/api/v1
+    
+    Tất cả request từ FE phải đi qua BFF, không gọi thẳng Core BE.
+    BFF kiểm tra session, lấy access token, forward tới Core BE.
+
+    Cookie session config (from frontend env):
+    - COOKIE_NAME: cookie key used by auth routes, middleware, and proxy (default: healthos.session)
+    - COOKIE_MAX_AGE: cookie ttl in seconds (default: 604800)
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local development (BFF embedded in Next.js)
+
+security:
+  - CookieAuth: []
+
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: healthos.session
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+
+    AuthSession:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            display_name:
+              type: string
+        expires_at:
+          type: string
+          format: date-time
+
+paths:
+  /health:
+    get:
+      tags: [System]
+      summary: BFF health check
+      security: []
+      responses:
+        "200":
+          description: BFF is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  core_api:
+                    type: string
+                    enum: [reachable, unreachable]
+
+  # ── Auth ──────────────────────────────────────────────────────────────────
+  /auth/request-otp:
+    post:
+      tags: [Auth]
+      summary: Request email OTP (proxy → Core BE)
+      description: |
+        Proxies to Core BE POST /v1/auth/request-otp.
+        Returns 404 EMAIL_NOT_FOUND for reset_password when email is not registered.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                purpose:
+                  type: string
+                  enum: [signup, reset_password]
+                  default: signup
+                name:
+                  type: string
+      responses:
+        "200":
+          description: OTP sent (see Core API for full schema)
+        "404":
+          description: Email not registered (reset_password only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: EMAIL_NOT_FOUND
+                  message: No account found with that email address.
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/check-email:
+    get:
+      tags: [Auth]
+      summary: Check email availability (proxy → Core BE)
+      description: |
+        Proxies to Core BE GET /v1/auth/check-email.
+        Returns whether an email can be used for signup.
+      security: []
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        "200":
+          description: Availability result
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [available]
+                properties:
+                  available:
+                    type: boolean
+                    example: true
+        "400":
+          description: Missing/invalid query parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: Upstream Core API unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/verify-otp:
+    post:
+      tags: [Auth]
+      summary: Verify email OTP (proxy → Core BE)
+      description: |
+        Proxies to Core BE POST /v1/auth/verify-otp.
+        - signup: returns JWT.
+        - reset_password: returns `{ email, next_step: "reset_password" }`.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code]
+              properties:
+                email:
+                  type: string
+                  format: email
+                code:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+                purpose:
+                  type: string
+                  enum: [signup, reset_password]
+                  default: signup
+      responses:
+        "200":
+          description: Verification result (see Core API for shapes)
+        "400":
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Complete password reset (proxy → Core BE)
+      description: |
+        Proxies to Core BE POST /v1/auth/reset-password.
+        Requires a prior verify-otp call with purpose=reset_password.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, new_password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                new_password:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          description: Password reset, JWT issued
+        "400":
+          description: OTP not verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/session:
+    get:
+      tags: [Auth]
+      summary: Get current session info
+      security: []
+      responses:
+        "200":
+          description: Active session
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AuthSession"
+        "401":
+          description: No active session
+
+  /auth:
+    get:
+      tags: [Auth]
+      summary: Backward-compatible alias for /auth/session
+      security: []
+      responses:
+        "200":
+          description: Active session
+        "401":
+          description: No active session
+    post:
+      tags: [Auth]
+      summary: Backward-compatible alias for /auth/session login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        "200":
+          description: Logged in
+    delete:
+      tags: [Auth]
+      summary: Backward-compatible alias for /auth/session logout
+      security: []
+      responses:
+        "200":
+          description: Logged out
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current user (proxied from Core BE)
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      email:
+                        type: string
+                        format: email
+                      display_name:
+                        type: string
+                      avatar_url:
+                        type: string
+                        nullable: true
+
+  /health-data:
+    get:
+      tags: [Health Data]
+      summary: Aggregated health overview for dashboard
+      description: BFF aggregates meals + health_metrics + latest alerts into one payload
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d]
+            default: 30d
+      responses:
+        "200":
+          description: Aggregated health data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      meals_summary:
+                        type: object
+                      metrics_summary:
+                        type: object
+                      recent_alerts:
+                        type: array
+                        items:
+                          type: object
+    post:
+      tags: [Health Data]
+      summary: Create meal log via aggregate route (proxy → Core BE POST /v1/meals)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                notes: { type: string }
+                logged_at: { type: string, format: date-time }
+                image:
+                  type: string
+                  format: binary
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                notes: { type: string }
+                logged_at: { type: string, format: date-time }
+      responses:
+        "201":
+          description: Forwarded response from Core BE
+
+  /health-data/meal:
+    post:
+      tags: [Health Data]
+      summary: Data-flow alias for meal logging (proxy → Core BE POST /v1/meals)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                notes: { type: string }
+                logged_at: { type: string, format: date-time }
+                image:
+                  type: string
+                  format: binary
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                notes: { type: string }
+                logged_at: { type: string, format: date-time }
+      responses:
+        "201":
+          description: Forwarded response from Core BE
+
+  /meals:
+    get:
+      tags: [Meals]
+      summary: List meals (proxy → Core BE GET /v1/meals)
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: date_from
+          in: query
+          schema: { type: string, format: date }
+        - name: date_to
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+    post:
+      tags: [Meals]
+      summary: Create meal log (forwards multipart to Core BE)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                notes:
+                  type: string
+                logged_at:
+                  type: string
+                  format: date-time
+                image:
+                  type: string
+                  format: binary
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                notes:
+                  type: string
+                logged_at:
+                  type: string
+                  format: date-time
+      responses:
+        "201":
+          description: Forwarded response from Core BE
+
+  /plans:
+    get:
+      tags: [Plans]
+      summary: List plans (proxy → Core BE)
+      security: []
+      responses:
+        "200":
+          description: Available plans
+
+  /dashboard/summary:
+    get:
+      tags: [Dashboard]
+      summary: Dashboard summary (proxy → Core BE)
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+
+  /reports:
+    get:
+      tags: [Reports]
+      summary: Reports list/detail (proxy → Core BE)
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d]
+        - name: list
+          in: query
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+
+  /reports/trends:
+    get:
+      tags: [Reports]
+      summary: Trend analysis (proxy → Core BE)
+      parameters:
+        - name: metric
+          in: query
+          schema: { type: string }
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d]
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+
+  /reports/trends/batch:
+    get:
+      tags: [Reports]
+      summary: Batch trend analysis (proxy → Core BE)
+      parameters:
+        - name: metrics
+          in: query
+          required: true
+          schema:
+            type: string
+            example: heart_rate,steps,sleep
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d]
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+        "400":
+          description: No supported trend metrics requested
+        "422":
+          description: Missing or invalid query parameters
+
+  /vitals/timeseries:
+    get:
+      tags: [Vitals]
+      summary: Vitals timeseries (proxy → Core BE)
+      parameters:
+        - name: metric
+          in: query
+          schema: { type: string }
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d]
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+
+  /reminders/upcoming:
+    get:
+      tags: [Reminders]
+      summary: List upcoming reminders (proxy → Core BE)
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+    post:
+      tags: [Reminders]
+      summary: Acknowledge reminder (proxy → Core BE)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+
+  /devices:
+    get:
+      tags: [Devices]
+      summary: List connected wearable devices for current user
+      responses:
+        "200":
+          description: Connected devices
+    post:
+      tags: [Devices]
+      summary: Connect a new wearable device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [provider]
+              properties:
+                provider:
+                  type: string
+                  enum: [apple_health, google_fit, garmin, fitbit]
+                auth_code:
+                  type: string
+      responses:
+        "201":
+          description: Device connected
+
+  /devices/{id}:
+    delete:
+      tags: [Devices]
+      summary: Disconnect connected wearable device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Device disconnected
+
+  /devices/{id}/sync:
+    post:
+      tags: [Devices]
+      summary: Trigger connected wearable device sync
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+
+  /devices/{id}/sync-state:
+    get:
+      tags: [Devices]
+      summary: List connected device sync state
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+
+  /wearables/google/connect:
+    post:
+      tags: [Wearables]
+      summary: Begin Google Health OAuth connection
+      responses:
+        "200":
+          description: Google Health consent URL
+        "503":
+          description: Google Health is not configured
+
+  /wearables/google/callback:
+    get:
+      tags: [Wearables]
+      summary: Finish Google Health OAuth connection
+      parameters:
+        - name: code
+          in: query
+          schema: { type: string }
+        - name: state
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Forwarded response from Core BE
+        "400":
+          description: Invalid OAuth callback
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: List notifications for current user
+      parameters:
+        - name: unread_only
+          in: query
+          schema: { type: boolean, default: false }
+      responses:
+        "200":
+          description: Notifications list
+
+  # ── Chat ──────────────────────────────────────────────────────────────────
+  /conversations:
+    get:
+      tags: [Chat]
+      summary: List accepted conversations (proxy → Core BE)
+      responses:
+        "200":
+          description: Conversation list (same shape as Core BE)
+    post:
+      tags: [Chat]
+      summary: Create group conversation (proxy → Core BE POST /v1/conversations)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, member_ids]
+              properties:
+                title:       { type: string }
+                member_ids:  { type: array, items: { type: string, format: uuid } }
+                avatar_url:  { type: string, format: uri }
+      responses:
+        "201":
+          description: Group conversation created
+
+  /conversations/direct:
+    post:
+      tags: [Chat]
+      summary: Create or return existing direct conversation (proxy → Core BE)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target_user_id]
+              properties:
+                target_user_id: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Existing conversation
+        "201":
+          description: New stranger request sent
+
+  /conversations/pending:
+    get:
+      tags: [Chat]
+      summary: List pending stranger requests (proxy → Core BE)
+      responses:
+        "200":
+          description: Pending list
+
+  /conversations/{id}:
+    get:
+      tags: [Chat]
+      summary: Get single conversation (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Conversation detail
+    patch:
+      tags: [Chat]
+      summary: Update group metadata (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:      { type: string }
+                avatar_url: { type: string }
+      responses:
+        "200":
+          description: Updated
+
+  /conversations/{id}/accept:
+    post:
+      tags: [Chat]
+      summary: Accept a stranger request (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Accepted
+
+  /conversations/{id}/reject:
+    post:
+      tags: [Chat]
+      summary: Reject a stranger request (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Rejected
+
+  /conversations/{id}/messages:
+    get:
+      tags: [Chat]
+      summary: List messages with cursor pagination (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: before
+          in: query
+          schema: { type: string, format: date-time }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+      responses:
+        "200":
+          description: Messages
+    post:
+      tags: [Chat]
+      summary: Send message via REST (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:          { type: string }
+                content_type:     { type: string, default: text }
+                reply_to_id:      { type: string, format: uuid }
+                client_message_id: { type: string }
+      responses:
+        "201":
+          description: Message sent
+
+  /conversations/{id}/messages/{messageId}:
+    patch:
+      tags: [Chat]
+      summary: Edit message (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: messageId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content: { type: string }
+      responses:
+        "200":
+          description: Edited
+    delete:
+      tags: [Chat]
+      summary: Recall message (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: messageId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Recalled
+
+  /conversations/{id}/messages/{messageId}/reactions:
+    post:
+      tags: [Chat]
+      summary: Toggle reaction (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: messageId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [emoji]
+              properties:
+                emoji: { type: string }
+      responses:
+        "200":
+          description: Toggled
+
+  /conversations/{id}/read:
+    post:
+      tags: [Chat]
+      summary: Mark conversation as read (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [last_read_message_id]
+              properties:
+                last_read_message_id:
+                  type: string
+                  format: uuid
+      responses:
+        "204":
+          description: Read receipt updated
+
+  /conversations/{id}/pinned:
+    get:
+      tags: [Chat]
+      summary: List pinned messages (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Pinned messages
+
+  /conversations/{id}/pinned/{messageId}:
+    post:
+      tags: [Chat]
+      summary: Pin a message (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: messageId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Pinned
+    delete:
+      tags: [Chat]
+      summary: Unpin a message (proxy → Core BE)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: messageId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Unpinned
+
+  /auth/ws-token:
+    get:
+      tags: [Auth]
+      summary: Exchange session cookie for short-lived WebSocket ticket
+      description: |
+        Reads the httpOnly `core_access_token` cookie and calls Core BE
+        `GET /v1/auth/ws-ticket` to issue a short-lived WS ticket.
+
+        The browser passes this ticket via query string when opening `/ws`.
+
+        **Important:** This endpoint itself requires a valid session cookie.
+      responses:
+        "200":
+          description: WS ticket issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expires_in_seconds:
+                    type: integer
+        "401":
+          description: Not authenticated
+
+  /users/search:
+    get:
+      tags: [Users]
+      summary: Search users by name or email (proxy → Core BE /v1/users/lookup)
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema: { type: string, minLength: 2 }
+      responses:
+        "200":
+          description: Matching users
+

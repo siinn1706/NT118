@@ -5,7 +5,7 @@ Native Android client (Kotlin, Jetpack Compose, Material 3) for the HealthOS bac
 ## Requirements
 
 - Android Studio with JDK 21 (the bundled JBR works) and Android SDK platform 37.
-- A running HealthOS backend; see [docs/backend-tunnel.md](docs/backend-tunnel.md).
+- A running HealthOS backend. Its source lives in [server/](server/) (Core API, workers, web app and Docker infra, imported from NT208_HealthOS); see [server/README.md](server/README.md) to start it and [docs/backend-tunnel.md](docs/backend-tunnel.md) to expose it to a phone.
 
 ## Run
 
@@ -30,6 +30,8 @@ Native Android client (Kotlin, Jetpack Compose, Material 3) for the HealthOS bac
 - `core/data` — encrypted session store (DataStore + Tink), Room database, offline outbox (`OutboxRepository` + `OutboxWorker`).
 - `navigation` — routes, bottom bar and `AppNavHost`; each feature adds one `xxxGraph()` call.
 - `feature/<name>` — one package per feature, owned by one developer.
+
+- `server/` — the HealthOS backend this app talks to: FastAPI Core API (`backend`), AI, queue and notification workers (`services`), the Next.js web app that serves the emergency card page (`frontend`), API contracts and Docker infra. The NT208 Expo app is not included; this Android app replaces it.
 
 Plans and phase files live in [plans/](plans/).
 

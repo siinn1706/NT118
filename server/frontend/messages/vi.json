@@ -1,0 +1,3372 @@
+{
+  "charts": {
+    "periodComparison": {
+      "currentPeriod": "Kỳ hiện tại ({label})",
+      "previousPeriod": "Kỳ trước"
+    }
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "about": "Về chúng tôi",
+    "services": "Dịch vụ",
+    "features": "Dịch vụ",
+    "plans": "Gói dịch vụ",
+    "articles": "Kiến thức sức khỏe",
+    "signIn": "Đăng nhập",
+    "register": "Đăng ký",
+    "tryFree": "Dùng thử",
+    "navigation": "Điều hướng",
+    "switchLang": "EN"
+  },
+  "common": {
+    "readMore": "Đọc thêm",
+    "viewAll": "Xem tất cả",
+    "getStarted": "Bắt đầu ngay",
+    "learnMore": "Tìm hiểu thêm",
+    "loadMore": "Tải thêm",
+    "by": "Tác giả:",
+    "close": "Đóng",
+    "noResults": "Không tìm thấy kết quả nào.",
+    "all": "Tất cả",
+    "search": "Tìm kiếm...",
+    "sort": "Sắp xếp",
+    "submit": "Gửi yêu cầu",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "noData": "Chưa có dữ liệu",
+    "loading": "Đang tải...",
+    "tryAgain": "Thử lại",
+    "manualEntry": "Nhập thủ công",
+    "confirm": "Xác nhận",
+    "perDay": "{v}/day",
+    "dailyTarget": "{pct}% mục tiêu hàng ngày",
+    "vitamins": "Vitamin",
+    "mealTypeLabels": {
+      "breakfast": "Sáng",
+      "lunch": "Trưa",
+      "dinner": "Tối",
+      "snack": "Phụ"
+    },
+    "timeRange": {
+      "days7": "7 ngày",
+      "days30": "30 ngày",
+      "days90": "90 ngày",
+      "custom": "Tùy chỉnh",
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày",
+      "apply": "Áp dụng"
+    }
+  },
+  "onboarding": {
+    "meta": {
+      "title": "Thiết lập hồ sơ của bạn"
+    },
+    "welcome": {
+      "title": "Chào mừng đến với HealthOS",
+      "subtitle": "Chúng tôi sẽ thiết lập hồ sơ của bạn qua năm bước ngắn. Mỗi bước thường mất chưa đến một phút, và bạn có thể quay lại bất cứ khi nào — tiến trình được lưu tự động.",
+      "bullets": {
+        "private": "Dữ liệu sức khỏe của bạn được giữ riêng tư và mã hoá khi truyền và lưu trữ.",
+        "resume": "Bạn có thể rời đi bất cứ lúc nào và tiếp tục đúng nơi đã dừng.",
+        "skipOptional": "Các bước không bắt buộc đều được đánh dấu rõ — bỏ qua nếu không phù hợp."
+      },
+      "primaryCta": "Bắt đầu thôi",
+      "skipForNow": "Để sau"
+    },
+    "stepLabels": {
+      "welcome": "Bắt đầu",
+      "basics": "Cơ bản",
+      "health": "Sức khoẻ",
+      "contact": "Liên hệ",
+      "emergency": "Khẩn cấp",
+      "medical": "Y tế",
+      "review": "Xem lại"
+    },
+    "optional": "Tuỳ chọn",
+    "stepHeaders": {
+      "welcome": "Một vài lưu ý nhanh",
+      "basics": "Hãy giới thiệu một chút về bạn",
+      "health": "Chiều cao và cân nặng",
+      "contact": "Chúng tôi liên hệ với bạn thế nào?",
+      "emergency": "Ai cần được báo khi có sự cố?",
+      "medical": "Có thông tin y tế nào quan trọng không?",
+      "review": "Xem lại và xác nhận"
+    },
+    "whyWeAsk": {
+      "basics": "Vì sao chúng tôi hỏi: tên và ngày sinh giúp cá nhân hoá nhắc nhở, tóm tắt và gợi ý chăm sóc.",
+      "health": "Vì sao chúng tôi hỏi: chiều cao và cân nặng giúp tính BMI và đưa ra gợi ý phù hợp.",
+      "contact": "Vì sao chúng tôi hỏi: chúng tôi chỉ gọi nếu có cảnh báo quan trọng về tài khoản hoặc sức khoẻ.",
+      "emergency": "Vì sao chúng tôi hỏi: liên hệ khẩn cấp được hiển thị cho lực lượng cứu hộ khi bạn kích hoạt SOS.",
+      "medical": "Vì sao chúng tôi hỏi: dị ứng và bệnh mãn tính giúp công cụ đánh giá rủi ro phát hiện tương tác nguy hiểm."
+    },
+    "step1": {
+      "title": "Thông tin cơ bản",
+      "subtitle": "Hãy cho chúng tôi biết một chút về bạn",
+      "fullName": "Họ và tên",
+      "fullNameRequired": "Họ và tên là bắt buộc",
+      "dateOfBirth": "Ngày sinh",
+      "dateOfBirthRequired": "Ngày sinh là bắt buộc",
+      "gender": "Giới tính",
+      "genderRequired": "Vui lòng chọn giới tính",
+      "selectGender": "Chọn giới tính",
+      "male": "Nam",
+      "female": "Nữ",
+      "other": "Khác",
+      "bloodType": "Nhóm máu",
+      "selectBloodType": "Chọn nhóm máu"
+    },
+    "step2": {
+      "title": "Chiều cao & Cân nặng",
+      "subtitle": "Thông tin này giúp chúng tôi tính chỉ số BMI của bạn",
+      "height": "Chiều cao (cm)",
+      "weight": "Cân nặng (kg)",
+      "bmiLabel": "Chỉ số BMI của bạn",
+      "bmiPlaceholder": "Nhập chiều cao và cân nặng để tính BMI",
+      "heightInvalid": "Chiều cao phải nằm trong khoảng 50–250 cm",
+      "weightInvalid": "Cân nặng phải nằm trong khoảng 20–300 kg"
+    },
+    "bmi": {
+      "underweight": "Thiếu cân",
+      "normal": "Bình thường",
+      "overweight": "Thừa cân",
+      "obese": "Béo phì",
+      "advice": {
+        "underweight": "Bạn nên tăng cân để có sức khỏe tốt hơn.",
+        "normal": "Bạn có cân nặng bình thường. Giữ gìn sức khỏe tốt!",
+        "overweight": "Bạn nên giảm cân để có sức khỏe tốt hơn.",
+        "obese": "Bạn nên tham khảo ý kiến bác sĩ về việc quản lý cân nặng."
+      }
+    },
+    "step3": {
+      "title": "Thông tin liên hệ",
+      "subtitle": "Chúng tôi cần thông tin này để liên lạc với bạn",
+      "phone": "Số điện thoại",
+      "phonePlaceholder": "+84 987 654 321",
+      "phoneRequired": "Số điện thoại là bắt buộc",
+      "phoneInvalid": "Số điện thoại không hợp lệ",
+      "address": "Địa chỉ",
+      "addressPlaceholder": "123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh"
+    },
+    "step4": {
+      "title": "Liên hệ khẩn cấp",
+      "subtitle": "Thêm ít nhất một người chúng tôi có thể gọi khi có sự cố.",
+      "contactLabel": "Liên hệ {n}",
+      "name": "Tên",
+      "namePlaceholder": "Nguyễn Thị B",
+      "phone": "Số điện thoại",
+      "phonePlaceholder": "+84 987 654 321",
+      "relationship": "Quan hệ",
+      "selectRelationship": "Chọn quan hệ",
+      "emailOptional": "Email (tuỳ chọn)",
+      "emailPlaceholder": "ten@vidu.com",
+      "addContact": "Thêm liên hệ",
+      "removeContact": "Xoá liên hệ",
+      "relationships": {
+        "spouse": "Vợ/Chồng",
+        "parent": "Cha/Mẹ",
+        "sibling": "Anh/Chị/Em",
+        "child": "Con cái",
+        "friend": "Bạn bè",
+        "coworker": "Đồng nghiệp",
+        "other": "Khác"
+      },
+      "errorAtLeastOne": "Vui lòng thêm ít nhất một liên hệ khẩn cấp.",
+      "errorIncomplete": "Vui lòng điền đầy đủ thông tin cho mỗi liên hệ."
+    },
+    "step5": {
+      "title": "Thông tin y tế",
+      "subtitle": "Thông tin này giúp chúng tôi chăm sóc sức khỏe tốt hơn cho bạn",
+      "allergies": "Dị ứng",
+      "allergiesPlaceholder": "Ví dụ: Hải sản, thuốc penicillin...",
+      "chronicConditions": "Bệnh mãn tính",
+      "chronicConditionsPlaceholder": "Ví dụ: Tiểu đường, cao huyết áp...",
+      "currentMedications": "Thuốc đang sử dụng",
+      "currentMedicationsPlaceholder": "Ví dụ: Aspirin 100mg mỗi ngày...",
+      "notes": "Ghi chú thêm",
+      "notesPlaceholder": "Bất kỳ thông tin y tế nào bạn muốn chia sẻ...",
+      "complete": "Sắp xong rồi!",
+      "completeHint": "Xem lại thông tin ở bước tiếp theo, sau đó gửi để bắt đầu dùng HealthOS."
+    },
+    "review": {
+      "title": "Xem lại và xác nhận",
+      "subtitle": "Kiểm tra nhanh thông tin. Bạn có thể chỉnh sửa bất kỳ mục nào trước khi gửi.",
+      "sectionBasics": "Cơ bản",
+      "sectionHealth": "Sức khoẻ",
+      "sectionContact": "Liên hệ",
+      "sectionEmergency": "Liên hệ khẩn cấp",
+      "sectionMedical": "Y tế",
+      "edit": "Sửa",
+      "noContacts": "Chưa có liên hệ khẩn cấp.",
+      "notProvided": "Chưa cung cấp",
+      "labels": {
+        "height": "Chiều cao",
+        "weight": "Cân nặng",
+        "phone": "Số điện thoại",
+        "address": "Địa chỉ",
+        "allergies": "Dị ứng",
+        "conditions": "Bệnh lý nền",
+        "medications": "Thuốc đang dùng",
+        "notes": "Ghi chú"
+      },
+      "consentTitle": "Đồng ý sử dụng thông tin này",
+      "consentBody": "Tôi hiểu rằng HealthOS sẽ dùng thông tin này để cá nhân hoá thông tin chi tiết, hiển thị cảnh báo và đưa ra hướng dẫn không mang tính chẩn đoán. HealthOS không thay thế tư vấn y tế chuyên môn. Tôi có thể xem lại hoặc thu hồi đồng ý này bất cứ lúc nào trong phần cài đặt.",
+      "consentRequired": "Vui lòng xác nhận đồng ý để tiếp tục."
+    },
+    "draft": {
+      "savedJustNow": "Đã lưu nháp",
+      "savedAt": "Đã lưu nháp · {time}",
+      "saving": "Đang lưu nháp…",
+      "saveFailed": "Không lưu được tiến trình lên thiết bị này. Bước hiện tại vẫn an toàn — bạn có thể thử lại hoặc hoàn tất trong cùng phiên."
+    },
+    "nav": {
+      "back": "Quay lại",
+      "next": "Tiếp theo",
+      "skip": "Để sau",
+      "submit": "Hoàn tất thiết lập",
+      "submitting": "Đang gửi…"
+    },
+    "validation": {
+      "summary": "Vui lòng sửa các trường được đánh dấu để tiếp tục."
+    },
+    "emergencyContactRequired": "Vui lòng thêm ít nhất 1 liên hệ khẩn cấp",
+    "saveError": "Không thể lưu thông tin",
+    "saveSuccess": "Chào mừng đến với HealthOS — hồ sơ của bạn đã sẵn sàng!",
+    "saveGenericError": "Có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "errors": {
+    "unknown": "Đã xảy ra lỗi không xác định",
+    "generic": "Đã xảy ra lỗi",
+    "network": "Không thể kết nối máy chủ. Vui lòng kiểm tra kết nối mạng.",
+    "networkError": "Lỗi mạng. Vui lòng kiểm tra kết nối.",
+    "serverError": "Lỗi máy chủ. Vui lòng thử lại sau.",
+    "invalidEmail": "Email không hợp lệ",
+    "invalidPhone": "Số điện thoại không hợp lệ",
+    "required": "{field} là bắt buộc",
+    "loginFailed": "Đăng nhập thất bại",
+    "loginSuccess": "Đăng nhập thành công!",
+    "emailTaken": "Email đã được sử dụng. Vui lòng dùng email khác.",
+    "genericTryAgain": "Có lỗi xảy ra. Vui lòng thử lại.",
+    "sessionExpired": "Phiên đăng nhập hết hạn",
+    "accountNotFoundEmail": "Không tìm thấy tài khoản với email này",
+    "accountNotFoundUsername": "Không tìm thấy tài khoản với tên đăng nhập này",
+    "accountLocked": "Tài khoản bị khóa. Vui lòng thử lại sau {minutes} phút.",
+    "invalidCredentials": "Tên đăng nhập hoặc mật khẩu không đúng",
+    "otpLocked": "Quá nhiều lần nhập OTP sai. Vui lòng chờ trước khi thử lại.",
+    "otpInvalid": "Mã OTP không hợp lệ",
+    "otpExpired": "Mã OTP đã hết hạn",
+    "passwordBreached": "Mật khẩu này đã bị lộ trong một vụ rò rỉ dữ liệu. Vui lòng chọn mật khẩu khác.",
+    "otpRequired": "Cần xác thực OTP",
+    "otpSendFailed": "Không thể gửi OTP. Vui lòng thử lại.",
+    "accountCreateFailed": "Tạo tài khoản thất bại. Vui lòng thử lại.",
+    "registrationFailed": "Gửi mã OTP thất bại. Vui lòng thử lại.",
+    "alerts": {
+      "heartRateHigh": "Nhịp tim {value} {unit} vượt ngưỡng an toàn {threshold} {unit}",
+      "bpSystolicHigh": "Huyết áp tâm thu {value} {unit} vượt ngưỡng an toàn {threshold} {unit}",
+      "bpDiastolicHigh": "Huyết áp tâm trương {value} {unit} vượt ngưỡng an toàn {threshold} {unit}",
+      "calorieHigh": "Lượng calo hôm nay {value} {unit} vượt mức khuyến nghị {threshold} {unit}",
+      "calorieLow": "Lượng calo hôm nay {value} {unit} thấp hơn mức tối thiểu khuyến nghị",
+      "calorieNormal": "Lượng calo trong ngưỡng lành mạnh",
+      "activityGood": "Xuất sắc! Bạn đã đạt mục tiêu hoạt động hôm nay",
+      "stepsLow": "Mới đi được {value} {unit} hôm nay — hãy cố đạt {threshold} {unit}",
+      "sleepLow": "Thời gian ngủ {value} {unit} thấp hơn khuyến nghị {threshold} {unit}",
+      "bmiOverweight": "BMI {value} {unit} cho thấy thừa cân (ngưỡng: {threshold} {unit})",
+      "medicationAdherenceLow": "Tuân thủ thuốc {value} {unit} thấp hơn mục tiêu {threshold} {unit}"
+    }
+  },
+  "camera": {
+    "title": "Chụp hoặc tải ảnh bữa ăn",
+    "aiSubtitle": "AI sẽ nhận diện thành phần và ước lượng dinh dưỡng tự động",
+    "openCamera": "Mở camera",
+    "cameraPreview": "Xem trước camera",
+    "capture": "Chụp ảnh",
+    "upload": "Tải ảnh",
+    "takenAlt": "Ảnh bữa ăn đã chụp",
+    "deletePhoto": "Xóa ảnh",
+    "retake": "Chụp lại",
+    "analyzeAria": "Phân tích bữa ăn bằng AI",
+    "analyze": "Phân tích AI",
+    "analyzing": "Đang phân tích ảnh...",
+    "analyzingAlt": "Đang phân tích",
+    "analyzeComplete": "Phân tích xong! Kiểm tra và xác nhận kết quả.",
+    "mealPhotoAlt": "Ảnh bữa ăn",
+    "aiIdentified": "AI nhận diện tự động",
+    "ingredientsFound": "Thành phần nhận diện ({n})",
+    "noInfo": "Chưa có thông tin",
+    "nutritionDetails": "Chi tiết dinh dưỡng",
+    "saturates": "Chất béo bão hòa",
+    "sugar": "Đường",
+    "salt": "Muối",
+    "serving": "Khẩu phần",
+    "aiDisclaimer": "AI có thể không chính xác 100%. Bạn có thể chỉnh sửa thành phần trong bước tiếp theo.",
+    "confirmEdit": "Xác nhận & chỉnh sửa",
+    "cancelCamera": "Hủy camera",
+    "capturePhoto": "Chụp ảnh",
+    "analyzeError": "Không thể phân tích ảnh. Vui lòng thử lại hoặc nhập thủ công.",
+    "retry": "Thử lại",
+    "manualEntry": "Nhập thủ công",
+    "fileTooLargeTitle": "Ảnh quá lớn",
+    "fileTooLargeBody": "Ảnh phải nhỏ hơn 10 MB. Vui lòng chọn ảnh nhẹ hơn hoặc chụp lại.",
+    "queuedOfflineTitle": "Đã lưu để gửi sau",
+    "queuedOfflineBody": "Bạn đang ngoại tuyến. Ảnh sẽ tự động được tải lên khi bạn kết nối lại.",
+    "unsupportedImageTitle": "Ảnh không hỗ trợ",
+    "unsupportedImageBody": "Vui lòng dùng ảnh JPG, PNG hoặc WebP của món ăn. Hình vẽ hoặc ảnh chụp màn hình không thể phân tích.",
+    "slowWarning": "AI đang xử lý lâu hơn thường lệ. Bạn có thể đợi tiếp hoặc chuyển sang nhập thủ công.",
+    "lowConfidenceTitle": "Cần kiểm tra lại kết quả",
+    "lowConfidenceBody": "AI chưa thật sự chắc chắn — hãy kiểm tra lại thành phần và khối lượng trước khi lưu.",
+    "confidenceLabel": "Độ tin cậy AI",
+    "uploadFailedTitle": "Không thể tải ảnh",
+    "uploadFailedBody": "Không kết nối được dịch vụ phân tích. Vui lòng thử lại hoặc nhập món ăn thủ công.",
+    "skipToManual": "Chuyển sang nhập thủ công"
+  },
+  "quickMeal": {
+    "title": "Ghi bữa ăn nhanh",
+    "searchPlaceholder": "VD: Phở bò, Cơm chiên...",
+    "ingredientPlaceholder": "Tên nguyên liệu",
+    "saving": "Đang lưu...",
+    "save": "Lưu nhanh"
+  },
+  "addMeal": {
+    "title": "Thêm món ăn thủ công",
+    "subtitle": "Nhập tên món, thêm thành phần và gram — hệ thống tự tính calo, protein, carbs, chất béo.",
+    "sectionGeneral": "Thông tin chung",
+    "dishNameTitle": "Thông tin món ăn",
+    "dishNameSubtitle": "Đặt tên và chọn loại bữa ăn",
+    "dishName": "Tên món ăn",
+    "dishNameRequired": "Tên món ăn là bắt buộc",
+    "dishNamePlaceholder": "VD: Phở bò tái, Cơm sườn, Bún riêu...",
+    "mealType": "Loại bữa ăn",
+    "notesLabel": "Ghi lại cảm nhận, nguồn gốc món ăn, hoặc thông tin thêm",
+    "notesTitle": "Ghi chú (tuỳ chọn)",
+    "notesPlaceholder": "VD: Ăn ở nhà hàng Phở 24, cảm thấy no vừa phải...",
+    "loggedAt": "Thời gian",
+    "cancel": "Huỷ",
+    "saving": "Đang lưu...",
+    "submit": "Ghi vào nhật ký",
+    "savedOffline": "Đã lưu cục bộ — sẽ đồng bộ khi có mạng",
+    "savedOfflineDescription": "Bữa ăn đã được xếp hàng và sẽ gửi đi khi bạn trực tuyến trở lại."
+  },
+  "validation": {
+    "componentNameRequired": "Tên thành phần không được để trống.",
+    "componentNameTooLong": "Tên thành phần không được vượt quá 100 ký tự.",
+    "gramInvalid": "Giá trị gram không hợp lệ.",
+    "gramNegative": "Giá trị gram không được âm.",
+    "mealNameRequired": "Tên món ăn là bắt buộc.",
+    "mealNameTooShort": "Tên món ăn phải có ít nhất 2 ký tự.",
+    "selectTime": "Vui lòng chọn thời gian.",
+    "addIngredient": "Vui lòng thêm ít nhất 1 thành phần.",
+    "phoneInvalid": "Số điện thoại không hợp lệ.",
+    "heightInvalid": "Chiều cao không hợp lệ.",
+    "heightMin": "Chiều cao phải ít nhất 50 cm.",
+    "weightInvalid": "Cân nặng không hợp lệ.",
+    "weightMin": "Cân nặng phải ít nhất 10 kg.",
+    "fullNameRequired": "Họ và tên là bắt buộc.",
+    "fullNameTooShort": "Họ và tên phải có ít nhất 2 ký tự.",
+    "fullNameTooLong": "Họ và tên không được vượt quá 100 ký tự.",
+    "addressTooLong": "Địa chỉ không được vượt quá 512 ký tự.",
+    "ecNameRequired": "Vui lòng nhập tên người liên hệ.",
+    "ecPhoneRequired": "Vui lòng nhập số điện thoại người liên hệ.",
+    "ecRelationshipRequired": "Vui lòng nhập mối quan hệ."
+  },
+  "system": {
+    "noServerData": "Máy chủ không trả dữ liệu mục tiêu",
+    "dailyGoalCompleted": "Hoàn thành mục tiêu hàng ngày",
+    "shareSuccess": "Đã gửi báo cáo đến {n} người nhận thành công.",
+    "sharePartial": "Gửi thành công {sent}/{total} người nhận.",
+    "shareUnknownError": "Lỗi không xác định.",
+    "shareCancelled": "Đã hủy gửi tự động."
+  },
+  "goalDialog": {
+    "saveSuccess": "Đã cập nhật mục tiêu",
+    "saveNewSuccess": "Đã lưu mục tiêu",
+    "saveFailed": "Không thể lưu mục tiêu sức khỏe"
+  },
+  "main": {
+    "exploreMore": "Tìm hiểu thêm",
+    "viewPlans": "Xem tất cả gói"
+  },
+  "footer": {
+    "tagline": "Bác sĩ cá nhân ảo của bạn",
+    "menuTitle": "Danh mục",
+    "helpTitle": "Hỗ trợ",
+    "downloadTitle": "Tải ứng dụng",
+    "blog": "Blog",
+    "career": "Tuyển dụng",
+    "menuServices": "Tính năng",
+    "menuPlans": "Gói dịch vụ",
+    "security": "Bảo mật",
+    "media": "Truyền thông",
+    "partnership": "Đối tác",
+    "faq": "Câu hỏi thường gặp",
+    "terms": "Điều khoản dịch vụ",
+    "privacy": "Chính sách bảo mật",
+    "googlePlay": "CH Play",
+    "appStore": "App Store",
+    "forDoctors": "Bạn là bác sĩ?",
+    "joinAsDoctor": "Tham gia HealthOS",
+    "copyright": "© 2026 HealthOS. Đồ án môn học NT208 — phục vụ mục đích học tập."
+  },
+  "home": {
+    "meta": {
+      "title": "HealthOS — Ứng dụng quản lý sức khỏe bằng AI | Đồ án NT208",
+      "description": "HealthOS là đồ án môn NT208: theo dõi BMI, calo và bữa ăn bằng AI nhận dạng thực phẩm, quản lý thuốc, nhắc nhở và hồ sơ sức khỏe cá nhân — tất cả trong một ứng dụng."
+    },
+    "hero": {
+      "badge": "#1 Bác sĩ cá nhân ảo tại NT208.Q22.ANTT",
+      "title": "Bác sĩ cá nhân ảo của bạn,",
+      "titleHighlight": "mọi lúc mọi nơi",
+      "description": "Quản lý hồ sơ y tế, theo dõi dinh dưỡng, phân tích bữa ăn bằng AI, kết nối wearable và nhận cảnh báo sức khỏe realtime — tất cả trong một ứng dụng.",
+      "cta": "Bắt đầu miễn phí",
+      "floatingBrand": "HealthOS",
+      "floatingStatus": "Đang hoạt động",
+      "floatingScoreLabel": "Chỉ số sức khỏe",
+      "floatingScoreSample": "Ví dụ minh họa",
+      "floatingScoreAriaLabel": "Chỉ số sức khỏe minh họa",
+      "imageAlt": "Bác sĩ"
+    },
+    "about": {
+      "badge": "Về chúng tôi",
+      "title": "Bảo vệ sức khỏe toàn diện, thông minh hơn mỗi ngày",
+      "description": "HealthOS sử dụng AI tiên tiến để giúp bạn hiểu rõ cơ thể mình hơn — từ quản lý hồ sơ y tế đến phân tích dinh dưỡng và kết nối thiết bị đeo thông minh.",
+      "imageAlt": "Đội ngũ chuyên gia y tế"
+    },
+    "features": {
+      "badge": "Tính năng",
+      "title": "Tất cả những gì bạn cần để sống khỏe",
+      "subtitle": "Từ quản lý hồ sơ đến phân tích AI — HealthOS bao phủ mọi khía cạnh sức khỏe của bạn.",
+      "tab1": "Tính năng cốt lõi",
+      "tab2": "Trí tuệ nhân tạo",
+      "tab3": "Theo dõi thời gian thực & thiết bị đeo",
+      "tab4": "Mục tiêu & Gamification"
+    },
+    "plans": {
+      "badge": "Gói dịch vụ",
+      "title": "Chọn gói phù hợp cho bạn",
+      "subtitle": "Bắt đầu với gói miễn phí, nâng cấp bất cứ lúc nào để mở khóa toàn bộ tính năng AI và wearable.",
+      "popular": "Phổ biến nhất",
+      "free": "Miễn phí",
+      "month": "/tháng",
+      "ctaFree": "Dùng ngay miễn phí",
+      "ctaPaid": "Chọn gói này",
+      "all": "Tất cả",
+      "catFree": "Miễn phí",
+      "catPersonal": "Cá nhân",
+      "catFamily": "Gia đình",
+      "catPro": "Chuyên nghiệp",
+      "viewPlans": "Xem tất cả gói"
+    },
+    "testimonials": {
+      "badge": "Người dùng nói gì",
+      "title": "Hàng nghìn người đã tin dùng HealthOS",
+      "scrollIndicator": "Vị trí cuộn đánh giá",
+      "goTo": "Đến đánh giá"
+    },
+    "articles": {
+      "badge": "Kiến thức sức khỏe",
+      "title": "Đọc để sống khỏe hơn mỗi ngày",
+      "seeAll": "Xem tất cả bài viết"
+    },
+    "contact": {
+      "title": "Bắt đầu hành trình sức khỏe của bạn hôm nay",
+      "description": "Điền thông tin bên dưới, chúng tôi sẽ liên hệ hỗ trợ bạn ngay."
+    },
+    "exploreMore": "Tìm hiểu thêm"
+  },
+  "about": {
+    "meta": {
+      "title": "Giới thiệu — Đồ án NT208 HealthOS",
+      "description": "HealthOS là ứng dụng quản lý sức khỏe do sinh viên xây dựng trong khuôn khổ đồ án môn NT208 tại UIT. Ứng dụng minh họa nhận dạng thực phẩm bằng AI, theo dõi BMI, tư vấn dinh dưỡng và thể dục."
+    },
+    "hero": {
+      "title": "Chúng tôi đặt sức khỏe của bạn lên hàng đầu",
+      "description": "HealthOS được xây dựng bởi nhóm sinh viên trong khuôn khổ đồ án môn NT208 tại UIT. Ứng dụng minh họa phân tích bữa ăn bằng AI, theo dõi BMI, tư vấn dinh dưỡng và quản lý sức khỏe cá nhân — nhằm mục đích học tập và minh hoạ.",
+      "imageAlt": "Đội ngũ HealthOS"
+    },
+    "story": {
+      "badge": "Câu chuyện của chúng tôi",
+      "title": "Hành trình không ngừng đổi mới vì sức khỏe cộng đồng",
+      "description": "Từ một ý tưởng đơn giản — mọi người xứng đáng có một bác sĩ cá nhân — HealthOS đã trở thành nền tảng y tế số hàng đầu Việt Nam.",
+      "card1Title": "Sứ mệnh",
+      "card1Desc": "Dân chủ hóa chăm sóc sức khỏe bằng AI, giúp mọi người tiếp cận thông tin y tế chính xác và kịp thời.",
+      "card2Title": "Giá trị",
+      "card2Desc": "Bảo mật dữ liệu, minh bạch thuật toán, và luôn đặt lợi ích sức khỏe người dùng lên trên hết.",
+      "card3Title": "Công nghệ",
+      "card3Desc": "AI phân tích ảnh bữa ăn, thuật toán phát hiện bất thường sinh trắc học và đồng bộ dữ liệu wearable thời gian thực."
+    },
+    "why": {
+      "badge": "Tại sao HealthOS",
+      "title": "Tầm nhìn và sứ mệnh",
+      "subtitle": "Tầm nhìn dẫn lối, sứ mệnh thực thi — hai nửa cùng một lời cam kết với bạn."
+    },
+    "vision": {
+      "badge": "Tầm nhìn",
+      "title": "Tiếp cận dịch vụ y tế chất lượng cao, mọi lúc mọi nơi",
+      "description1": "Chúng tôi tin rằng mỗi người đều xứng đáng được tiếp cận thông tin y tế đáng tin cậy và được hỗ trợ bởi AI tiên tiến — bất kể họ ở đâu.",
+      "description2": "HealthOS hướng đến xây dựng hệ sinh thái y tế số toàn diện: từ phòng ngừa đến theo dõi, từ cá nhân đến gia đình.",
+      "imageAlt": "Tầm nhìn HealthOS"
+    },
+    "mission": {
+      "badge": "Sứ mệnh",
+      "title": "Cung cấp chăm sóc toàn diện dựa trên bằng chứng khoa học",
+      "description1": "HealthOS tích hợp dữ liệu từ hồ sơ y tế, thiết bị đeo và nhật ký dinh dưỡng để tạo nên bức tranh toàn diện về sức khỏe của bạn.",
+      "description2": "Chúng tôi phối hợp chặt chẽ với các bác sĩ và chuyên gia y tế để đảm bảo mọi tư vấn AI đều được lâm sàng kiểm chứng.",
+      "imageAlt": "Bác sĩ phối hợp với HealthOS"
+    },
+    "team": {
+      "badge": "Đội ngũ",
+      "title": "Những con người tâm huyết đứng sau HealthOS",
+      "coreGroup": "Đội ngũ cốt lõi",
+      "advisorGroup": "Cố vấn y khoa"
+    },
+    "atGlance": {
+      "badge": "Tổng quan",
+      "title": "HealthOS qua những con số",
+      "users": "Người dùng đang hoạt động",
+      "doctors": "Cố vấn y khoa",
+      "records": "Hồ sơ được bảo mật",
+      "uptime": "Uptime nền tảng",
+      "project": "Đồ án môn học",
+      "team": "Nhóm sinh viên",
+      "year": "Năm học",
+      "university": "Trường đại học"
+    },
+    "faq": {
+      "badge": "FAQ",
+      "title": "Câu hỏi thường gặp",
+      "subtitle": "Không tìm thấy câu trả lời? Liên hệ với chúng tôi qua form bên dưới."
+    },
+    "contact": {
+      "title": "Bắt đầu hành trình sức khỏe của bạn hôm nay",
+      "description": "Điền thông tin bên dưới, chúng tôi sẽ liên hệ hỗ trợ bạn ngay."
+    },
+    "disclaimer": {
+      "title": "⚕️ Lưu ý y khoa quan trọng",
+      "text": "HealthOS cung cấp thông tin sức khỏe mang tính tham khảo và không thay thế lời khuyên từ bác sĩ có chuyên môn. Luôn tham khảo ý kiến bác sĩ trước khi đưa ra quyết định y tế quan trọng."
+    }
+  },
+  "services": {
+    "meta": {
+      "title": "Tính năng — Ứng dụng quản lý sức khỏe HealthOS",
+      "description": "Khám phá tính năng HealthOS: phân tích bữa ăn bằng AI, theo dõi calo và BMI, nhắc nhở thuốc, đồng bộ thiết bị đeo và cảnh báo sức khỏe. Đồ án NT208."
+    },
+    "badge": "Dịch vụ",
+    "title": "Tất cả những công cụ bạn cần",
+    "subtitle": "Khám phá hệ sinh thái HealthOS với đầy đủ dịch vụ quản lý sức khỏe cá nhân thông minh.",
+    "contactTitle": "Bắt đầu hành trình sức khỏe của bạn",
+    "contactSubtitle": "Điền thông tin bên dưới để nhận tư vấn miễn phí.",
+    "overviewBadge": "Tổng quan",
+    "overviewTitle": "Tổng quan dịch vụ",
+    "overviewSubtitle": "Bốn nhóm dịch vụ phối hợp cùng nhau cho cả phòng ngừa, theo dõi và phục hồi.",
+    "tab1Label": "Cốt lõi",
+    "tab1Desc": "Nền tảng quản lý hồ sơ và dữ liệu sức khỏe cá nhân.",
+    "tab1Promise": "Hồ sơ y tế của bạn được sắp xếp một chỗ — dễ tìm, sẵn sàng chia sẻ với bác sĩ.",
+    "tab2Label": "Trí tuệ nhân tạo",
+    "tab2Desc": "AI phân tích bữa ăn, phát hiện bất thường và đưa ra gợi ý cá nhân hóa.",
+    "tab2Promise": "AI phát hiện rủi ro sớm và biến dữ liệu thành những bước hành động rõ ràng.",
+    "tab3Label": "Theo dõi thời gian thực & thiết bị đeo",
+    "tab3Desc": "Theo dõi các chỉ số sinh trắc học liên tục và nhận cảnh báo kịp thời.",
+    "tab3Promise": "Wearable luôn đồng bộ — cảnh báo đến bạn và người thân ngay khi chỉ số bất thường.",
+    "tab4Label": "Mục tiêu & Gamification",
+    "tab4Desc": "Đặt mục tiêu sức khỏe, theo dõi tiến độ và thi đua cùng cộng đồng HealthOS.",
+    "tab4Promise": "Thói quen bền vững — chuỗi ngày, mốc tuần và một cộng đồng cùng cổ vũ bạn.",
+    "seeRelatedPlan": "Xem gói liên quan →"
+  },
+  "plans": {
+    "meta": {
+      "title": "Gói dịch vụ — HealthOS",
+      "description": "Chọn gói HealthOS phù hợp cho theo dõi sức khỏe cá nhân, gia đình hoặc chuyên nghiệp. Đồ án môn NT208 — demo mục đích học tập."
+    },
+    "badge": "Gói dịch vụ",
+    "title": "Đầu tư vào sức khỏe của bạn",
+    "subtitle": "Chọn gói dịch vụ phù hợp với nhu cầu. Tất cả gói có bảo đảm hoàn tiền trong 30 ngày.",
+    "searchPlaceholder": "Tìm kiếm gói dịch vụ...",
+    "sort": "Sắp xếp",
+    "resultCount": "{count, plural, =0 {Không có gói} =1 {1 gói} other {# gói}}",
+    "noResults": "Không tìm thấy gói phù hợp. Hãy thử danh mục khác.",
+    "clearFilters": "Xoá bộ lọc",
+    "popular": "Phổ biến",
+    "recommended": "Khuyên dùng",
+    "free": "Miễn phí",
+    "month": "/tháng",
+    "cta": "Chọn gói này",
+    "ctaFree": "Dùng miễn phí",
+    "includes": "Bao gồm:",
+    "all": "Tất cả",
+    "catFree": "Miễn phí",
+    "catPersonal": "Cá nhân",
+    "catFamily": "Gia đình",
+    "catPro": "Chuyên nghiệp",
+    "howItWorksTitle": "Cách các gói HealthOS hoạt động",
+    "howItWorksSubtitle": "Ba điều mọi gói đều cam kết — để bạn yên tâm chọn lựa.",
+    "howItWorksBullet1Title": "Hủy bất cứ lúc nào",
+    "howItWorksBullet1Desc": "Đổi gói hoặc hủy ngay từ trang quản lý. Không cần gọi điện, không điều khoản ẩn.",
+    "howItWorksBullet2Title": "Hoàn tiền 30 ngày",
+    "howItWorksBullet2Desc": "Không phù hợp? Hoàn tiền đầy đủ trong 30 ngày đầu.",
+    "howItWorksBullet3Title": "Dữ liệu thuộc về bạn",
+    "howItWorksBullet3Desc": "Xuất hoặc xóa hồ sơ bất cứ lúc nào. Chúng tôi không bao giờ bán dữ liệu sức khỏe.",
+    "compareTitle": "So sánh các gói song song",
+    "compareSubtitle": "Chọn cột phù hợp với cách bạn muốn dùng HealthOS hằng ngày.",
+    "compareFeature": "Tính năng",
+    "compareIncluded": "Có",
+    "compareNotIncluded": "Không có",
+    "compareRows": {
+      "records": "Hồ sơ y tế cá nhân",
+      "aiMeal": "Phân tích bữa ăn bằng AI",
+      "wearables": "Đồng bộ wearable & cảnh báo",
+      "family": "Chia sẻ với người thân",
+      "doctor": "Tư vấn bác sĩ",
+      "support": "Hỗ trợ ưu tiên"
+    },
+    "faqTitle": "Câu hỏi về gói dịch vụ",
+    "faqSubtitle": "Mọi vấn đề thanh toán ở một nơi. Vẫn chưa rõ? Hãy liên hệ ở dưới.",
+    "testimonialsTitle": "Người dùng ở mọi gói chia sẻ",
+    "testimonialsSubtitle": "Câu chuyện ngắn vì sao họ chọn HealthOS — và ở lại."
+  },
+  "articles": {
+    "meta": {
+      "title": "Kiến thức sức khỏe — HealthOS",
+      "description": "Đọc bài viết về dinh dưỡng, BMI, thể dục, nhận dạng thực phẩm bằng AI và sống khỏe từ nhóm đồ án NT208 HealthOS."
+    },
+    "badge": "Kiến thức sức khỏe",
+    "featuredTitle": "Bài viết mới nhất về sức khỏe",
+    "listingTitle": "Khám phá kiến thức sức khỏe chuyên sâu",
+    "noResults": "Không tìm thấy bài viết nào trong danh mục này.",
+    "loadMore": "Tải thêm bài viết",
+    "all": "Tất cả",
+    "catNutrition": "Dinh dưỡng",
+    "catWearable": "Wearable",
+    "catAI": "AI & Sức khỏe",
+    "catRecords": "Hồ sơ y tế",
+    "catLifestyle": "Lối sống",
+    "searchPlaceholder": "Tìm bài viết theo tiêu đề, chủ đề hoặc tác giả...",
+    "resultCount": "{count, plural, =0 {Không có bài viết} =1 {1 bài viết} other {# bài viết}}",
+    "minRead": "{n} phút đọc",
+    "relatedTitle": "Có thể bạn cũng thích",
+    "relatedSubtitle": "Thêm bài cùng chủ đề, được biên tập viên tuyển chọn."
+  },
+  "compliance": {
+    "title": "Chỉ mang tính tham khảo",
+    "text": "HealthOS là đồ án môn học (môn NT208) và không cung cấp tư vấn y khoa. Thông tin hiển thị chỉ mang tính tham khảo và không thay thế lời khuyên từ bác sĩ có giấy phép hành nghề. Hãy luôn tham khảo ý kiến chuyên gia y tế trước khi đưa ra bất kỳ quyết định y khoa nào."
+  },
+  "form": {
+    "name": "Họ và tên",
+    "email": "Địa chỉ email",
+    "phone": "Số điện thoại",
+    "message": "Bạn cần hỗ trợ gì?",
+    "submit": "Gửi yêu cầu",
+    "success": "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể."
+  },
+  "dashboard": {
+    "greeting": "Chào buổi sáng",
+    "greetingAfternoon": "Chào buổi chiều",
+    "greetingEvening": "Chào buổi tối",
+    "overview": "Tổng quan",
+    "alerts": {
+      "title": "Cảnh báo sức khỏe",
+      "dismiss": "Bỏ qua",
+      "dismissAll": "Bỏ qua tất cả",
+      "empty": "Không có cảnh báo nào"
+    },
+    "quickActions": {
+      "title": "Thao tác nhanh",
+      "logMeal": "Ghi bữa ăn",
+      "logMealDesc": "Thêm calo & dinh dưỡng",
+      "scanMeal": "Chụp bữa ăn",
+      "scanMealDesc": "AI phân tích ảnh",
+      "addVital": "Thêm chỉ số",
+      "addVitalDesc": "Nhập số liệu mới nhất",
+      "logMedicine": "Ghi uống thuốc",
+      "logMedicineDesc": "Xác nhận đã uống",
+      "viewReports": "Xem báo cáo",
+      "viewReportsDesc": "Phân tích sức khỏe",
+      "visitPrep": "Chuẩn bị khám",
+      "visitPrepDesc": "Triệu chứng + câu hỏi"
+    },
+    "kpi": {
+      "caloriesBurned": "Calo tiêu thụ",
+      "caloriesTarget": "trên {target} kcal",
+      "sleepScore": "Chất lượng giấc ngủ",
+      "sleepUnit": "điểm",
+      "heartRate": "Nhịp tim",
+      "heartUnit": "bpm",
+      "steps": "Số bước",
+      "stepsUnit": "bước",
+      "noData": "Chưa có dữ liệu",
+      "loadError": "Không tải được dữ liệu KPI"
+    },
+    "vitals": {
+      "title": "Xu hướng chỉ số",
+      "subtitle": "7 ngày gần nhất",
+      "heartRate": "Nhịp tim",
+      "bloodPressureSys": "Huyết áp tâm thu",
+      "bloodPressureDia": "Huyết áp tâm trương",
+      "loading": "Đang tải biểu đồ...",
+      "noData": "Chưa có dữ liệu chỉ số",
+      "loadError": "Không tải được dữ liệu chỉ số",
+      "tabVitals": "Tim mạch",
+      "tabSteps": "Bước chân",
+      "tabSleep": "Giấc ngủ",
+      "tabWeight": "Cân nặng"
+    },
+    "calorieChart": {
+      "title": "Lượng calo theo ngày",
+      "subtitle": "{n} ngày qua",
+      "noData": "Chưa có thông tin",
+      "target": "Mục tiêu: {n} kcal",
+      "tooltipTarget": "Mục tiêu:",
+      "tooltipCalories": "Calo:",
+      "legend": "Calo",
+      "loading": "Đang tải..."
+    },
+    "nutrition": {
+      "title": "Gợi ý dinh dưỡng",
+      "subtitle": "Dựa trên nhật ký hôm nay",
+      "noData": "Chưa có thông tin",
+      "types": {
+        "warning": "Cảnh báo",
+        "tip": "Gợi ý",
+        "goal": "Mục tiêu",
+        "success": "Đạt"
+      },
+      "suggestions": {
+        "nutrition-no-data": {
+          "title": "Chưa có dữ liệu bữa ăn",
+          "message": "Hôm nay chưa có bữa ăn nào được ghi lại để phân tích."
+        },
+        "nutrition-protein-low": {
+          "title": "Lượng protein thấp",
+          "message": "Bổ sung thêm nguồn protein để cân bằng chế độ ăn uống."
+        },
+        "nutrition-calories-high": {
+          "title": "Vượt mức calo khuyến nghị",
+          "message": "Lượng calo hôm nay cao hơn mức khuyến nghị."
+        },
+        "nutrition-calories-low": {
+          "title": "Lượng năng lượng thấp",
+          "message": "Tổng calo hôm nay còn thấp, hãy cân nhắc thêm bữa ăn nhẹ."
+        },
+        "nutrition-balanced": {
+          "title": "Dinh dưỡng cân bằng",
+          "message": "Đạm {protein}g, tinh bột {carbs}g, chất béo {fat}g."
+        }
+      }
+    },
+    "reminders": {
+      "title": "Lịch trình hôm nay",
+      "pageTitle": "Nhắc nhở & Lịch trình",
+      "pageSubtitle": "Quản lý lịch uống thuốc, khám định kỳ và tập luyện",
+      "addReminder": "Thêm nhắc nhở",
+      "empty": "Không có nhắc nhở nào hôm nay",
+      "ack": "Đánh dấu hoàn thành",
+      "ackFailed": "Không thể đánh dấu nhắc nhở này. Vui lòng thử lại.",
+      "loadErrorTitle": "Không tải được nhắc nhở",
+      "loadErrorBody": "Có lỗi khi kết nối tới dịch vụ nhắc nhở. Vui lòng làm mới.",
+      "pending": "Đang chờ",
+      "done": "Đã xong",
+      "total": "Tổng cộng",
+      "repeatLabels": {
+        "daily": "Hàng ngày",
+        "weekly": "Hàng tuần",
+        "monthly": "Hàng tháng",
+        "once": "Một lần"
+      },
+      "filterAll": "Tất cả",
+      "types": {
+        "medicine": "Thuốc",
+        "appointment": "Lịch khám",
+        "exercise": "Vận động"
+      },
+      "form": {
+        "type": "Loại",
+        "reminderTitle": "Tên nhắc nhở",
+        "time": "Thời gian",
+        "repeat": "Lặp lại",
+        "note": "Ghi chú (tuỳ chọn)",
+        "weekdays": "Các ngày trong tuần",
+        "dayOfMonth": "Ngày trong tháng",
+        "timezone": "Múi giờ",
+        "cancel": "Hủy"
+      },
+      "weekdayShort": {
+        "mon": "T2",
+        "tue": "T3",
+        "wed": "T4",
+        "thu": "T5",
+        "fri": "T6",
+        "sat": "T7",
+        "sun": "CN"
+      },
+      "createFailed": "Không thể tạo nhắc nhở",
+      "tabs": {
+        "today": "Hôm nay",
+        "upcoming": "Sắp tới",
+        "missed": "Đã lỡ",
+        "completed": "Đã xong",
+        "all": "Tất cả"
+      },
+      "appointmentLinked": "Lịch khám",
+      "medicationLinked": "Thuốc",
+      "snooze": {
+        "label": "Hoãn",
+        "tenMin": "10 phút",
+        "thirtyMin": "30 phút",
+        "oneHour": "1 giờ",
+        "untilTomorrow": "Đến mai",
+        "untilTomorrowAt": "Đến mai {time}",
+        "snoozedUntil": "Hoãn đến {time}",
+        "failed": "Không thể hoãn. Vui lòng thử lại."
+      },
+      "skip": "Bỏ qua",
+      "skipped": "Đã bỏ qua",
+      "skipFailed": "Không thể bỏ qua. Vui lòng thử lại.",
+      "deleteLabel": "Xoá nhắc nhở",
+      "deleteConfirmTitle": "Xoá nhắc nhở này?",
+      "deleteConfirmBody": "Nhắc nhở này sẽ bị xoá vĩnh viễn.",
+      "deleteOrSkipTitle": "Xoá nhắc nhở lặp lại?",
+      "deleteOrSkipBody": "Bạn có thể bỏ qua lần tiếp theo hoặc xoá toàn bộ nhắc nhở lặp lại.",
+      "skipOccurrence": "Bỏ qua lần này",
+      "deleteEntire": "Xoá toàn bộ nhắc nhở",
+      "cancelDelete": "Huỷ",
+      "permission": {
+        "title": "Bạn đang tắt thông báo",
+        "body": "Bật thông báo để HealthOS nhắc bạn khi đến giờ.",
+        "deniedHint": "Trình duyệt đã chặn thông báo. Mở phần cài đặt của trang web để cho phép lại.",
+        "enable": "Bật",
+        "dismiss": "Để sau"
+      },
+      "explain": {
+        "everyDayAt": "Mỗi ngày lúc {time}",
+        "everyWeekAt": "Mỗi tuần lúc {time}",
+        "everyMonthAt": "Mỗi tháng lúc {time}",
+        "onceAt": "Một lần lúc {time}"
+      }
+    },
+    "health": {
+      "title": "Chỉ số & Thiết bị",
+      "subtitle": "Theo dõi các chỉ số sức khỏe của bạn",
+      "addMetric": "Thêm chỉ số",
+      "addMetricAria": "Thêm chỉ số",
+      "addMetricSubtitle": "Ghi chép chỉ số sức khoẻ thủ công",
+      "addMetricComingSoonTitle": "Sắp ra mắt",
+      "addMetricComingSoonBody": "Tính năng nhập chỉ số thủ công đang được phát triển. Kết nối thiết bị trong Cài đặt để bắt đầu theo dõi.",
+      "heartRate": "Nhịp tim",
+      "systolic": "Huyết áp tâm thu",
+      "diastolic": "Huyết áp tâm trương",
+      "temperature": "Nhiệt độ",
+      "compareTitle": "So sánh theo kỳ",
+      "compareChartTitle": "Nhịp tim & Huyết áp theo thời gian",
+      "loading": "Đang tải...",
+      "noData": "Chưa có dữ liệu",
+      "noReadingTitle": "Chưa có chỉ số",
+      "noReadingBody": "Kết nối thiết bị hoặc ghi chỉ số thủ công để bắt đầu theo dõi.",
+      "addReading": "Ghi chỉ số",
+      "connectedDevices": "Thiết bị đã kết nối",
+      "noDeviceInfo": "Chưa có thông tin",
+      "connected": "Đã kết nối",
+      "notConnected": "Chưa kết nối",
+      "addDevice": "Thêm thiết bị",
+      "addVital": "Thêm chỉ số",
+      "deviceConnected": "Đã kết nối",
+      "deviceDisconnected": "Ngắt kết nối",
+      "manualEntry": "Nhập liệu thủ công",
+      "manualEntryHint": "Bạn có thể nhập các chỉ số sức khỏe thủ công nếu không có thiết bị wearable.",
+      "manualEntryDesc": "Bạn muốn ghi chỉ số không từ thiết bị? Sử dụng nút \"Thêm chỉ số\" ở trên để nhập thủ công nhịp tim, huyết áp, SpO₂, và nhiệt độ.",
+      "vitalLabels": {
+        "heartRate": "Nhịp tim",
+        "systolic": "Huyết áp tâm thu",
+        "diastolic": "Huyết áp tâm trương",
+        "temperature": "Nhiệt độ cơ thể",
+        "spo2": "SpO₂"
+      },
+      "trendVsYesterday": "so với hôm qua",
+      "metricForm": {
+        "intro": "Nhập các chỉ số bạn tự đo được. Để trống ô nào bạn không có.",
+        "heartRate": "Nhịp tim",
+        "bloodPressure": "Huyết áp",
+        "systolic": "Tâm thu",
+        "diastolic": "Tâm trương",
+        "spo2": "SpO₂",
+        "temperature": "Nhiệt độ cơ thể",
+        "weight": "Cân nặng",
+        "recordedAt": "Thời điểm đo",
+        "placeholder": "Nhập giá trị",
+        "save": "Lưu chỉ số",
+        "saving": "Đang lưu…",
+        "viewMetrics": "Xem chỉ số",
+        "successSaved": "Đã lưu {count} chỉ số.",
+        "partialSaved": "Đã lưu {ok}/{total} chỉ số.",
+        "errorEmpty": "Hãy nhập ít nhất một chỉ số.",
+        "errorBpPair": "Hãy nhập cả huyết áp tâm thu và tâm trương.",
+        "errorRange": "{label} phải trong khoảng {min}–{max} {unit}.",
+        "errorGeneric": "Không lưu được chỉ số. Vui lòng thử lại."
+      }
+    },
+    "appointments": {
+      "status": {
+        "booked": "Đã đặt",
+        "scheduled": "Đã đặt lịch",
+        "upcoming": "Sắp tới",
+        "in_progress": "Đang khám",
+        "completed": "Đã khám",
+        "cancelled": "Đã huỷ",
+        "no_show": "Vắng mặt",
+        "rescheduled": "Đã đổi lịch"
+      },
+      "filter": {
+        "all": "Tất cả"
+      },
+      "searchPlaceholder": "Tìm kiếm bác sĩ, chẩn đoán...",
+      "addNew": "Thêm lịch khám mới",
+      "addNewAria": "Thêm lịch khám mới",
+      "doctor": "Bác sĩ",
+      "pageTitle": "Lịch sử khám bệnh",
+      "pageSubtitle": "Xem lịch sử khám và toa thuốc đã kê",
+      "hasPrescription": "Có toa thuốc",
+      "emptyTitle": "Không tìm thấy lịch khám",
+      "emptyRetry": "Thử lại với từ khóa khác",
+      "emptyList": "Chưa có lịch sử khám nào",
+      "noData": "Chưa có thông tin",
+      "disclaimer": "⚕️ Lưu ý: Dữ liệu lịch sử khám bệnh chỉ mang tính chất tham khảo. Toa thuốc phải được sử dụng theo hướng dẫn của bác sĩ. Không tự ý thay đổi liều lượng hoặc dừng thuốc.",
+      "viewPrescription": "Xem toa thuốc",
+      "prescriptionAria": "Xem toa thuốc của {name}",
+      "facility": "Cơ sở",
+      "prescriptionDate": "Ngày kê đơn",
+      "close": "Đóng",
+      "medicineList": "Danh sách thuốc ({count})",
+      "frequency": "Tần suất",
+      "duration": "Thời gian",
+      "doctorNotes": "Ghi chú của bác sĩ",
+      "prescriptionDisclaimer": "Thông tin đơn thuốc chỉ mang tính tham khảo. Không tự ý thay đổi liều lượng hay ngưng thuốc khi chưa có hướng dẫn của bác sĩ.",
+      "attachments": {
+        "title": "Tệp đính kèm",
+        "upload": "Tải lên",
+        "uploading": "Đang tải lên…",
+        "none": "Chưa có tệp đính kèm.",
+        "view": "Xem",
+        "download": "Tải xuống",
+        "delete": "Xoá",
+        "loadError": "Không tải được danh sách tệp.",
+        "uploadError": "Tải lên thất bại. Vui lòng thử lại.",
+        "uploadSuccess": "Đã tải lên.",
+        "tooLarge": "Tệp quá lớn (tối đa 10 MB).",
+        "unsupportedType": "Chỉ chấp nhận PDF, PNG, JPEG hoặc WEBP.",
+        "urlError": "Không mở được tệp. Vui lòng thử lại.",
+        "confirmDelete": "Xoá tệp này?",
+        "deleteSuccess": "Đã xoá tệp.",
+        "deleteError": "Không xoá được tệp."
+      },
+      "detail": {
+        "title": "Chi tiết lịch khám",
+        "diagnosis": "Chẩn đoán / Lý do",
+        "noNotes": "Không có ghi chú"
+      },
+      "edit": {
+        "title": "Chỉnh sửa lịch khám",
+        "doctorName": "Tên bác sĩ",
+        "specialty": "Chuyên khoa",
+        "clinic": "Cơ sở khám",
+        "date": "Ngày",
+        "time": "Giờ",
+        "reason": "Chẩn đoán / Lý do",
+        "notes": "Ghi chú",
+        "save": "Lưu thay đổi",
+        "saving": "Đang lưu...",
+        "saved": "Đã lưu thay đổi",
+        "saveFailed": "Không lưu được. Vui lòng thử lại.",
+        "cancel": "Huỷ"
+      },
+      "statusAction": {
+        "title": "Cập nhật trạng thái",
+        "markInProgress": "Bắt đầu khám",
+        "markCompleted": "Đánh dấu đã khám",
+        "markNoShow": "Vắng mặt",
+        "markCancelled": "Huỷ lịch",
+        "updated": "Đã cập nhật trạng thái",
+        "updateFailed": "Không cập nhật được trạng thái"
+      },
+      "create": {
+        "title": "Lịch khám mới",
+        "subtitle": "Thêm lịch để HealthOS nhắc bạn và lưu lại hồ sơ.",
+        "stepWho": "Bác sĩ",
+        "stepWhen": "Thời gian",
+        "stepPurpose": "Lý do",
+        "stepReview": "Xem lại",
+        "doctorName": "Tên bác sĩ",
+        "doctorNamePlaceholder": "BS. Nguyễn Thị A",
+        "specialty": "Chuyên khoa",
+        "specialtyPlaceholder": "Tim mạch",
+        "clinic": "Cơ sở khám",
+        "clinicPlaceholder": "Bệnh viện Saint Paul",
+        "date": "Ngày",
+        "time": "Giờ",
+        "reason": "Lý do khám",
+        "reasonPlaceholder": "Khám định kỳ, tái khám...",
+        "notes": "Ghi chú (tuỳ chọn)",
+        "notesPlaceholder": "Những điều cần nhớ.",
+        "back": "Quay lại",
+        "next": "Tiếp",
+        "save": "Thêm lịch khám",
+        "saving": "Đang lưu...",
+        "saved": "Đã thêm lịch khám",
+        "saveFailed": "Không thể lưu lịch khám. Vui lòng thử lại.",
+        "missingRequired": "Vui lòng điền các trường bắt buộc."
+      }
+    },
+    "medications": {
+      "pageTitle": "Thuốc",
+      "pageSubtitle": "Theo dõi thuốc và uống đúng giờ.",
+      "add": "Thêm thuốc",
+      "addAria": "Thêm một loại thuốc mới",
+      "today": "Liều hôm nay",
+      "todayEmpty": "Hôm nay chưa có liều nào.",
+      "todayDone": "Đã uống {n}",
+      "todayPending": "Còn {n}",
+      "todayLoadError": "Không tải được liều hôm nay.",
+      "todayMarkAria": "Đánh dấu đã uống",
+      "todayMarkedAria": "Đã uống",
+      "todayMarkError": "Không thể đánh dấu liều này đã uống.",
+      "todayViewAll": "Xem tất cả",
+      "noPlans": "Chưa có thuốc nào",
+      "noPlansDesc": "Thêm thuốc thủ công hoặc nhập từ một lịch khám gần đây để bắt đầu theo dõi.",
+      "importFromAppointment": "Nhập từ lịch khám",
+      "summary": {
+        "active": "Đang dùng",
+        "todayProgress": "Hôm nay",
+        "refillSoon": "Sắp hết"
+      },
+      "filter": {
+        "active": "Đang dùng",
+        "paused": "Tạm dừng",
+        "all": "Tất cả"
+      },
+      "card": {
+        "nextDose": "Liều tiếp theo",
+        "noNext": "Chưa có liều sắp tới",
+        "doses": "{n} liều/lịch",
+        "refillIn": "Hết sau {days} ngày",
+        "refillOverdue": "Đã quá hạn nạp lại",
+        "paused": "Tạm dừng",
+        "completed": "Hoàn tất",
+        "cancelled": "Đã lưu trữ"
+      },
+      "form": {
+        "name": "Tên thuốc",
+        "namePlaceholder": "VD: Amoxicillin",
+        "genericName": "Tên hoạt chất (tuỳ chọn)",
+        "strength": "Hàm lượng",
+        "strengthPlaceholder": "VD: 500 mg",
+        "form": "Dạng bào chế",
+        "formOptions": {
+          "tablet": "Viên nén",
+          "capsule": "Viên nang",
+          "liquid": "Dung dịch",
+          "injection": "Tiêm",
+          "drops": "Nhỏ giọt",
+          "other": "Khác"
+        },
+        "doseTimes": "Giờ uống",
+        "doseTimesHint": "Mỗi chip là một mốc giờ trong ngày.",
+        "doseAria": "Liều {index}",
+        "addTime": "Thêm giờ",
+        "removeTime": "Bỏ giờ",
+        "repeat": "Lặp",
+        "repeatOptions": {
+          "daily": "Mỗi ngày",
+          "weekly": "Mỗi tuần",
+          "monthly": "Mỗi tháng",
+          "once": "Một lần"
+        },
+        "weekdays": "Các ngày trong tuần",
+        "weekdayRequired": "Chọn ít nhất một ngày cho lịch hàng tuần.",
+        "dayOfMonth": "Ngày trong tháng",
+        "startDate": "Ngày bắt đầu",
+        "endDate": "Ngày kết thúc (tuỳ chọn)",
+        "reviewDueAt": "Khám lại với bác sĩ trước (tuỳ chọn)",
+        "instructions": "Chỉ dẫn (tuỳ chọn)",
+        "instructionsPlaceholder": "VD: Uống sau ăn",
+        "prescriber": "Bác sĩ kê đơn (tuỳ chọn)",
+        "clinic": "Cơ sở khám (tuỳ chọn)",
+        "refillSection": "Theo dõi nạp thuốc (tuỳ chọn)",
+        "supplyUnits": "Số lượng còn lại",
+        "supplyUnitsHint": "Số đơn vị (viên, ml...) bạn đang có.",
+        "refillCadenceDays": "Chu kỳ nạp thuốc (ngày)",
+        "tzid": "Múi giờ",
+        "notes": "Ghi chú (tuỳ chọn)",
+        "submit": "Lưu thuốc",
+        "submitting": "Đang lưu…",
+        "cancel": "Huỷ",
+        "validationError": "Vui lòng kiểm tra lại các trường được đánh dấu.",
+        "saveError": "Không thể lưu thuốc. Vui lòng thử lại.",
+        "scheduleRebuildWarning": "Sửa lịch sẽ xoá lịch sử tuân thủ của thuốc này. Tiếp tục?"
+      },
+      "weekdayShort": {
+        "mon": "T2",
+        "tue": "T3",
+        "wed": "T4",
+        "thu": "T5",
+        "fri": "T6",
+        "sat": "T7",
+        "sun": "CN"
+      },
+      "detail": {
+        "title": "Chi tiết thuốc",
+        "edit": "Sửa",
+        "pause": "Tạm dừng",
+        "resume": "Tiếp tục",
+        "archive": "Lưu trữ",
+        "archiveConfirmTitle": "Lưu trữ thuốc này?",
+        "archiveConfirmBody": "Các liều trong tương lai sẽ không được nhắc nữa. Lịch sử vẫn được giữ để báo cáo tuân thủ.",
+        "archiveCancel": "Huỷ",
+        "archiveConfirm": "Lưu trữ",
+        "schedule": "Lịch uống",
+        "instructions": "Chỉ dẫn",
+        "prescriber": "Bác sĩ kê đơn",
+        "clinic": "Cơ sở khám",
+        "linkedAppointment": "Lịch khám liên kết",
+        "openAppointment": "Mở lịch khám",
+        "reviewDue": "Khám lại với bác sĩ trước {date}",
+        "adherence": {
+          "title": "Mức tuân thủ",
+          "ariaLabel": "Tuân thủ: {percent}% — đã uống {taken} trong {scheduled}",
+          "ariaEmpty": "Tuân thủ: chưa có dữ liệu",
+          "period": {
+            "7d": "7 ngày qua",
+            "30d": "30 ngày qua",
+            "90d": "90 ngày qua"
+          },
+          "scheduled": "Theo lịch",
+          "taken": "Đã uống",
+          "missed": "Bỏ lỡ",
+          "skipped": "Bỏ qua",
+          "snoozed": "Hoãn",
+          "empty": "Chưa có dữ liệu cho khoảng thời gian này."
+        },
+        "refill": {
+          "title": "Nạp thuốc",
+          "supply": "Còn {n} đơn vị",
+          "estimated": "Dự kiến hết vào {date}",
+          "overdue": "Đã quá hạn nạp lại",
+          "log": "Ghi nạp thuốc",
+          "saving": "Đang lưu…",
+          "cancel": "Huỷ",
+          "logError": "Không thể lưu lần nạp. Vui lòng thử lại.",
+          "supplyAfter": "Số lượng mới (đơn vị)",
+          "supplyHint": "Đặt số lượng bạn đang có sau khi nạp."
+        },
+        "loadError": "Không tải được thông tin thuốc.",
+        "actions": {
+          "saveError": "Không thể cập nhật thuốc.",
+          "pauseError": "Không thể tạm dừng thuốc.",
+          "resumeError": "Không thể tiếp tục thuốc.",
+          "archiveError": "Không thể lưu trữ thuốc."
+        }
+      },
+      "import": {
+        "title": "Nhập từ lịch khám",
+        "subtitle": "Chọn các thuốc cần thêm vào danh sách theo dõi. Có thể nhập lại an toàn — các bản trùng sẽ bị bỏ qua.",
+        "selectAll": "Chọn tất cả",
+        "deselectAll": "Bỏ chọn tất cả",
+        "doseTimesLabel": "Giờ uống mặc định",
+        "submit": "Thêm vào danh sách thuốc",
+        "submitting": "Đang nhập…",
+        "cancel": "Huỷ",
+        "result": "Đã thêm {created} · Bỏ qua {skipped}",
+        "alreadyImported": "Đã nhập trước đó",
+        "missingName": "Thiếu tên",
+        "createFailed": "Không tạo được",
+        "noMedicines": "Lịch khám này chưa có thuốc trong đơn.",
+        "disclaimer": "Thông tin bạn nhập chỉ phục vụ theo dõi cá nhân. Hãy đối chiếu với nhãn đơn thuốc."
+      },
+      "hubLoadError": "Không tải được danh sách thuốc.",
+      "hubLoadRetry": "Thử lại",
+      "disclaimer": "HealthOS giúp bạn nhớ và theo dõi. Đây không phải là tư vấn y khoa thay thế bác sĩ kê đơn. Hãy luôn làm theo chỉ dẫn của bác sĩ.",
+      "addDisclaimer": "Thông tin bạn nhập chỉ phục vụ theo dõi cá nhân. Hãy đối chiếu với nhãn đơn thuốc."
+    },
+    "meals": {
+      "subtitle": "Theo dõi chế độ ăn và mục tiêu dinh dưỡng",
+      "today": "Hôm nay",
+      "noMealsToday": "Chưa ghi bữa nào hôm nay",
+      "addMeal": "Thêm bữa",
+      "addMealPage": "Thêm bữa ăn",
+      "snapPage": "Chụp ảnh bữa ăn",
+      "mealTypes": {
+        "breakfast": "Bữa sáng",
+        "lunch": "Bữa trưa",
+        "dinner": "Bữa tối",
+        "snack": "Bữa phụ"
+      },
+      "saveSuccess": "Đã ghi món ăn thành công!",
+      "viewDiary": "Xem nhật ký",
+      "saveFailed": "Lưu thất bại. Vui lòng thử lại.",
+      "diary": "Nhật ký dinh dưỡng",
+      "dailyTarget": "{pct}% mục tiêu hàng ngày",
+      "noMealsLogged": "Chưa ghi bữa nào",
+      "mealsLogged": "{count} bữa · {cal} kcal",
+      "noMealsTodayMsg": "Ghi nhật ký để theo dõi dinh dưỡng của bạn",
+      "addFirst": "Thêm bữa đầu tiên",
+      "ingredients": "Thành phần",
+      "protein": "Đạm",
+      "carbs": "Tinh bột",
+      "fat": "Chất béo",
+      "saturates": "Chất béo bão hòa",
+      "sugar": "Đường",
+      "salt": "Muối",
+      "serving": "Khẩu phần",
+      "kcalUnit": "kcal"
+    },
+    "reports": {
+      "title": "Báo cáo sức khỏe",
+      "subtitle": "Tổng quan các chỉ số sức khỏe",
+      "aiSummaryTitle": "Nhận xét từ AI",
+      "detailedInDev": "Nội dung báo cáo chi tiết đang được phát triển",
+      "kpiOverview": "Tổng quan KPI",
+      "heartRateAvg": "Nhịp tim TB",
+      "stepsAvg": "Số bước TB",
+      "sleepAvg": "Giấc ngủ TB",
+      "weightAvg": "Cân nặng TB",
+      "noData": "Chưa có dữ liệu",
+      "sleepChart": {
+        "hours": "Số giờ",
+        "qualityPercent": "Chất lượng (%)"
+      },
+      "detail": {
+        "noData": "Chưa có dữ liệu",
+        "vitalsHr": "Nhịp tim (bpm)",
+        "vitalsSys": "Huyết áp tâm thu (mmHg)",
+        "vitalsDia": "Huyết áp tâm trương (mmHg)"
+      },
+      "exportPdf": {
+        "warning": "Cần chú ý",
+        "activity": "Hoạt động",
+        "sleep": "Giấc ngủ"
+      },
+      "shareStatus": {
+        "normal": "Bình thường",
+        "warning": "Cần chú ý",
+        "critical": "Cần can thiệp"
+      }
+    },
+    "achievements": {
+      "tracking": "Theo dõi tiến độ và streak của bạn",
+      "activeGoals": "Mục tiêu đang theo dõi",
+      "activeGoalsCount": "{n} mục tiêu đang hoạt động",
+      "unlockedAchievements": "Thành tích đã mở khóa",
+      "unlockedOfTotal": "{n} / {total} đã mở khóa",
+      "unlockedCount": "{n} đã mở khóa",
+      "comingSoon": "Sắp ra mắt",
+      "noGoals": "Chưa có mục tiêu nào",
+      "pageTitle": "Thành tích",
+      "pageSubtitle": "Theo dõi tiến độ và chuỗi ngày của bạn",
+      "streakHistory": "Lịch sử chuỗi",
+      "last8Weeks": "8 tuần gần nhất",
+      "currentStreak": "Chuỗi hiện tại",
+      "longestStreak": "Chuỗi dài nhất",
+      "totalScore": "Tổng điểm",
+      "recentAchievements": "Thành tựu gần đây",
+      "unlocked": "Đã mở khóa",
+      "noStreakData": "Chưa có dữ liệu chuỗi",
+      "recentUnlocked": "Thành tựu đã mở khóa",
+      "tierLabels": {
+        "bronze": "Đồng",
+        "silver": "Bạc",
+        "gold": "Vàng",
+        "platinum": "Bạch kim",
+        "diamond": "Kim cương"
+      },
+      "badgeCard": {
+        "points": "điểm",
+        "achieved": "Đã đạt",
+        "daysCompleted": "{n}/20 ngày hoàn thành",
+        "weekProgress": "Tuần {week}/4 — Ngày {day}/5 tuần này",
+        "notStarted": "Chưa bắt đầu"
+      },
+      "dailyProgress": {
+        "title": "Tiến độ hôm nay",
+        "goalsCompleted": "{done}/{total} mục tiêu hoàn thành",
+        "perfect": "Hoàn hảo!"
+      },
+      "milestoneLabels": {
+        "daily-goal": "Hoàn thành mục tiêu hàng ngày",
+        "run-100": "Chạy 100m mỗi ngày",
+        "run-200": "Chạy 200m mỗi ngày",
+        "run-300": "Chạy 300m mỗi ngày",
+        "run-400": "Chạy 400m mỗi ngày",
+        "run-500": "Chạy 500m mỗi ngày",
+        "cycle-5": "Đạp xe 5km mỗi ngày",
+        "cycle-10": "Đạp xe 10km mỗi ngày",
+        "cycle-15": "Đạp xe 15km mỗi ngày",
+        "cycle-20": "Đạp xe 20km mỗi ngày",
+        "cycle-25": "Đạp xe 25km mỗi ngày",
+        "swim-100": "Bơi 100m mỗi ngày",
+        "swim-200": "Bơi 200m mỗi ngày",
+        "swim-400": "Bơi 400m mỗi ngày",
+        "swim-500": "Bơi 500m mỗi ngày",
+        "swim-1000": "Bơi 1km mỗi ngày",
+        "steps-5000": "5.000 bước mỗi ngày",
+        "steps-7000": "7.000 bước mỗi ngày",
+        "steps-8000": "8.000 bước mỗi ngày",
+        "steps-10000": "10.000 bước mỗi ngày",
+        "steps-15000": "15.000 bước mỗi ngày"
+      },
+      "leaderboard": {
+        "user": "Người dùng",
+        "score": "Điểm",
+        "streak": "Chuỗi ngày",
+        "change": "Thay đổi",
+        "you": "Bạn",
+        "yourRank": "Xếp hạng của bạn:"
+      },
+      "completed": "Hoàn thành",
+      "notCompleted": "Chưa hoàn thành"
+    },
+    "risk": {
+      "title": "Dự đoán rủi ro sức khỏe",
+      "updateAria": "Cập nhật dự đoán mới",
+      "subtitle": "Phân tích AI dựa trên sinh trắc học và hành vi của bạn",
+      "scoreGood": "Tốt",
+      "scoreAverage": "Trung bình",
+      "scoreNeedsWork": "Có thể cải thiện",
+      "noModelOutputTitle": "Chưa có dự đoán nào",
+      "noModelOutputBody": "Chúng tôi sẽ tạo bức tranh rủi ro cá nhân hóa khi bạn đã ghi đủ chỉ số sinh tồn và thông tin hồ sơ cơ bản. Hãy bấm Làm mới để thử lại, hoặc bổ sung các chỉ số trước.",
+      "monitoredConditions": "Các chỉ số theo dõi",
+      "highLevel": "Mức cao",
+      "moderateLevel": "Trung bình",
+      "lastUpdated": "Cập nhật lần cuối",
+      "monitoredRisks": "Các rủi ro được theo dõi",
+      "noInfo": "Không có thông tin",
+      "factors": "Yếu tố ảnh hưởng",
+      "tips": "Gợi ý phòng ngừa ({n})",
+      "level": {
+        "low": "Thấp",
+        "moderate": "Trung bình",
+        "high": "Cao",
+        "critical": "Nghiêm trọng"
+      },
+      "trend": {
+        "improving": "Cải thiện",
+        "stable": "Ổn định",
+        "worsening": "Tăng"
+      },
+      "priority": {
+        "high": "Ưu tiên cao",
+        "medium": "Trung bình",
+        "low": "Thấp"
+      },
+      "category": {
+        "diet": "Chế độ ăn",
+        "exercise": "Vận động",
+        "medication": "Thuốc",
+        "monitoring": "Theo dõi",
+        "lifestyle": "Lối sống"
+      },
+      "update": "Cập nhật",
+      "conditionLabels": {
+        "obesity": "Béo phì",
+        "fatty_liver": "Gan nhiễu mỡ"
+      },
+      "conditions": {
+        "DIABETES_T2": "Đái tháo đường loại 2",
+        "HYPERTENSION": "Tăng huyết áp",
+        "OVERWEIGHT": "Thừa cân",
+        "OBESITY": "Béo phì",
+        "CARDIOVASCULAR": "Bệnh tim mạch",
+        "FATTY_LIVER": "Gan nhiễm mỡ"
+      },
+      "factorLabels": {
+        "STEPS": "Số bước chân",
+        "SYSTOLIC_BP": "Huyết áp tâm thu",
+        "DIASTOLIC_BP": "Huyết áp tâm trương",
+        "PHYSICAL_ACTIVITY": "Hoạt động thể chất",
+        "BMI": "BMI",
+        "HEART_RATE": "Nhịp tim",
+        "SLEEP": "Giấc ngủ",
+        "WEIGHT": "Cân nặng",
+        "CALORIES": "Calo",
+        "NO_DATA": "Chưa có dữ liệu"
+      },
+      "tipTitles": {
+        "tip-diabetes-activity": "Tăng cường vận động",
+        "tip-hypertension-diet": "Giảm muối trong khẩu phần",
+        "tip-obesity-goal": "Duy trì thâm hụt calo hợp lý"
+      },
+      "tipDescriptions": {
+        "tip-diabetes-activity": "Cố gắng đạt ít nhất 150 phút hoạt động aerobic cường độ vừa mỗi tuần để cải thiện độ nhạy insulin.",
+        "tip-hypertension-diet": "Hạn chế lượng natri dưới 2.300 mg mỗi ngày. Chọn thực phẩm ít muối và tránh thêm muối khi nấu ăn.",
+        "tip-obesity-goal": "Tạo thâm hụt calo vừa phải từ 300–500 kcal mỗi ngày thông qua chế độ ăn và tập thể dục để giảm cân bền vững."
+      },
+      "disclaimer": "⚕️ Kết quả chỉ để tham khảo, không thay thế lời khuyên y tế. Vui lòng tham khảo ý kiến bác sĩ để được chẩn đoán và điều trị đúng.",
+      "alerts": {
+        "HEART_RATE_HIGH": "Nhịp tim hiện tại {value} bpm vượt ngưỡng khuyến nghị.",
+        "BP_SYSTOLIC_HIGH": "Huyết áp tâm thu {value} mmHg đang ở mức cao.",
+        "BP_DIASTOLIC_HIGH": "Huyết áp tâm trương {value} mmHg đang ở mức cao.",
+        "CALORIE_HIGH": "Lượng calo hôm nay cao hơn mức khuyến nghị.",
+        "STEPS_LOW": "Số bước chân hôm nay thấp hơn mức khuyến nghị {threshold} bước.",
+        "SLEEP_LOW": "Giờ ngủ hôm nay thấp hơn mức khuyến nghị {threshold} giờ.",
+        "BMI_OVERWEIGHT": "BMI hiện tại đang ở mức thừa cân. Hãy cân nhắc điều chỉnh chế độ ăn và tập thể dục.",
+        "MEDICATION_ADHERENCE_LOW": "Mức độ tuân thủ thuốc thấp. Vui lòng uống thuốc đúng theo lịch được kê."
+      },
+      "insights": {
+        "CALORIE_LOW": "Bạn đang ăn dưới nhu cầu năng lượng trong ngày.",
+        "CALORIE_HIGH": "Lượng calo hôm nay cao hơn mức khuyến nghị.",
+        "CALORIE_NORMAL": "Năng lượng hôm nay đang gần mức mục tiêu.",
+        "ACTIVITY_GOOD": "Bạn có dữ liệu vận động, tiếp tục duy trì để cải thiện sức khỏe."
+      },
+      "sections": {
+        "VITALS": {
+          "title": "Chỉ số sinh tồn",
+          "summary": "Đánh giá các chỉ số sinh tồn quan trọng trong kỳ."
+        },
+        "NUTRITION": {
+          "title": "Dinh dưỡng",
+          "summary": "Tổng quan về lượng dinh dưỡng nạp vào và cân bằng calo."
+        },
+        "ACTIVITY": {
+          "title": "Hoạt động thể chất",
+          "summary": "Tóm tắt hoạt động thể chất và thói quen tập luyện."
+        },
+        "SLEEP": {
+          "title": "Giấc ngủ",
+          "summary": "Phân tích thời lượng và chất lượng giấc ngủ."
+        },
+        "BMI": {
+          "title": "BMI & Cân nặng",
+          "summary": "Đánh giá chỉ số khối cơ thể và xu hướng cân nặng."
+        },
+        "MEDICATION": {
+          "title": "Thuốc",
+          "summary": "Tổng quan về việc tuân thủ và sử dụng thuốc."
+        }
+      },
+      "trendSummary": {
+        "TREND_SUMMARY": "Dữ liệu {metric} trong {period} đang {trend}, thay đổi {change}% so với đầu kỳ.",
+        "TREND_NO_DATA": "Không đủ dữ liệu để phân tích xu hướng."
+      }
+    },
+    "goals": {
+      "title": "Tiến độ mục tiêu",
+      "water": "Uống nước",
+      "steps": "Số bước mỗi ngày",
+      "calories": "Mục tiêu calo",
+      "viewAll": "Xem tất cả mục tiêu",
+      "addGoal": "Thêm mục tiêu",
+      "addGoalDisabled": "Tính năng mục tiêu hoạt động sắp ra mắt",
+      "newGoal": "Đặt mục tiêu mới",
+      "step1": "Chọn hoạt động",
+      "step2": "Chọn mức mục tiêu",
+      "step3": "Xác nhận",
+      "hint": "Duy trì ≥ 5 ngày/tuần trong 4 tuần để nhận huy hiệu thành tựu.",
+      "dailyUnit": "{v}/ngày",
+      "setSuccess": "Mục tiêu đã được thiết lập!",
+      "pointsHint": "Tích lũy điểm thưởng mỗi ngày hoàn thành",
+      "completedCount": "{n}/{total} mục tiêu hoàn thành",
+      "everyday": "mỗi ngày",
+      "maintainReq": "Yêu cầu duy trì:",
+      "perWeek": "ngày/tuần × 4 tuần liên tiếp",
+      "reward": "Phần thưởng:",
+      "badgePoints": "Huy hiệu thành tựu + điểm xếp hạng",
+      "streak": "Chuỗi:",
+      "streakAccumulate": "Tích lũy điểm thưởng mỗi ngày hoàn thành",
+      "back": "Quay lại",
+      "startNow": "Bắt đầu ngay",
+      "activityLabels": {
+        "running": "Chạy bộ",
+        "cycling": "Đạp xe",
+        "swimming": "Bơi lội",
+        "steps": "Bước chân"
+      },
+      "milestoneLabels": {
+        "daily-goal": "Hoàn thành mục tiêu hàng ngày",
+        "run-100": "Chạy 100m mỗi ngày",
+        "run-200": "Chạy 200m mỗi ngày",
+        "run-300": "Chạy 300m mỗi ngày",
+        "run-400": "Chạy 400m mỗi ngày",
+        "run-500": "Chạy 500m mỗi ngày",
+        "cycle-5": "Đạp xe 5km mỗi ngày",
+        "cycle-10": "Đạp xe 10km mỗi ngày",
+        "cycle-15": "Đạp xe 15km mỗi ngày",
+        "cycle-20": "Đạp xe 20km mỗi ngày",
+        "cycle-25": "Đạp xe 25km mỗi ngày",
+        "swim-100": "Bơi 100m mỗi ngày",
+        "swim-200": "Bơi 200m mỗi ngày",
+        "swim-400": "Bơi 400m mỗi ngày",
+        "swim-500": "Bơi 500m mỗi ngày",
+        "swim-1000": "Bơi 1km mỗi ngày",
+        "steps-5000": "5.000 bước mỗi ngày",
+        "steps-7000": "7.000 bước mỗi ngày",
+        "steps-8000": "8.000 bước mỗi ngày",
+        "steps-10000": "10.000 bước mỗi ngày",
+        "steps-15000": "15.000 bước mỗi ngày"
+      },
+      "noInfo": "Chưa có thông tin",
+      "loadError": "Không tải được mục tiêu"
+    },
+    "services": {
+      "pageTitle": "Bắt đầu hành trình sức khỏe"
+    },
+    "devices": {
+      "title": "Thiết bị kết nối",
+      "subtitle": "Quản lý thiết bị đeo thông minh và thiết bị theo dõi sức khỏe",
+      "syncSuccess": "Đồng bộ thành công",
+      "syncing": "Đang đồng bộ...",
+      "syncFailed": "Đồng bộ thất bại",
+      "lastSync": "Lần cuối:",
+      "noSyncInfo": "Chưa đồng bộ",
+      "justNow": "Vừa xong",
+      "minutesAgo": "{n} phút trước",
+      "hoursAgo": "{n} giờ trước",
+      "connected": "Đã kết nối",
+      "notConnected": "Chưa kết nối",
+      "syncNow": "Đồng bộ ngay",
+      "disconnect": "Ngắt kết nối",
+      "connect": "Kết nối",
+      "battery": "Pin",
+      "yourDevicesSection": "Thiết bị của bạn ({n})",
+      "connectedSection": "Đang kết nối ({n})",
+      "availableSection": "Có thể kết nối ({n})",
+      "connecting": "Đang kết nối...",
+      "tapToConnect": "Nhấn để kết nối",
+      "connectFailed": "Kết nối thất bại",
+      "privacyNote": "Dữ liệu từ thiết bị đeo được mã hóa và chỉ dùng để cải thiện trải nghiệm sức khỏe của bạn. Bạn có thể ngắt kết nối bất cứ lúc nào.",
+      "hcCount": "{n} bản ghi mới",
+      "hcPermissionDenied": "Quyền đã bị thu hồi. Mở ứng dụng HealthOS trên Android và cấp lại quyền trong Health Connect.",
+      "hcSyncError": "Đồng bộ gần nhất thất bại. Mở ứng dụng HealthOS trên Android và bấm Đồng bộ ngay để thử lại.",
+      "hcSyncFromMobile": "Health Connect chỉ có thể đồng bộ từ ứng dụng HealthOS Android. Mở ứng dụng trên điện thoại và bấm Đồng bộ ngay.",
+      "hcSyncFromMobileShort": "Đồng bộ từ di động",
+      "hc": {
+        "modalTitle": "Kết nối Health Connect trên Android",
+        "modalBody": "Health Connect là ứng dụng hệ thống chỉ có trên Android. Để kết nối, hãy hoàn tất thiết lập trong ứng dụng HealthOS trên di động — bạn sẽ được yêu cầu cấp quyền truy cập Bước chân, Nhịp tim, Giấc ngủ và Cân nặng.",
+        "step1": "Mở ứng dụng HealthOS trên điện thoại Android.",
+        "step2": "Vào Cài đặt → Thiết bị kết nối → Kết nối Health Connect.",
+        "step3": "Phê duyệt quyền hệ thống, sau đó quay lại đây để xem dữ liệu đã đồng bộ.",
+        "modalClose": "Đã hiểu"
+      }
+    },
+    "settingsPage": {
+      "pageTitle": "Cài đặt",
+      "pageSubtitle": "Tùy chỉnh ứng dụng, thông báo và bảo mật tài khoản",
+      "sections": {
+        "account": "Tài khoản",
+        "appearance": "Giao diện",
+        "notifications": "Thông báo",
+        "privacy": "Quyền riêng tư & Bảo mật",
+        "session": "Phiên đăng nhập"
+      },
+      "account": {
+        "profile": "Hồ sơ cá nhân",
+        "profileDesc": "Cập nhật tên, ảnh đại diện và thông tin sức khỏe",
+        "security": "Mật khẩu & Bảo mật",
+        "securityDesc": "Đổi mật khẩu và quản lý xác thực 2 yếu tố",
+        "devices": "Thiết bị kết nối",
+        "devicesDesc": "Quản lý thiết bị đeo thông minh và thiết bị y tế"
+      },
+      "appearance": {
+        "language": "Ngôn ngữ hiển thị",
+        "languageDesc": "Chọn ngôn ngữ giao diện ứng dụng",
+        "theme": "Giao diện màu sắc",
+        "themeDesc": "Chọn chủ đề màu cho HealthOS",
+        "themeSystem": "Theo hệ thống",
+        "themeLight": "Sáng",
+        "themeDark": "Tối",
+        "accentColor": "Màu nhấn",
+        "accentColorDesc": "Tuỳ chỉnh giao diện ứng dụng",
+        "saveAccent": "Lưu",
+        "accentSaved": "Đã lưu màu nhấn",
+        "accentSaveFailed": "Không thể lưu màu nhấn",
+        "accentLowContrast": "Độ tương phản thấp trên nền sáng/tối — văn bản có thể khó đọc.",
+        "resetDefault": "Đặt lại mặc định"
+      },
+      "notifications": {
+        "healthAlerts": "Cảnh báo sức khỏe",
+        "healthAlertsDesc": "Thông báo khi chỉ số bất thường",
+        "reminders": "Nhắc nhở",
+        "remindersDesc": "Thuốc, lịch khám và tập luyện",
+        "weeklyReports": "Báo cáo tuần",
+        "weeklyReportsDesc": "Tổng kết sức khỏe mỗi thứ Hai",
+        "chatMessages": "Tin nhắn",
+        "chatMessagesDesc": "Tin nhắn từ bác sĩ và bạn bè",
+        "promotions": "Khuyến mãi",
+        "promotionsDesc": "Ưu đãi và thông báo tính năng mới",
+        "saveFailed": "Không thể lưu tuỳ chọn thông báo. Vui lòng thử lại."
+      },
+      "privacy": {
+        "policy": "Chính sách quyền riêng tư",
+        "policyDesc": "Tìm hiểu cách chúng tôi xử lý dữ liệu của bạn",
+        "download": "Tải dữ liệu của tôi",
+        "downloadDesc": "Xuất hồ sơ sức khoẻ của bạn thành tệp",
+        "delete": "Xoá tài khoản",
+        "deleteDesc": "Xoá vĩnh viễn tài khoản và toàn bộ dữ liệu",
+        "pendingNotice": "Tính năng này đang được triển khai và sẽ sớm ra mắt — vui lòng liên hệ support@healthos.app để được xử lý thủ công.",
+        "downloadDialog": {
+          "title": "Yêu cầu một bản sao dữ liệu của bạn",
+          "body": "Chúng tôi sẽ chuẩn bị một file lưu trữ gồm hồ sơ, chỉ số sinh tồn, bữa ăn và báo cáo của bạn, sau đó gửi liên kết tải về qua email. Thường mất vài phút; tài khoản lớn có thể đến 24 giờ.",
+          "contains": "Bao gồm",
+          "containsList": "Hồ sơ, chỉ số sinh tồn, bữa ăn, vận động, giấc ngủ, BMI, báo cáo, hội thoại với AI.",
+          "secureNote": "Liên kết hết hạn sau 24 giờ và chỉ dành riêng cho bạn.",
+          "request": "Yêu cầu xuất dữ liệu",
+          "requested": "Đã bắt đầu xuất. Bạn sẽ nhận thông báo khi tệp sẵn sàng (thường trong vài phút).",
+          "requestFailed": "Không gửi được yêu cầu xuất dữ liệu. Vui lòng thử lại sau.",
+          "rateLimited": "Bạn đã yêu cầu xuất dữ liệu trong 24 giờ qua.",
+          "expired": "Liên kết tải xuống đã hết hạn. Vui lòng yêu cầu xuất lại.",
+          "downloadFailed": "Không tải được tệp xuất. Vui lòng thử lại."
+        },
+        "deleteDialog": {
+          "title": "Xoá tài khoản của bạn?",
+          "body": "Việc này sẽ xoá vĩnh viễn tài khoản, hồ sơ và mọi dữ liệu sức khoẻ. Chúng tôi không thể khôi phục sau khi xoá.",
+          "irreversible": "Hành động này không thể hoàn tác.",
+          "exportFirst": "Bạn nên tải về một bản sao dữ liệu trước.",
+          "emailPrompt": "Nhập email tài khoản để xác nhận",
+          "emailPlaceholder": "ban@vidu.com",
+          "passwordPrompt": "Mật khẩu hiện tại",
+          "identityFailed": "Không xác minh được danh tính. Vui lòng kiểm tra email và mật khẩu.",
+          "confirmPrompt": "Nhập {phrase} để xác nhận",
+          "confirmPlaceholder": "Nhập đúng cụm từ xác nhận",
+          "confirmPhrase": "XOA",
+          "confirm": "Xoá tài khoản của tôi",
+          "deleting": "Đang xoá…",
+          "requested": "Đã gửi yêu cầu xoá tài khoản. Chúng tôi sẽ gửi email khi hoàn tất.",
+          "requestFailed": "Không gửi được yêu cầu xoá. Vui lòng thử lại sau."
+        },
+        "emergencyCard": "Thẻ y tế khẩn cấp",
+        "emergencyCardDesc": "Tạo bản tóm tắt y tế chia sẻ qua QR cho nhân viên cứu thương."
+      },
+      "dialogClose": "Đóng",
+      "logout": "Đăng xuất",
+      "logoutDesc": "Đăng xuất khỏi tài khoản trên thiết bị này"
+    },
+    "ai": {
+      "title": "Gợi ý từ AI",
+      "subtitle": "Dựa trên dữ liệu của bạn hôm nay",
+      "askAI": "Hỏi Trợ lý AI",
+      "loading": "Đang phân tích dữ liệu sức khỏe...",
+      "noInfo": "Chưa có thông tin",
+      "loadError": "Không tải được gợi ý AI",
+      "notMedicalAdvice": "Gợi ý do AI tạo ra, không thay thế lời khuyên y khoa. Hãy trao đổi với bác sĩ về bất kỳ điều gì bạn lo lắng."
+    },
+    "nav": {
+      "overview": "Tổng quan",
+      "profile": "Hồ sơ",
+      "nutrition": "Dinh dưỡng",
+      "vitalsDevices": "Chỉ số & Thiết bị",
+      "reminders": "Nhắc nhở",
+      "medications": "Thuốc",
+      "appointments": "Lịch sử khám",
+      "risk": "Dự đoán rủi ro",
+      "goals": "Mục tiêu",
+      "achievements": "Thành tựu",
+      "leaderboard": "Xếp hạng",
+      "chat": "Tin nhắn",
+      "reports": "Báo cáo",
+      "settings": "Cài đặt",
+      "groups": {
+        "overview": "Tổng quan",
+        "track": "Theo dõi",
+        "care": "Chăm sóc",
+        "grow": "Phát triển",
+        "you": "Cá nhân"
+      },
+      "mainNavAriaLabel": "Điều hướng chính",
+      "visitPrep": "Chuẩn bị khám",
+      "emergencyCard": "Thẻ khẩn cấp"
+    },
+    "topnav": {
+      "searchPlaceholder": "Tìm hồ sơ, thuốc...",
+      "notifications": "Thông báo",
+      "noNotifications": "Không có thông báo mới",
+      "profile": "Hồ sơ của tôi",
+      "signOut": "Đăng xuất"
+    },
+    "shell": {
+      "openDrawer": "Mở menu",
+      "more": "Thêm",
+      "mobileNav": "Điều hướng nhanh",
+      "themeToggle": "Đổi chủ đề",
+      "commandPaletteTitle": "Tìm kiếm trong ứng dụng",
+      "commandPaletteHint": "Đến mọi trang hoặc thao tác nhanh.",
+      "commandPalettePlaceholder": "Tìm trang, thao tác, cài đặt...",
+      "commandPaletteEmpty": "Không có kết quả.",
+      "commandPaletteQuickActions": "Thao tác nhanh",
+      "commandPaletteShortcut": "Ctrl/⌘ K để mở · Esc để đóng",
+      "commandPaletteComingSoon": "Sắp ra mắt",
+      "notificationsUnread": "{n} chưa đọc",
+      "notificationsAllRead": "Đã đọc hết",
+      "notificationsLoadError": "Không tải được thông báo.",
+      "notificationsRetry": "Thử lại",
+      "notificationsCapNotice": "Đang hiển thị {n} thông báo gần nhất.",
+      "notificationsUnreadAria": "{n} thông báo chưa đọc",
+      "notificationsDefaultTitle": "Thông báo",
+      "notificationsMarkAllRead": "Đánh dấu đã đọc tất cả",
+      "notificationsSeeAll": "Xem tất cả thông báo",
+      "skipToMain": "Bỏ qua đến nội dung chính"
+    },
+    "notificationsPage": {
+      "title": "Thông báo",
+      "subtitle": "Tất cả thông báo, lời nhắc và cập nhật của bạn ở một nơi.",
+      "empty": "Bạn chưa có thông báo nào.",
+      "loadMore": "Tải thêm",
+      "loadingMore": "Đang tải…"
+    },
+    "profile": {
+      "title": "Hồ sơ cá nhân",
+      "subtitle": "Quản lý thông tin, chỉ số cơ thể và dữ liệu y tế của bạn",
+      "linkedAccounts": {
+        "title": "Tài khoản liên kết",
+        "subtitle": "Đăng nhập nhanh hơn bằng cách kết nối Google hoặc GitHub. Bạn có thể gỡ liên kết bất cứ lúc nào.",
+        "none": "Chưa có tài khoản liên kết.",
+        "loadError": "Không tải được danh sách liên kết.",
+        "retry": "Thử lại",
+        "addProvider": "Thêm {provider}",
+        "removeAria": "Gỡ liên kết {provider}",
+        "removeConfirmTitle": "Gỡ tài khoản liên kết này?",
+        "removeConfirmBody": "Sau khi gỡ {provider}, bạn sẽ cần một phương thức đăng nhập khác (mật khẩu hoặc nhà cung cấp khác) để vào tài khoản.",
+        "remove": "Gỡ",
+        "removing": "Đang gỡ…",
+        "cancel": "Hủy",
+        "removeSuccess": "Đã gỡ tài khoản liên kết.",
+        "removeError": "Không gỡ được liên kết. Vui lòng thử lại.",
+        "lastMethodError": "Không thể gỡ phương thức đăng nhập duy nhất. Hãy đặt mật khẩu trước.",
+        "linkSuccess": "Đã liên kết {provider} vào tài khoản của bạn.",
+        "linkError": "Không liên kết được tài khoản. Vui lòng thử lại.",
+        "conflictError": "Tài khoản {provider} này đã được liên kết với người dùng khác."
+      },
+      "editButton": "Chỉnh sửa",
+      "saveButton": "Lưu thay đổi",
+      "cancelButton": "Hủy",
+      "saving": "Đang lưu...",
+      "avatarChange": "Đổi ảnh đại diện",
+      "memberSince": "Thành viên từ",
+      "emailReadOnly": "Email không thể thay đổi tại đây. Vui lòng dùng mục Bảo mật.",
+      "optional": "tuỳ chọn",
+      "notSpecified": "Chưa cập nhật",
+      "saveSuccess": "Cập nhật hồ sơ thành công!",
+      "saveError": "Lưu thất bại. Vui lòng thử lại.",
+      "loadError": "Không thể tải thông tin của bạn. Vui lòng thử lại.",
+      "addContact": "Thêm người liên hệ",
+      "removeContact": "Xóa",
+      "contactN": "Người liên hệ {n}",
+      "noContacts": "Chưa có người liên hệ khẩn cấp",
+      "sections": {
+        "basicInfo": "Thông tin cơ bản",
+        "bodyBasics": "Chỉ số cơ thể",
+        "contact": "Liên hệ",
+        "emergency": "Liên hệ khẩn cấp",
+        "medical": "Thông tin y tế"
+      },
+      "fields": {
+        "fullName": "Họ và tên",
+        "dateOfBirth": "Ngày sinh",
+        "gender": "Giới tính",
+        "bloodType": "Nhóm máu",
+        "heightCm": "Chiều cao",
+        "weightKg": "Cân nặng",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "address": "Địa chỉ",
+        "emergencyName": "Tên người liên hệ",
+        "emergencyRelationship": "Mối quan hệ",
+        "emergencyPhone": "SĐT người liên hệ",
+        "allergies": "Dị ứng",
+        "chronicConditions": "Bệnh nền",
+        "currentMedications": "Thuốc đang dùng",
+        "notes": "Ghi chú"
+      },
+      "genders": {
+        "male": "Nam",
+        "female": "Nữ",
+        "other": "Khác"
+      },
+      "relationships": {
+        "parent": "Cha/Mẹ",
+        "spouse": "Vợ/Chồng",
+        "sibling": "Anh/Chị/Em",
+        "child": "Con",
+        "friend": "Bạn bè",
+        "other": "Khác"
+      },
+      "bmi": {
+        "label": "BMI",
+        "underweight": "Thiếu cân",
+        "normal": "Bình thường",
+        "overweight": "Thừa cân",
+        "obese": "Béo phì"
+      },
+      "placeholders": {
+        "select": "Chọn...",
+        "address": "Số nhà, đường, quận, thành phố",
+        "emergencyName": "Nguyễn Văn B",
+        "allergies": "VD: Penicillin, hải sản...",
+        "chronicConditions": "VD: Tiểu đường loại 2, viêm dạ dày...",
+        "currentMedications": "VD: Metformin 500mg 2 lần/ngày...",
+        "notes": "Ghi chú thêm về sức khoẻ..."
+      },
+      "manageEmergencyCard": "Dùng các liên hệ này trong thẻ khẩn cấp"
+    },
+    "progress": {
+      "bmiProgress": "Tiến độ BMI",
+      "bmiChart": "Biểu đồ BMI",
+      "classification": "Phân loại",
+      "achievedGoals": "{n} đã đạt",
+      "chartSubtitle": "Lịch sử BMI theo thời gian",
+      "chartNoData": "Chưa có dữ liệu BMI",
+      "bmiInfo": "Thông tin BMI",
+      "streakCalendar": {
+        "title": "Chuỗi ngày luyện tập",
+        "active": "Hoạt động",
+        "rest": "Nghỉ",
+        "currentStreak": "Streak hiện tại",
+        "longestStreak": "Streak dài nhất",
+        "pastWeeks": "8 tuần qua",
+        "days": "ngày",
+        "activitiesCount": "{n} hoạt động",
+        "requirement": "Cần ≥ 5 ngày/tuần × 4 tuần để nhận huy hiệu"
+      },
+      "bmiLabels": {
+        "underweight": "Thiếu cân",
+        "normal": "Bình thường",
+        "overweight": "Thừa cân",
+        "obese": "Béo phì"
+      },
+      "bmiLabel": "Chỉ số BMI",
+      "bmiContribution": "Đóng góp điểm xếp hạng",
+      "rankingPoints": "điểm xếp hạng",
+      "targetLabel": "Mục tiêu:",
+      "needToLose": "cần giảm",
+      "needToGain": "cần tăng",
+      "chartHighest": "Cao nhất",
+      "chartLowest": "Thấp nhất",
+      "chartTarget": "Mục tiêu"
+    },
+    "gamification": {
+      "tabs": {
+        "goals": "Mục tiêu",
+        "achievements": "Thành tựu",
+        "leaderboard": "Xếp hạng"
+      }
+    },
+    "visitPrep": {
+      "pageTitle": "Chuẩn bị khám",
+      "pageSubtitle": "Chuẩn bị cho buổi khám bằng cách ghi lại các triệu chứng và câu hỏi bạn muốn hỏi bác sĩ.",
+      "newBrief": "Tạo bản chuẩn bị mới",
+      "newBriefAria": "Bắt đầu bản chuẩn bị khám mới",
+      "list": {
+        "empty": "Chưa có bản chuẩn bị nào — hãy bắt đầu để ghi lại triệu chứng và câu hỏi trước khi đi khám.",
+        "startCta": "Chuẩn bị cho buổi khám",
+        "filterAll": "Tất cả",
+        "filterDraft": "Bản nháp",
+        "filterFinalized": "Đã hoàn tất",
+        "filterArchived": "Đã lưu trữ",
+        "updatedAt": "Cập nhật {when}",
+        "attachedTo": "Đã đính kèm cuộc hẹn {when}",
+        "unattached": "Chưa đính kèm cuộc hẹn nào"
+      },
+      "status": {
+        "draft": "Bản nháp",
+        "finalized": "Đã hoàn tất",
+        "archived": "Đã lưu trữ"
+      },
+      "visitTypes": {
+        "gp_routine": "Khám tổng quát định kỳ",
+        "gp_routineHelp": "Khám sức khỏe thông thường với bác sĩ gia đình.",
+        "specialist": "Khám chuyên khoa",
+        "specialistHelp": "Được chuyển khám hoặc tái khám với bác sĩ chuyên khoa.",
+        "follow_up": "Tái khám",
+        "follow_upHelp": "Tiếp tục theo dõi một tình trạng đã có.",
+        "mental_health": "Sức khỏe tâm thần",
+        "mental_healthHelp": "Tham vấn tâm lý hoặc khám chuyên khoa tâm thần.",
+        "urgent_walkin": "Khám gấp / không hẹn",
+        "urgent_walkinHelp": "Khám trong ngày hoặc khám tại phòng cấp cứu nhẹ.",
+        "pediatric_caregiver": "Chăm sóc trẻ em",
+        "pediatric_caregiverHelp": "Bản chuẩn bị thay cho trẻ em hoặc trẻ sơ sinh."
+      },
+      "concernCategories": {
+        "pain": "Đau",
+        "fever": "Sốt",
+        "gi": "Tiêu hóa",
+        "resp": "Hô hấp",
+        "mental": "Tâm lý / sức khỏe tâm thần",
+        "skin": "Da liễu",
+        "neuro": "Thần kinh",
+        "cardio": "Tim mạch / ngực",
+        "other": "Khác"
+      },
+      "wizard": {
+        "autoSaving": "Đang lưu nháp…",
+        "savedAt": "Đã lưu {when}",
+        "next": "Tiếp",
+        "back": "Quay lại",
+        "finalize": "Hoàn tất bản chuẩn bị",
+        "finalizing": "Đang hoàn tất…",
+        "addAnother": "Thêm vấn đề khác",
+        "doneAddingConcerns": "Không còn vấn đề nào nữa",
+        "maxConcernsHelp": "Tối đa {max} vấn đề trong một bản chuẩn bị.",
+        "cannotEdit": "Bản chuẩn bị này đã hoàn tất. Tạo bản mới để chỉnh sửa.",
+        "newRevision": "Tạo bản mới",
+        "steps": {
+          "visitType": "Loại khám",
+          "concern": "Vấn đề",
+          "whenHow": "Khi nào & ra sao",
+          "triggers": "Yếu tố",
+          "tried": "Đã thử gì",
+          "review": "Xem lại",
+          "routing": "Gợi ý bước tiếp theo",
+          "questions": "Câu hỏi",
+          "attach": "Đính kèm",
+          "finalize": "Hoàn tất"
+        },
+        "unsavedBadge": "Chưa lưu"
+      },
+      "concernForm": {
+        "concernText": "Vấn đề chính (theo cách bạn diễn đạt)",
+        "concernTextPlaceholder": "VD: Đau lưng dưới sau khi làm vườn",
+        "category": "Thuộc nhóm nào?",
+        "onsetDate": "Bắt đầu khi nào?",
+        "duration": "Kéo dài bao lâu?",
+        "durationValue": "Số",
+        "durationUnit": "Đơn vị",
+        "severity": "Mức độ hiện tại ({value}/10)",
+        "severityAnchorLow": "Hầu như không cảm thấy",
+        "severityAnchorMid": "Khá khó chịu",
+        "severityAnchorHigh": "Tệ nhất có thể",
+        "triggers": "Yếu tố khởi phát (không bắt buộc)",
+        "triggersPlaceholder": "VD: Sau khi ăn, khi đứng",
+        "betterWith": "Điều gì làm dễ chịu hơn? (không bắt buộc)",
+        "betterWithPlaceholder": "VD: Nghỉ ngơi, paracetamol",
+        "worseWith": "Điều gì làm tệ hơn? (không bắt buộc)",
+        "worseWithPlaceholder": "VD: Cúi người",
+        "medsTaken": "Thuốc đã dùng cho vấn đề này (không bắt buộc)",
+        "medsTakenPlaceholder": "VD: Ibuprofen 400mg, hai lần hôm nay",
+        "priorCare": "Đã được chăm sóc gì cho vấn đề này (không bắt buộc)",
+        "priorCarePlaceholder": "VD: Khám bác sĩ tuần trước, được kê kháng sinh",
+        "severityNotSet": "Kéo để chọn mức độ",
+        "severityHint": "Chỉ đặt mức độ khi bạn có thể đánh giá"
+      },
+      "durationUnits": {
+        "hours": "giờ",
+        "days": "ngày",
+        "weeks": "tuần",
+        "months": "tháng"
+      },
+      "routing": {
+        "rulesetVersion": "Bộ quy tắc {version}",
+        "computedAt": "Tính lại {when}",
+        "matchedSignals": "Những chi tiết bạn mô tả gợi ý điều này:",
+        "noMatches": "Không có dấu hiệu khớp — bạn nên cân nhắc đặt một cuộc hẹn thường quy.",
+        "recompute": "Tính lại",
+        "emergency_now": {
+          "title": "Có thể cần cấp cứu ngay",
+          "body": "Dựa trên những gì bạn mô tả, hãy liên hệ ngay với dịch vụ cấp cứu tại địa phương. Công cụ này không phải bác sĩ và không thể chẩn đoán, nhưng các triệu chứng bạn báo là dấu hiệu cảnh báo cần được giúp đỡ khẩn cấp.",
+          "next_action": "Gọi cấp cứu",
+          "emergencyHint": "Việt Nam: 115 · Anh: 999 · Mỹ: 911 · hoặc số cấp cứu địa phương",
+          "secondary": "Vẫn lưu bản chuẩn bị"
+        },
+        "urgent_same_day": {
+          "title": "Cố gắng được khám ngay trong ngày",
+          "body": "Những triệu chứng bạn mô tả thường cần được khám trong ngày. Hãy liên hệ bác sĩ, phòng khám cấp cứu nhẹ, hoặc đường dây y tế địa phương ngay hôm nay. Nếu có bất kỳ dấu hiệu nào xấu đi đột ngột, hãy coi là cấp cứu.",
+          "next_action": "Tìm nơi khám trong ngày",
+          "secondary": "Đặt cuộc hẹn thường quy",
+          "urgentHint": "Việt Nam: 115 · Anh: 111 · Mỹ: 911 · hoặc đường dây cấp cứu nhẹ địa phương"
+        },
+        "routine_gp": {
+          "title": "Đặt cuộc hẹn thường quy",
+          "body": "Triệu chứng của bạn kéo dài hoặc ở mức trung bình — một cuộc hẹn khám thường quy là bước hợp lý tiếp theo. Dùng danh sách câu hỏi bên dưới để tận dụng tối đa cuộc trò chuyện. Nếu triệu chứng xấu đi đột ngột trước cuộc hẹn, hãy liên hệ phòng khám cấp cứu nhẹ hoặc dịch vụ cấp cứu địa phương.",
+          "next_action": "Đặt cuộc hẹn",
+          "secondary": "Lưu bản chuẩn bị để dùng sau"
+        },
+        "self_care_with_monitoring": {
+          "title": "Tự chăm sóc, nhưng theo dõi sát",
+          "body": "Những gì bạn mô tả có vẻ nhẹ và ngắn ngày. Hãy nghỉ ngơi, uống đủ nước, và theo dõi diễn biến. Đặt cuộc hẹn nếu nặng hơn, kéo dài hơn dự kiến, hoặc xuất hiện triệu chứng mới.",
+          "next_action": "Lưu bản chuẩn bị phòng khi kéo dài",
+          "watchTitle": "Khi nào cần tìm trợ giúp",
+          "watchItems": [
+            "Triệu chứng nặng hơn hoặc xuất hiện triệu chứng mới",
+            "Triệu chứng kéo dài quá vài ngày mà không cải thiện",
+            "Bạn bị sốt, đau dữ dội, hoặc khó thở"
+          ]
+        },
+        "insufficient_info": {
+          "title": "Cần thêm thông tin",
+          "body": "Hiện chưa đủ thông tin để đề xuất một hướng đi cụ thể. Bạn nên cân nhắc đặt một cuộc hẹn thường quy để được bác sĩ trực tiếp tư vấn. Nếu triệu chứng có vẻ nặng, đang xấu đi nhanh, hoặc có dấu hiệu cảnh báo như đau ngực, khó thở, yếu một bên người đột ngột, hoặc ý nghĩ tự làm hại bản thân, hãy liên hệ phòng khám cấp cứu nhẹ hoặc số cấp cứu địa phương.",
+          "next_action": "Đặt cuộc hẹn thường quy",
+          "urgentSecondary": "Tìm nơi khám gấp"
+        },
+        "signals": {
+          "stroke_face": "Bạn mô tả mặt đột ngột bị méo / lệch — cần được khám khẩn.",
+          "stroke_arm": "Bạn mô tả yếu một bên người đột ngột — cần được khám khẩn.",
+          "stroke_speech": "Bạn mô tả nói khó / nói lắp đột ngột — cần được khám khẩn.",
+          "cardiac_chest_sob": "Bạn mô tả đau ngực kèm khó thở — cần được khám khẩn.",
+          "cardiac_chest_radiating": "Bạn mô tả đau ngực lan ra tay hoặc hàm — cần được khám khẩn.",
+          "sob_at_rest": "Bạn mô tả khó thở khi nghỉ ngơi — cần được khám khẩn.",
+          "anaphylaxis": "Bạn mô tả sưng môi, lưỡi hoặc họng kèm khó thở — cần được khám khẩn.",
+          "uncontrolled_bleeding": "Bạn mô tả chảy máu không cầm được — cần được chăm sóc khẩn.",
+          "thunderclap_headache": "Bạn mô tả cơn đau đầu dữ dội đột ngột — cần được khám khẩn.",
+          "suicidal_ideation": "Bạn mô tả ý nghĩ tự làm hại bản thân hoặc không muốn sống — hãy tìm trợ giúp ngay bây giờ.",
+          "focal_neuro": "Bạn mô tả tê một bên người mới xuất hiện hoặc mất thị lực đột ngột — cần được khám khẩn.",
+          "loss_consciousness": "Bạn mô tả mất ý thức — cần được khám khẩn.",
+          "infant_fever": "Sốt ở trẻ dưới 3 tháng — luôn được xem là cấp.",
+          "cardio_high_severity": "Bạn mô tả triệu chứng nặng ở vùng này — nên được khám trong ngày.",
+          "resp_high_severity": "Bạn mô tả triệu chứng hô hấp nặng — nên được khám trong ngày.",
+          "acute_severe_pain": "Bạn mô tả đau dữ dội mới khởi phát — nên được khám trong ngày.",
+          "high_fever": "Bạn báo có sốt cao — nên được khám trong ngày.",
+          "mental_crisis_passive": "Bạn mô tả đang căng thẳng tâm lý — hãy tìm trợ giúp ngay hôm nay.",
+          "gi_bleeding": "Bạn mô tả nôn ra máu hoặc đi ngoài ra máu — nên được khám trong ngày.",
+          "persistent_moderate": "Triệu chứng vừa phải kéo dài hơn vài ngày.",
+          "long_duration": "Triệu chứng kéo dài hơn một tuần.",
+          "mental_default": "Mối quan tâm về sức khỏe tâm thần đáng được trao đổi với bác sĩ trong ngày.",
+          "mild_short_pain": "Đau nhẹ và ngắn ngày.",
+          "mild_short_gi": "Khó chịu tiêu hóa nhẹ và ngắn ngày.",
+          "mild_short_fever": "Sốt nhẹ và ngắn ngày.",
+          "mild_short_skin": "Vấn đề da liễu nhẹ và ngắn ngày.",
+          "meds_overuse": "Bạn mô tả đã uống thuốc quá liều khuyến cáo — hãy được khám trong ngày."
+        }
+      },
+      "questions": {
+        "title": "Câu hỏi để hỏi bác sĩ",
+        "subtitle": "Chọn từ gợi ý hoặc thêm câu của riêng bạn. Tối đa {max} câu hỏi.",
+        "suggested": "Gợi ý cho bạn",
+        "yourList": "Danh sách của bạn ({count}/{max})",
+        "addCustom": "Thêm câu hỏi của riêng bạn",
+        "addCustomPlaceholder": "VD: Tôi có cần chụp X-quang không?",
+        "add": "Thêm",
+        "remove": "Xóa",
+        "lockedHint": "Luôn được giữ",
+        "tooManyHint": "Đã đạt giới hạn. Hãy xóa một câu để thêm câu mới.",
+        "empty": "Chưa có câu hỏi nào — chọn một gợi ý hoặc viết câu của bạn."
+      },
+      "review": {
+        "title": "Xem lại bản chuẩn bị",
+        "concernsHeader": "Vấn đề của bạn",
+        "questionsHeader": "Câu hỏi của bạn",
+        "routingHeader": "Gợi ý bước tiếp theo",
+        "attachHeader": "Cuộc hẹn đã đính kèm",
+        "attachNone": "Chưa đính kèm",
+        "edit": "Sửa",
+        "print": "In hoặc lưu"
+      },
+      "attach": {
+        "title": "Đính kèm vào một cuộc hẹn",
+        "subtitle": "Chọn một cuộc hẹn sắp tới để bản chuẩn bị này hiển thị cùng cuộc hẹn đó.",
+        "noUpcoming": "Chưa có cuộc hẹn sắp tới.",
+        "createAppointment": "Tạo cuộc hẹn",
+        "attachAction": "Đính kèm",
+        "detach": "Bỏ đính kèm",
+        "attached": "Đã đính kèm vào {label}",
+        "replacedActive": "Thay cho bản chuẩn bị đã đính kèm trước đó."
+      },
+      "disclaimer": "Công cụ này giúp bạn chuẩn bị cho buổi khám — không thay thế việc chẩn đoán. Nếu triệu chứng có vẻ nặng hoặc đang xấu đi, hãy liên hệ bác sĩ hoặc dịch vụ cấp cứu địa phương.",
+      "finalized": {
+        "title": "Bản chuẩn bị đã hoàn tất",
+        "body": "Hãy mang theo trong buổi khám tới. Bạn có thể in hoặc đính kèm vào một cuộc hẹn."
+      },
+      "errors": {
+        "loadFailed": "Không tải được bản chuẩn bị này. Vui lòng thử lại.",
+        "saveFailed": "Không lưu được. Vui lòng thử lại.",
+        "finalizeRequirements": "Thêm ít nhất một vấn đề và giữ ít nhất một câu hỏi trước khi hoàn tất."
+      }
+    },
+    "emergencyCard": {
+      "pageTitle": "Thẻ y tế khẩn cấp",
+      "pageSubtitle": "Chia sẻ thông tin y tế quan trọng với nhân viên cứu thương qua mã QR có thể thu hồi.",
+      "publishedTitle": "Thẻ đã công khai",
+      "publishedSubtitle": "{count} thẻ QR đang hoạt động. Người quét có thể đọc thông tin tối thiểu của bạn.",
+      "unpublishedTitle": "Thẻ đang riêng tư",
+      "unpublishedSubtitle": "Không ai có thể quét thẻ này cho đến khi bạn công khai.",
+      "publishSwitch": "Công khai thẻ",
+      "publishedToast": "Đã công khai thẻ.",
+      "unpublishedToast": "Đã ngừng công khai — mọi lần quét QR sẽ hiển thị 'không khả dụng'.",
+      "togglePublishFailed": "Không thể đổi trạng thái. Vui lòng thử lại.",
+      "previewTitle": "Người ứng cứu sẽ thấy",
+      "previewMutedNote": "Chỉ là xem trước — hãy công khai để thẻ có thể quét được.",
+      "print": "In thẻ",
+      "tabs": {
+        "qr": "Thẻ QR",
+        "edit": "Chỉnh sửa",
+        "logs": "Nhật ký",
+        "editDirtyAria": "Có thay đổi chưa lưu"
+      },
+      "provenance": {
+        "publishedAt": "Công khai từ {date}"
+      },
+      "consent": {
+        "title": "Tạo thẻ y tế khẩn cấp",
+        "subtitle": "Giúp bác sĩ cấp cứu xử lý nhanh hơn — kể cả khi bạn không thể nói.",
+        "feature1Title": "Chỉ hiển thị thông tin cần thiết",
+        "feature1Body": "Họ tên, nhóm máu, dị ứng, bệnh nền, thuốc, liên hệ ICE. Không có gì khác.",
+        "feature2Title": "Mặc định ẩn",
+        "feature2Body": "Chúng tôi không bao giờ tiết lộ email, địa chỉ, ngày sinh đầy đủ, lịch dùng thuốc hay ghi chú riêng.",
+        "feature3Title": "Thu hồi tức thì",
+        "feature3Body": "Mất ví? Thu hồi QR trong vài giây — thẻ cũ ngừng hoạt động ngay lập tức.",
+        "exposedTitle": "Thẻ của bạn sẽ hiển thị",
+        "exposed1": "Họ tên, tuổi, nhóm máu",
+        "exposed2": "Dị ứng và bệnh mạn tính",
+        "exposed3": "Thuốc đang dùng (chỉ tên thuốc + hàm lượng)",
+        "exposed4": "Tối đa 3 liên hệ khẩn cấp (tên, số điện thoại)",
+        "hiddenTitle": "Chúng tôi không bao giờ hiển thị",
+        "hidden1": "Email, địa chỉ, ngày sinh đầy đủ, ảnh đại diện",
+        "hidden2": "Lịch dùng thuốc, bác sĩ kê đơn, phòng khám",
+        "hidden3": "Ghi chú y tế riêng tư",
+        "incompleteProfileWarning": "Hãy thêm họ tên, nhóm máu và liên hệ khẩn cấp trong Hồ sơ trước để có thẻ hữu ích nhất.",
+        "revocableNote": "Bạn có thể thu hồi hoặc ngừng công khai bất cứ lúc nào.",
+        "createCta": "Tạo thẻ khẩn cấp",
+        "publishing": "Đang công khai…",
+        "published": "Đã tạo thẻ — hãy tạo mã QR tiếp theo.",
+        "publishFailed": "Không thể tạo thẻ. Vui lòng thử lại."
+      },
+      "nudges": {
+        "complete": "Hồ sơ đã sẵn sàng để công khai.",
+        "completeBody": "Mức độ đầy đủ {score}/100 — bạn có thể tạo mã QR.",
+        "criticalHeader": "{n} mục quan trọng cần sửa trước khi công khai",
+        "recommendedHeader": "{n} mục nên bổ sung để thẻ hữu ích hơn",
+        "fixInProfile": "Sửa trong hồ sơ",
+        "messages": {
+          "missingEmergencyContacts": "Thêm ít nhất một liên hệ khẩn cấp",
+          "missingBloodType": "Thêm nhóm máu",
+          "missingAllergies": "Xác nhận dị ứng (hoặc đánh dấu 'Không có dị ứng')",
+          "missingConditions": "Liệt kê các bệnh mạn tính",
+          "missingMedications": "Liệt kê thuốc đang dùng"
+        }
+      },
+      "fields": {
+        "blood_type": "Nhóm máu",
+        "age": "Tuổi",
+        "gender": "Giới tính",
+        "allergies": "Dị ứng",
+        "conditions": "Bệnh mạn tính",
+        "medications": "Thuốc",
+        "contacts": "Liên hệ khẩn cấp",
+        "assistance": "Hỗ trợ cần thiết",
+        "equipment": "Thiết bị y tế",
+        "communication": "Giao tiếp",
+        "preferred_language": "Ngôn ngữ ưa thích"
+      },
+      "edit": {
+        "allergiesTitle": "Dị ứng",
+        "nkdaTitle": "Tôi không có dị ứng thuốc đã biết",
+        "nkdaDesc": "Khi chọn, thẻ sẽ hiển thị 'NKDA — Không có dị ứng thuốc đã biết' để người ứng cứu thấy xác nhận rõ ràng, không phải dữ liệu trống.",
+        "assistanceTitle": "Hỗ trợ cần thiết",
+        "assistanceDesc": "Chọn tất cả phù hợp — các nhãn này sẽ xuất hiện trên thẻ công khai.",
+        "assistance": {
+          "walking": "Hỗ trợ di chuyển",
+          "communication": "Hỗ trợ giao tiếp",
+          "dietary": "Chế độ ăn đặc biệt",
+          "hearing": "Khiếm thính",
+          "vision": "Khiếm thị",
+          "cognitive": "Hỗ trợ nhận thức"
+        },
+        "equipmentTitle": "Thiết bị y tế",
+        "equipmentDesc": "Máy tạo nhịp, bơm insulin, oxy, v.v.",
+        "equipmentPlaceholder": "VD: Máy tạo nhịp (2024), bơm insulin",
+        "communicationTitle": "Ghi chú giao tiếp",
+        "communicationDesc": "Ngôn ngữ ký hiệu, thiết bị AAC, ngôn ngữ ưa thích.",
+        "communicationPlaceholder": "VD: Chỉ nói tiếng Việt, dùng ASL",
+        "languageTitle": "Ngôn ngữ ưa thích",
+        "languageDesc": "Mã ISO (vi / en / fr). Hiển thị ở góc trên-phải thẻ.",
+        "visibilityTitle": "Hiển thị từng trường",
+        "visibilityDesc": "Tắt bất kỳ phần nào bạn không muốn người ứng cứu thấy.",
+        "save": "Lưu thay đổi",
+        "saving": "Đang lưu…",
+        "saved": "Đã lưu",
+        "saveFailed": "Không thể lưu. Vui lòng thử lại.",
+        "reset": "Hoàn tác"
+      },
+      "tokens": {
+        "title": "Thẻ QR của bạn",
+        "activeCount": "{active}/{max} đang hoạt động",
+        "mint": "Tạo QR",
+        "revokeAll": "Thu hồi tất cả",
+        "mintDisabledNotPublished": "Hãy công khai thẻ trước khi tạo QR.",
+        "mintDisabledCap": "Bạn đã đạt giới hạn thẻ đang hoạt động. Hãy thu hồi một thẻ để tạo mới.",
+        "emptyTitle": "Chưa có thẻ QR",
+        "emptyBody": "Tạo một thẻ để in lên thẻ ví hoặc ép plastic làm vòng đeo tay.",
+        "active": "Đang hoạt động",
+        "revoked": "Đã thu hồi",
+        "createdAt": "Tạo {date}",
+        "lastSeen": "Quét gần nhất {date}",
+        "neverScanned": "Chưa quét lần nào",
+        "hits": "{count} lần quét",
+        "revoke": "Thu hồi",
+        "revokedToast": "Đã thu hồi token — QR không còn quét được.",
+        "revokeFailed": "Không thể thu hồi token. Vui lòng thử lại.",
+        "revokeAllConfirmTitle": "Thu hồi tất cả QR đang hoạt động?",
+        "revokeAllConfirmBody": "Tất cả QR đã in sẽ ngừng hoạt động ngay lập tức. Bạn có thể tạo mới sau đó.",
+        "revokeAllConfirmCta": "Thu hồi tất cả",
+        "revokedAllToast": "Đã thu hồi tất cả token.",
+        "revokeAllFailed": "Không thể thu hồi tất cả. Vui lòng thử lại.",
+        "cancel": "Huỷ"
+      },
+      "mint": {
+        "title": "Tạo thẻ QR mới",
+        "description": "Liên kết bên dưới chỉ hiển thị một lần. Hãy lưu ảnh QR trước khi đóng hộp thoại này.",
+        "defaultLabel": "Thẻ ví",
+        "labelInput": "Nhãn",
+        "labelPlaceholder": "VD: Ví, Vòng đeo tay, Tủ lạnh",
+        "exposedTitle": "Khi quét, QR này sẽ hiển thị:",
+        "exposed1": "Họ tên, tuổi, nhóm máu",
+        "exposed2": "Dị ứng và bệnh mạn tính",
+        "exposed3": "Thuốc đang dùng (chỉ tên + hàm lượng)",
+        "exposed4": "Tối đa 3 số điện thoại khẩn cấp",
+        "acknowledge": "Tôi hiểu thẻ này có thể đọc được bởi bất kỳ ai có QR cho đến khi tôi thu hồi.",
+        "lowCompletenessTitle": "Hồ sơ dưới mức hoàn thành khuyến nghị ({score}/100)",
+        "lowCompletenessBody": "Tôi hiểu thẻ này sẽ ít hữu ích trong tình huống khẩn cấp.",
+        "cancel": "Huỷ",
+        "mint": "Tạo thẻ QR",
+        "minting": "Đang tạo…",
+        "mintFailed": "Không thể tạo thẻ. Vui lòng thử lại.",
+        "tooMany": "Bạn đã có số thẻ QR tối đa. Hãy thu hồi một thẻ trước.",
+        "notPublished": "Hãy công khai thẻ trước khi tạo QR.",
+        "insufficient": "Hồ sơ chưa đủ thông tin. Hãy bổ sung các mục quan trọng hoặc đánh dấu xác nhận.",
+        "labelRequired": "Vui lòng nhập nhãn.",
+        "ackRequired": "Vui lòng xác nhận thông tin sẽ hiển thị.",
+        "ackLowCompletenessRequired": "Vui lòng xác nhận hồ sơ dưới mức khuyến nghị.",
+        "exposedNamePersonalized": "Tên: {name}",
+        "exposedBloodPersonalized": "Nhóm máu: {blood}",
+        "exposedAllergiesPersonalized": "Dị ứng: {list}{more}",
+        "exposedMedsPersonalized": "{count} thuốc đang dùng",
+        "exposedContactsPersonalized": "{count} liên hệ khẩn cấp (số điện thoại)"
+      },
+      "mintResult": {
+        "title": "Đã tạo {label}",
+        "description": "Lưu ảnh QR, sao chép URL hoặc in ngay. Bạn sẽ không thấy token này lần nữa.",
+        "warningTitle": "Chỉ hiển thị một lần",
+        "warningBody": "Nếu đóng hộp thoại mà chưa lưu, bạn cần tạo QR mới — nhưng thẻ hiện tại vẫn có thể thu hồi trong tab Thẻ QR.",
+        "qrAlt": "Mã QR cho {label}",
+        "downloadQr": "Tải QR (PNG)",
+        "urlLabel": "URL chia sẻ",
+        "copyUrl": "Sao chép",
+        "copied": "Đã sao chép",
+        "copiedToast": "Đã sao chép URL vào clipboard.",
+        "copyFailed": "Không thể sao chép. Vui lòng sao chép thủ công.",
+        "done": "Xong",
+        "downloadWalletPdf": "PDF thẻ ví",
+        "autoCloseIn": "Hộp thoại sẽ tự đóng sau {minutes} phút {seconds} giây"
+      },
+      "accessLog": {
+        "title": "Lượt quét gần đây",
+        "subtitle": "Hiển thị {count} mục gần nhất. IP được rút gọn về /24 (IPv4) hoặc /64 (IPv6).",
+        "refresh": "Làm mới",
+        "refreshFailed": "Không thể làm mới nhật ký. Vui lòng thử lại.",
+        "emptyTitle": "Chưa có lượt quét nào",
+        "emptyBody": "Khi có người quét QR, mục đó sẽ xuất hiện ở đây."
+      },
+      "previewTitleDraft": "Người ứng cứu sẽ thấy (chưa lưu)"
+    },
+    "trends": {
+      "title": "Xu hướng sức khỏe",
+      "subtitle": "Thay đổi theo thời gian",
+      "noData": "Chưa đủ dữ liệu để hiển thị xu hướng.",
+      "metrics": {
+        "heart_rate": "Nhịp tim",
+        "steps": "Bước chân",
+        "sleep": "Giấc ngủ",
+        "calories": "Calo",
+        "weight": "Cân nặng"
+      },
+      "units": {
+        "heart_rate": "bpm",
+        "steps": "bước",
+        "sleep": "giờ",
+        "calories": "kcal",
+        "weight": "kg"
+      }
+    },
+    "anomalies": {
+      "title": "Cảnh báo bất thường",
+      "subtitle": "Chỉ số bất thường được phát hiện",
+      "live": "Trực tiếp",
+      "offline": "Ngoại tuyến",
+      "dismiss": "Bỏ qua",
+      "realtimeSection": "Thời gian thực",
+      "recentSection": "Gần đây (30 ngày)",
+      "viewAll": "Xem tất cả xu hướng",
+      "allClear": "Không có bất thường nào trong 30 ngày qua",
+      "statCritical": "Nghiêm trọng",
+      "statWarning": "Cảnh báo",
+      "statTotal": "Tổng (30 ngày)",
+      "metricBreakdown": "Theo chỉ số",
+      "critical": "Nghiêm trọng",
+      "warning": "Cảnh báo"
+    },
+    "aiAdvice": {
+      "eyebrow": "Gợi ý AI",
+      "loadingTitle": "AI đang phân tích",
+      "loadingBody": "Đang đọc tín hiệu sức khỏe mới nhất của bạn.",
+      "errorTitle": "Chưa tải được gợi ý AI",
+      "errorBody": "Bảng điều khiển vẫn hoạt động bình thường. Bạn có thể thử lại sau.",
+      "retry": "Thử lại",
+      "source": {
+        "ai": "AI",
+        "rule": "Dự phòng an toàn",
+        "cache": "Bộ nhớ đệm"
+      }
+    },
+    "exercise": {
+      "title": "Gợi ý luyện tập",
+      "subtitle": "Dựa trên dữ liệu sức khỏe của bạn",
+      "noData": "Ghi lại dữ liệu sức khỏe để nhận gợi ý luyện tập.",
+      "loading": "Đang tải gợi ý luyện tập...",
+      "loadError": "Không tải được gợi ý luyện tập.",
+      "viewAll": "Xem tiến độ",
+      "minutes": "phút",
+      "tabRecommendations": "Gợi ý",
+      "tabWeekly": "Tuần này",
+      "weeklyPlanTitle": "Kế hoạch tuần",
+      "types": {
+        "warning": "Lưu ý",
+        "tip": "Mẹo",
+        "goal": "Mục tiêu",
+        "success": "Tốt"
+      },
+      "intensity": {
+        "low": "Nhẹ",
+        "medium": "Vừa",
+        "high": "Cao"
+      },
+      "categories": {
+        "cardio": "Cardio",
+        "strength": "Sức mạnh",
+        "flexibility": "Dẻo dai",
+        "balance": "Cân bằng"
+      },
+      "perWeek": "/tuần",
+      "trainingDays": "ngày luyện tập",
+      "estimatedKcal": "kcal ước tính",
+      "planDetails": "Chi tiết kế hoạch",
+      "restDay": "Nghỉ",
+      "days": {
+        "mon": "T2",
+        "tue": "T3",
+        "wed": "T4",
+        "thu": "T5",
+        "fri": "T6",
+        "sat": "T7",
+        "sun": "CN"
+      },
+      "muscles": {
+        "fullBody": "Toàn thân",
+        "cardiovascular": "Tim mạch",
+        "lungs": "Phổi",
+        "chest": "Ngực",
+        "back": "Lưng",
+        "arms": "Tay",
+        "legs": "Chân",
+        "spine": "Cột sống",
+        "hips": "Hông",
+        "shoulders": "Vai",
+        "tendons": "Gân",
+        "core": "Lõi",
+        "balance": "Cân bằng",
+        "nervous": "Thần kinh"
+      },
+      "suggestions": {
+        "exercise-no-data": {
+          "title": "Thiết lập hành trình",
+          "message": "Ghi lại bước chân, giấc ngủ hoặc nhịp tim để nhận kế hoạch luyện tập cá nhân hóa."
+        },
+        "exercise-hr-breathing": {
+          "title": "Kỹ thuật thở 4-7-8",
+          "message": "Nhịp tim đang ở {heart_rate} bpm — cao hơn bình thường. Hít sâu 4 giây, giữ 7 giây, thở ra 8 giây để hạ nhịp tim hiệu quả."
+        },
+        "exercise-hr-elevated": {
+          "title": "Thiền hít thở có chủ đích",
+          "message": "Nhịp tim {heart_rate} bpm — hơi cao. 20 phút thiền chánh niệm hoặc yoga nhẹ giúp hệ thần kinh phó giao cảm hoạt động tốt hơn."
+        },
+        "exercise-bp-yoga": {
+          "title": "Yoga hạ huyết áp",
+          "message": "Huyết áp tâm thu {systolic} mmHg. Các tư thế yoga như Child's Pose, Legs-Up-The-Wall giúp giảm huyết áp tự nhiên sau 25 phút."
+        },
+        "exercise-walk-more": {
+          "title": "Đi bộ nhanh (Power Walk)",
+          "message": "Hôm nay mới đi {steps} bước — còn {remaining} bước nữa đến mục tiêu {target}. 30 phút đi bộ nhanh sau bữa tối đốt ~120 kcal và cải thiện đường huyết."
+        },
+        "exercise-walk-boost": {
+          "title": "Tăng tốc về đích",
+          "message": "Đã đi {steps} bước — còn {remaining} bước nữa. Một cuộc đi bộ 20 phút là đủ để về đích hôm nay."
+        },
+        "exercise-sleep-yoga": {
+          "title": "Giãn cơ phục hồi giấc ngủ",
+          "message": "Bạn chỉ ngủ {sleep_hours} giờ tối qua. Chuỗi giãn cơ nhẹ 20 phút trước khi ngủ — Child's Pose, Supine Twist — giúp giảm cortisol và cải thiện chất lượng giấc ngủ."
+        },
+        "exercise-burn-calories": {
+          "title": "Cardio đốt mỡ hiệu quả",
+          "message": "Đã nạp {calories} kcal hôm nay (vượt {deficit} kcal). 45 phút chạy bộ nhẹ hoặc đạp xe giúp đốt ~315 kcal và duy trì cân bằng năng lượng."
+        },
+        "exercise-strength": {
+          "title": "Tập sức mạnh toàn thân",
+          "message": "Xuất sắc! {steps} bước hôm nay cho thấy cơ thể đang trong trạng thái tốt. Đây là thời điểm lý tưởng cho 30 phút tập kháng lực — squat, push-up, plank."
+        },
+        "exercise-hiit": {
+          "title": "HIIT — Đốt mỡ đỉnh cao",
+          "message": "{steps} bước! Cơ thể đang ở đỉnh phong độ hôm nay. 20 phút HIIT (20 giây bứt tốc / 10 giây nghỉ) đốt gấp đôi lượng mỡ so với cardio thông thường."
+        },
+        "exercise-balanced-strength": {
+          "title": "Ngày Sức mạnh — Thứ 2 / Thứ 5",
+          "message": "Hôm nay là ngày lý tưởng cho tập kháng lực. 35 phút luyện tập với 3 hiệp: squat, deadlift, bench press giúp tăng cơ và đẩy nhanh trao đổi chất."
+        },
+        "exercise-balanced-cardio": {
+          "title": "Ngày Cardio — Thứ 3 / Thứ 6",
+          "message": "Hôm nay là ngày cardio. 30 phút chạy bộ nhẹ (zone 2 — có thể nói chuyện) hoặc đạp xe giúp tăng sức bền tim mạch mà không gây mệt cơ."
+        },
+        "exercise-balanced-flex": {
+          "title": "Ngày Dẻo dai — Thứ 4",
+          "message": "Giữa tuần là thời điểm hoàn hảo để phục hồi. 25 phút yoga hoặc dynamic stretching giúp cơ thể sẵn sàng cho các buổi tập nặng hơn cuối tuần."
+        },
+        "exercise-balanced-rest": {
+          "title": "Ngày Phục hồi Chủ động",
+          "message": "Cuối tuần là lúc cơ thể tái tạo. 20 phút đi bộ thư giãn hoặc giãn cơ nhẹ — không cần tập nặng — giúp cơ bắp phục hồi tối ưu cho tuần mới."
+        }
+      }
+    }
+  },
+  "auth": {
+    "security": {
+      "passwordStrength": {
+        "weak": "Yếu",
+        "medium": "Trung bình",
+        "fair": "Khá",
+        "strong": "Mạnh",
+        "veryStrong": "Rất mạnh"
+      },
+      "breach": {
+        "checking": "Đang kiểm tra với danh sách rò rỉ...",
+        "breached": "Mật khẩu này đã từng bị rò rỉ. Vui lòng chọn mật khẩu khác.",
+        "safe": "Không tìm thấy trong danh sách rò rỉ."
+      },
+      "otpResendIn": "Gửi lại mã sau {seconds}s",
+      "otpResendNow": "Gửi lại mã"
+    },
+    "loginTitle": "Đăng nhập",
+    "loginSubtitle": "Chào mừng trở lại! Đăng nhập để tiếp tục hành trình sức khỏe của bạn.",
+    "registerTitle": "Tạo tài khoản",
+    "registerSubtitle": "Tham gia HealthOS để bắt đầu hành trình sức khỏe cá nhân hóa.",
+    "verifyTitle": "Xác minh tài khoản",
+    "verifySubtitle": "Chúng tôi đã gửi mã OTP 6 số đến email của bạn. Vui lòng nhập mã để xác minh.",
+    "email": "Địa chỉ email",
+    "emailPlaceholder": "you@example.com",
+    "loginIdentifier": "Tên đăng nhập hoặc Email",
+    "loginIdentifierPlaceholder": "Nhập tên đăng nhập hoặc email",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "••••••••",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "confirmPasswordPlaceholder": "••••••••",
+    "fullName": "Họ và tên",
+    "fullNamePlaceholder": "Nguyễn Văn A",
+    "dateOfBirth": "Ngày sinh",
+    "showPassword": "Hiện mật khẩu",
+    "hidePassword": "Ẩn mật khẩu",
+    "rememberMe": "Nhớ mật khẩu",
+    "forgotPassword": "Quên mật khẩu?",
+    "loginButton": "Đăng nhập",
+    "registerButton": "Tạo tài khoản",
+    "verifyButton": "Xác minh",
+    "resendOtp": "Gửi lại mã",
+    "orDivider": "Hoặc tiếp tục với",
+    "continueWithGoogle": "Tiếp tục với Google",
+    "continueWithFacebook": "Tiếp tục với Facebook",
+    "continueWithGitHub": "Tiếp tục với GitHub",
+    "noAccount": "Chưa có tài khoản?",
+    "hasAccount": "Đã có tài khoản?",
+    "registerLink": "Đăng ký ngay",
+    "loginLink": "Đăng nhập",
+    "backToLogin": "Quay lại đăng nhập",
+    "passwordMismatch": "Mật khẩu xác nhận không khớp.",
+    "otpDescription": "Nhập mã 6 số được gửi đến {email}",
+    "otpExpiry": "Mã OTP có hiệu lực trong 5 phút.",
+    "registrationSuccess": "Đăng ký thành công! Vui lòng kiểm tra email để nhận mã OTP.",
+    "verificationSuccess": "Xác minh thành công! Bạn có thể đăng nhập ngay.",
+    "forgotPasswordTitle": "Đặt lại mật khẩu",
+    "forgotPasswordSubtitle": "Nhập email của bạn và chúng tôi sẽ gửi mã xác minh.",
+    "sendCode": "Gửi mã",
+    "forgotPasswordOtpTitle": "Nhập mã xác minh",
+    "forgotPasswordOtpSubtitle": "Nhập mã 6 số được gửi đến {email}",
+    "newPassword": "Mật khẩu mới",
+    "newPasswordPlaceholder": "••••••••",
+    "confirmNewPassword": "Xác nhận mật khẩu mới",
+    "resetPasswordTitle": "Đặt mật khẩu mới",
+    "resetPasswordSubtitle": "Tạo mật khẩu mạnh cho tài khoản của bạn.",
+    "resetPasswordButton": "Đặt lại mật khẩu",
+    "resetPasswordSuccess": "Đặt lại mật khẩu thành công! Đang chuyển hướng đến trang đăng nhập...",
+    "emailNotFound": "Email này chưa được đăng ký. Vui lòng tạo tài khoản mới.",
+    "registrationFailed": "Gửi mã OTP thất bại. Vui lòng thử lại.",
+    "otpInvalid": "Mã OTP không hợp lệ hoặc đã hết hạn.",
+    "resendFailed": "Không thể gửi lại mã. Vui lòng thử lại.",
+    "sendCodeFailed": "Không thể gửi mã xác minh. Vui lòng thử lại.",
+    "resetPasswordFailed": "Đặt lại mật khẩu thất bại. Vui lòng thử lại.",
+    "usernameLabel": "Tên đăng nhập",
+    "usernamePlaceholder": "vidu123",
+    "usernameTooShort": "Username phải có ít nhất 3 ký tự",
+    "usernameTaken": "Username đã được sử dụng",
+    "passwordRequirements": "Mật khẩu cần ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt",
+    "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+    "oauthErrorCoreUnreachable": "Không thể kết nối máy chủ API. Hãy đảm bảo backend đang chạy và cấu hình môi trường chính xác.",
+    "oauthErrorServerError": "Đăng nhập bằng nhà cung cấp này thất bại. Vui lòng thử lại.",
+    "oauthErrorMissingCode": "Phản hồi OAuth không đầy đủ. Vui lòng đăng nhập lại.",
+    "oauthErrorInvalidState": "Phiên đăng nhập hết hạn hoặc không hợp lệ. Vui lòng thử lại.",
+    "oauthErrorMissingVerifier": "Thiếu dữ liệu bảo mật OAuth. Vui lòng đăng nhập lại.",
+    "oauthErrorNonceMismatch": "Kiểm tra bảo mật OAuth thất bại. Vui lòng đăng nhập lại.",
+    "oauthErrorUnverifiedEmail": "Email tài khoản này chưa được xác minh với nhà cung cấp."
+  },
+  "chat": {
+    "title": "Tin nhắn",
+    "loadingSession": "Đang tải phiên đăng nhập…",
+    "allChats": "Tất cả",
+    "strangers": "Người lạ",
+    "aiAssistant": "HealthOS AI",
+    "searchPlaceholder": "Tìm kiếm cuộc trò chuyện...",
+    "searchUsers": "Tìm người dùng",
+    "searchByEmail": "Tìm kiếm bằng địa chỉ email...",
+    "noResults": "Không tìm thấy người dùng",
+    "newConversation": "Cuộc trò chuyện mới",
+    "noMessages": "Chưa có tin nhắn nào",
+    "noConversation": "Chọn một cuộc trò chuyện để bắt đầu nhắn tin",
+    "typeMessage": "Viết tin nhắn...",
+    "sendMessage": "Gửi",
+    "stopGeneration": "Dừng sinh trả lời",
+    "online": "Đang hoạt động",
+    "offline": "Không hoạt động",
+    "lastSeen": "Hoạt động lúc",
+    "typing": "đang nhập...",
+    "edited": "Đã chỉnh sửa",
+    "recalled": "Tin nhắn đã bị thu hồi",
+    "deletedMessage": "Tin nhắn đã bị xóa",
+    "imageMessage": "Hình ảnh",
+    "fileMessage": "Tệp tin",
+    "pinned": "Đã ghim",
+    "pinChat": "Ghim đoạn hội thoại",
+    "unpinChat": "Bỏ ghim đoạn hội thoại",
+    "muteChat": "Tắt thông báo",
+    "unmuteChat": "Bật thông báo",
+    "deleteChat": "Xóa đoạn hội thoại",
+    "deleteChatConfirm": "Bạn có chắc muốn xóa cuộc trò chuyện này không? Hành động này không thể hoàn tác.",
+    "pinMessage": "Ghim tin nhắn",
+    "unpinMessage": "Bỏ ghim tin nhắn",
+    "replyTo": "Trả lời",
+    "editMessage": "Chỉnh sửa",
+    "recallMessage": "Thu hồi",
+    "recallMessageConfirm": "Thu hồi tin nhắn này với tất cả mọi người?",
+    "deleteMessage": "Xóa",
+    "deleteMessageConfirm": "Xóa tin nhắn này ở phía bạn?",
+    "copyMessage": "Sao chép",
+    "forwardMessage": "Chuyển tiếp",
+    "react": "Bày tỏ cảm xúc",
+    "reactedWith": "Đã bày tỏ cảm xúc",
+    "viewReactions": "Xem cảm xúc",
+    "pinnedMessages": "Tin nhắn đã ghim",
+    "noPinnedMessages": "Chưa có tin nhắn nào được ghim",
+    "replyingTo": "Đang trả lời",
+    "cancelReply": "Hủy trả lời",
+    "editingMessage": "Đang chỉnh sửa tin nhắn",
+    "cancelEdit": "Hủy",
+    "scrollToBottom": "Quay lại cuộc trò chuyện",
+    "saveEdit": "Lưu",
+    "changeTheme": "Đổi chủ đề",
+    "themeGradients": "Màu nền",
+    "themePatterns": "Họa tiết",
+    "themeOpacity": "Độ mờ họa tiết",
+    "themeNone": "Không có chủ đề",
+    "strangerRequest": "Yêu cầu nhắn tin",
+    "strangerInfo": "Người này không có trong danh bạ của bạn.",
+    "accept": "Đồng ý",
+    "reject": "Xóa",
+    "block": "Chặn",
+    "acceptedRequest": "Bạn đã chấp nhận yêu cầu nhắn tin",
+    "rejectedRequest": "Đã xóa yêu cầu nhắn tin",
+    "noStrangers": "Không có yêu cầu nhắn tin",
+    "conversationInfo": "Thông tin cuộc trò chuyện",
+    "sharedMedia": "Ảnh & file đã chia sẻ",
+    "searchInChat": "Tìm kiếm trong đoạn hội thoại",
+    "ai": {
+      "greeting": "Xin chào! Tôi là HealthOS AI Assistant. Tôi có thể hỗ trợ bạn về sức khỏe, dinh dưỡng, nhắc nhở uống thuốc, giải thích kết quả xét nghiệm và nhiều hơn nữa.",
+      "placeholder": "Hỏi tôi về sức khỏe của bạn...",
+      "subtitle": "Sức khỏe 24/7",
+      "disclaimer": "Do AI tạo. Không phải tư vấn y khoa.",
+      "disclaimerLong": "Câu trả lời từ HealthOS AI được tạo tự động và có thể không chính xác hoặc không đầy đủ. Đây chỉ là thông tin tham khảo, không thay thế cho việc thăm khám hay tư vấn của bác sĩ có chuyên môn. Vui lòng liên hệ bác sĩ khi cần chẩn đoán, điều trị hoặc trong tình huống khẩn cấp.",
+      "disclaimerLearnMore": "Tìm hiểu cách AI được sử dụng",
+      "thinking": "Đang suy nghĩ...",
+      "quickReplies": "Câu hỏi nhanh",
+      "streaming": "AI đang trả lời...",
+      "error": "Trợ lý AI gặp lỗi tạm thời. Vui lòng thử lại.",
+      "busy": "Trợ lý AI đang trả lời tin nhắn trước, vui lòng đợi.",
+      "rate_limited": "Bạn nhắn quá nhanh. Vui lòng đợi một chút rồi thử lại.",
+      "botLabel": "Bot",
+      "quickReply1": "Huyết áp là gì và vì sao quan trọng?",
+      "quickReply2": "Gợi ý nguyên tắc ăn uống lành mạnh",
+      "quickReply3": "Làm sao để duy trì thói quen tập luyện?",
+      "quickReply4": "Giải thích chỉ số BMI và giới hạn của nó",
+      "quickReply5": "Mẹo để nhớ uống thuốc đều đặn",
+      "quickReply6": "Giúp tôi chuẩn bị cho buổi khám"
+    },
+    "muted": "Đã tắt thông báo",
+    "unread": "chưa đọc",
+    "yesterday": "Hôm qua",
+    "today": "Hôm nay",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "delete": "Xóa",
+    "send": "Gửi",
+    "you": "Bạn",
+    "members": "{count} thành viên",
+    "searchInChatPlaceholder": "Tìm tin nhắn...",
+    "noSearchResults": "Không tìm thấy tin nhắn",
+    "attachFile": "Đính kèm tệp",
+    "attachImage": "Đính kèm ảnh",
+    "uploadComingSoon": "Tính năng upload sắp ra mắt",
+    "imageUploadBadType": "Chọn ảnh JPEG, PNG hoặc WEBP.",
+    "imageUploadTooLarge": "Ảnh phải nhỏ hơn hoặc bằng {maxMb}MB.",
+    "imageUploadFailed": "Không thể gửi ảnh. Vui lòng thử lại.",
+    "imageUploadOffline": "Kết nối internet trước khi gửi ảnh.",
+    "imageUploadAiUnavailable": "Chat AI chưa hỗ trợ gửi ảnh.",
+    "typingAria": "Người dùng đang nhập",
+    "healthQuestion": "Hỏi về sức khỏe",
+    "aiIntegrationNote": "Tôi đã nhận được tin nhắn của bạn! Tính năng AI đang được tích hợp với AI Worker.",
+    "unknownUser": "Chưa có thông tin",
+    "messageActions": "Thao tác tin nhắn",
+    "moreActions": "Thêm thao tác",
+    "moreOptions": "Tùy chọn khác",
+    "jumpToDateAria": "Nhảy đến {label}",
+    "newMessagesBadge": "{count} tin nhắn mới",
+    "dateJumpTitle": "Chọn ngày để nhảy đến",
+    "dateJumpTodaySubtitle": "Nhảy đến tin nhắn mới nhất",
+    "dateJumpMonthCount": "{count} tin nhắn",
+    "dateJumpNoMessages": "Chưa có tin nhắn nào",
+    "dateJumpNotFound": "Chưa tìm thấy tin nhắn cho ngày này",
+    "pinnedMore": "+{count} tin khác",
+    "collapsePinned": "Thu gọn tin đã ghim",
+    "expandPinned": "Mở rộng tin đã ghim",
+    "status": {
+      "queued": "Đang chờ gửi — sẽ tự gửi khi bạn online",
+      "sending": "Đang gửi",
+      "sent": "Đã gửi",
+      "delivered": "Đã nhận",
+      "read": "Đã đọc",
+      "failed": "Gửi không thành công",
+      "failedReasonNetwork": "Không gửi được — sự cố mạng.",
+      "failedReasonRateLimited": "Hơi nhanh quá — gửi quá nhiều tin nhắn.",
+      "failedReasonValidation": "Không thể gửi tin nhắn này.",
+      "retry": "Thử lại",
+      "discard": "Bỏ"
+    },
+    "connection": {
+      "reconnecting": "Đang kết nối lại…",
+      "offline": "Bạn đang offline. Tin nhắn sẽ được gửi khi kết nối lại.",
+      "sessionExpired": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại để tiếp tục.",
+      "signInAgain": "Đăng nhập lại",
+      "reconnectNow": "Thử lại"
+    },
+    "queue": {
+      "evictedTitle": "Đã bỏ một số tin nhắn trong hàng đợi",
+      "evictedDescription": "{n} tin nhắn cũ nhất không thể giữ lại khi bạn offline.",
+      "enqueueFailedTitle": "Tin nhắn chưa được xếp hàng",
+      "offlineQueuedTitle": "Tin nhắn đã được xếp hàng",
+      "offlineQueuedDescription": "Sẽ gửi khi bạn kết nối trở lại."
+    },
+    "empty": {
+      "noConversationsTitle": "Chưa có cuộc trò chuyện",
+      "noConversationsDescription": "Bắt đầu trò chuyện với bạn bè, đội ngũ chăm sóc hoặc HealthOS AI.",
+      "startNewChat": "Bắt đầu trò chuyện",
+      "noPinnedTitle": "Chưa có tin nhắn được ghim",
+      "noPinnedDescription": "Nhấn giữ tin nhắn để ghim vào đây cho dễ tra cứu.",
+      "noMediaTitle": "Chưa có ảnh hay tệp",
+      "noMediaDescription": "Ảnh và tệp được chia sẻ trong cuộc trò chuyện này sẽ hiện ở đây.",
+      "noSearchResultsTitle": "Không tìm thấy",
+      "noSearchResultsDescription": "Thử từ khoá khác hoặc kiểm tra chính tả.",
+      "blockedTitle": "Không thể nhắn tin với người này",
+      "blockedDescription": "Bạn hoặc họ đã chặn nhau. Bỏ chặn trong cài đặt để tiếp tục."
+    },
+    "attachments": {
+      "tooLarge": "Ảnh quá lớn. Tối đa {max} MB.",
+      "unsupported": "Chỉ hỗ trợ ảnh JPEG, PNG hoặc WebP.",
+      "uploadFailed": "Không tải được ảnh. Thử lại nhé."
+    },
+    "group": {
+      "newChat": "Tin nhắn mới",
+      "newGroup": "Nhóm mới",
+      "createGroup": "Nhóm mới",
+      "groupTitle": "Tên nhóm",
+      "groupTitlePlaceholder": "Nhập tên nhóm (2–100 ký tự)",
+      "addMembers": "Thêm thành viên",
+      "membersHint": "Chọn ít nhất 2 thành viên",
+      "groupAvatarOptional": "Ảnh nhóm (tuỳ chọn)",
+      "create": "Tạo nhóm",
+      "cancel": "Huỷ",
+      "errorGroupTitleTooShort": "Tên nhóm phải có ít nhất 2 ký tự",
+      "errorGroupTitleTooLong": "Tên nhóm không được quá 100 ký tự",
+      "errorGroupTooSmall": "Chọn ít nhất 2 thành viên",
+      "errorGroupTooLarge": "Nhóm không được quá 50 thành viên",
+      "members": "Thành viên ({count})",
+      "addMembersTitle": "Thêm thành viên",
+      "leave": "Rời nhóm",
+      "leaveConfirmTitle": "Rời nhóm này?",
+      "leaveConfirmDesc": "Bạn sẽ không nhận được tin nhắn từ nhóm này nữa.",
+      "leaveConfirm": "Rời nhóm",
+      "removeMember": "Xoá",
+      "promote": "Thăng lên quản trị viên",
+      "demote": "Hạ xuống thành viên",
+      "transferOwnership": "Chuyển quyền trưởng nhóm",
+      "transferOwnershipConfirmTitle": "Chuyển quyền trưởng nhóm?",
+      "transferOwnershipConfirmDesc": "Bạn sẽ trở thành quản trị viên sau khi chuyển quyền.",
+      "transferOwnershipConfirm": "Chuyển",
+      "editTitle": "Sửa tên",
+      "editAvatar": "Đổi ảnh nhóm",
+      "owner": "Trưởng nhóm",
+      "admin": "Quản trị viên",
+      "member": "Thành viên",
+      "queuedHint": "{count} tin chờ — sẽ gửi khi có mạng",
+      "systemMessage": "Hệ thống"
+    }
+  },
+  "reports": {
+    "title": "Báo cáo sức khỏe",
+    "subtitle": "Tổng hợp và phân tích dữ liệu sức khỏe của bạn",
+    "period": "Kỳ báo cáo",
+    "period7d": "7 ngày",
+    "period30d": "30 ngày",
+    "period90d": "90 ngày",
+    "generatedAt": "Tạo lúc",
+    "overallStatus": "Tình trạng tổng thể",
+    "statusNormal": "Bình thường",
+    "statusWarning": "Cần chú ý",
+    "statusCritical": "Cần can thiệp",
+    "alertCount": "{count} cảnh báo",
+    "noAlerts": "Không có cảnh báo",
+    "viewDetail": "Xem chi tiết",
+    "exportPdf": "Xuất PDF",
+    "exportPdfLoading": "Đang tạo PDF...",
+    "exportPdfSuccess": "Đang chuẩn bị PDF — bạn sẽ nhận thông báo khi tệp sẵn sàng.",
+    "exportPdfExpired": "Liên kết tải PDF đã hết hạn. Vui lòng tạo lại.",
+    "exportPdfDownloadFailed": "Không tải được PDF. Vui lòng thử lại.",
+    "share": "Chia sẻ",
+    "shareReport": "Chia sẻ báo cáo",
+    "analyzeTrends": "Phân tích xu hướng",
+    "recentReports": "Lịch sử báo cáo",
+    "noRecentReports": "Chưa có báo cáo nào",
+    "reportFor": "Báo cáo · {period}",
+    "alertsCount": "{count, plural, other {# cảnh báo}}",
+    "downloadPdfAria": "Tải xuống PDF",
+    "shareReportAria": "Chia sẻ báo cáo",
+    "viewReportAria": "Xem báo cáo",
+    "categories": {
+      "vitals": "Chỉ số sinh tồn",
+      "nutrition": "Dinh dưỡng",
+      "activity": "Hoạt động thể chất",
+      "sleep": "Giấc ngủ",
+      "bmi": "BMI & Cân nặng",
+      "medication": "Tuân thủ dùng thuốc"
+    },
+    "stats": {
+      "average": "Trung bình",
+      "min": "Thấp nhất",
+      "max": "Cao nhất",
+      "trend": "Xu hướng",
+      "change": "Thay đổi"
+    },
+    "trend": {
+      "improving": "Cải thiện",
+      "stable": "Ổn định",
+      "declining": "Giảm sút"
+    },
+    "detail": {
+      "title": "Báo cáo chi tiết",
+      "backToReports": "Quay lại báo cáo",
+      "dataTable": "Dữ liệu chi tiết",
+      "date": "Ngày",
+      "value": "Giá trị",
+      "status": "Trạng thái",
+      "alerts": "Cảnh báo trong kỳ",
+      "noAlerts": "Không có cảnh báo nào trong kỳ này",
+      "alertsSection": "Cảnh báo trong kỳ",
+      "alertValue": "Giá trị",
+      "alertThreshold": "Ngưỡng",
+      "severity": {
+        "critical": "Nghiêm trọng",
+        "warning": "Cảnh báo",
+        "info": "Thông tin"
+      }
+    },
+    "export": {
+      "createdAt": "Tạo lúc:",
+      "dialogDescription": "Chọn nội dung bao gồm trong file PDF.",
+      "sections": "Danh mục báo cáo",
+      "options": "Tuỳ chọn",
+      "includeRawTable": "Bao gồm bảng dữ liệu thô",
+      "includeAiInsights": "Bao gồm nhận xét AI",
+      "includeSensitive": "Bao gồm phần nhạy cảm",
+      "includeSensitiveHint": "Bao gồm thông tin tuân thủ thuốc và các mục nhạy cảm khác. Mặc định tắt.",
+      "sensitiveBlocked": "Bạn chọn một mục nhạy cảm nhưng chưa bật 'Bao gồm phần nhạy cảm'. Vui lòng bật hoặc bỏ chọn mục đó.",
+      "cancel": "Huỷ",
+      "popupBlocked": "Không thể mở cửa sổ tải xuống. Vui lòng cho phép popup.",
+      "selectAtLeastOne": "Vui lòng chọn ít nhất một danh mục.",
+      "errorGeneric": "Tạo PDF thất bại",
+      "piiTitle": "Dữ liệu cá nhân nhạy cảm",
+      "piiBody": "File PDF này chứa tên và chỉ số sức khoẻ của bạn. Hãy tránh chia sẻ trên kênh công khai và lưu trữ ở nơi riêng tư.",
+      "acknowledge": "Tôi đã hiểu và muốn tải xuống"
+    }
+  },
+  "trends": {
+    "title": "Phân tích xu hướng",
+    "subtitle": "Phân tích và dự báo chỉ số sức khỏe theo thời gian",
+    "breadcrumb": {
+      "parent": "Báo cáo",
+      "root": "Bảng điều khiển",
+      "ariaLabel": "Đường dẫn"
+    },
+    "selectMetric": "Chọn chỉ số",
+    "compareMetric": "So sánh với",
+    "metrics": {
+      "heart_rate": "Nhịp tim",
+      "blood_pressure": "Huyết áp",
+      "calories": "Lượng calo",
+      "steps": "Số bước",
+      "sleep": "Giấc ngủ",
+      "bmi": "BMI",
+      "weight": "Cân nặng"
+    },
+    "chart": {
+      "actual": "Thực tế",
+      "trendLine": "Đường xu hướng",
+      "prediction": "Dự báo",
+      "anomaly": "Điểm bất thường",
+      "uncertaintyBand": "Khoảng dự đoán",
+      "srCaption": "Bảng dữ liệu của biểu đồ xu hướng, bao gồm số đo thực tế và dự báo.",
+      "srDate": "Ngày",
+      "srSeries": "Chỉ số",
+      "srValue": "Giá trị"
+    },
+    "anomalies": "Điểm bất thường",
+    "noAnomalies": "Không phát hiện điểm bất thường",
+    "aiSummary": "Nhận xét AI",
+    "aiDisclaimer": "Nhận xét do AI tạo tự động từ dữ liệu gần nhất. Không thay thế lời khuyên y khoa.",
+    "compare": "So sánh chỉ số",
+    "export": "Xuất phân tích"
+  },
+  "share": {
+    "title": "Chia sẻ báo cáo",
+    "subtitle": "Gửi báo cáo sức khỏe đến người thân",
+    "recipients": "Người nhận",
+    "addRecipient": "Thêm người nhận",
+    "name": "Họ và tên",
+    "email": "Email",
+    "relationship": "Mối quan hệ",
+    "channels": "Kênh gửi",
+    "channelEmail": "Email (đính kèm PDF)",
+    "channelInApp": "Thông báo trong app",
+    "channelSms": "SMS (cần số điện thoại)",
+    "phone": "Số điện thoại (cho SMS)",
+    "message": "Lời nhắn (tuỳ chọn)",
+    "messagePlaceholder": "Thêm ghi chú cho người nhận...",
+    "send": "Gửi ngay",
+    "sending": "Đang gửi...",
+    "cancel": "Hủy",
+    "sent": "Đã gửi",
+    "failed": "Thất bại",
+    "pending": "Đang chờ",
+    "retry": "Thử lại",
+    "autoShare": {
+      "title": "Phát hiện chỉ số bất thường!",
+      "subtitle": "Báo cáo sẽ tự động gửi đến người thân trong",
+      "seconds": "giây",
+      "sendNow": "Gửi ngay",
+      "cancel": "Hủy gửi tự động",
+      "customize": "Tùy chỉnh người nhận",
+      "normalTitle": "Kết quả sức khỏe bình thường",
+      "normalSubtitle": "Bạn có muốn chia sẻ báo cáo này với người thân không?",
+      "shareOptional": "Chia sẻ (tuỳ chọn)"
+    },
+    "settings": {
+      "title": "Cài đặt chia sẻ tự động",
+      "enable": "Bật chia sẻ tự động",
+      "threshold": "Ngưỡng cảnh báo",
+      "thresholdCritical": "Chỉ khi nghiêm trọng",
+      "thresholdWarning": "Cảnh báo và nghiêm trọng",
+      "defaultContacts": "Người nhận mặc định",
+      "countdown": "Thời gian đếm ngược (giây)",
+      "save": "Lưu cài đặt",
+      "saved": "Đã lưu!"
+    },
+    "noEmergencyContacts": "Chưa có người liên hệ khẩn cấp. Thêm trong phần hồ sơ.",
+    "alertsWord": "cảnh báo",
+    "goToProfile": "Đến hồ sơ"
+  },
+  "progress": {
+    "setGoal": "Đặt mục tiêu BMI",
+    "editGoal": "Chỉnh sửa mục tiêu",
+    "deadline": "Ngày mục tiêu",
+    "daysRemaining": "Còn X ngày",
+    "overdue": "Đã quá hạn",
+    "height": "Chiều cao",
+    "targetHeight": "Chiều cao mục tiêu",
+    "currentWeight": "Cân nặng hiện tại",
+    "targetWeight": "Cân nặng mục tiêu",
+    "targetBmi": "BMI mục tiêu",
+    "bmi": "BMI",
+    "bmiAutoHint": "BMI tự động tính từ cân nặng và chiều cao mục tiêu",
+    "targetWeightRequired": "Nhập cân nặng mục tiêu.",
+    "targetWeightRange": "Cân nặng mục tiêu phải trong khoảng 30 đến 200 kg.",
+    "deadlineMustBeTodayOrFuture": "Chọn hôm nay hoặc một ngày trong tương lai cho mục tiêu.",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "currentBmi": "BMI hiện tại",
+    "bmiScore": "Điểm BMI",
+    "recWeight": "Cân nặng gợi ý: {weight} kg (BMI=22)",
+    "recHeight": "Chiều cao gợi ý: {height} cm (BMI=22)",
+    "legendCurrent": "Hiện tại",
+    "legendTarget": "Mục tiêu",
+    "cardWeight": "Cân nặng",
+    "cardHeight": "Chiều cao",
+    "bmiProgress": "Tiến độ BMI",
+    "bmiChart": "Biểu đồ BMI",
+    "chartSubtitle": "Lịch sử BMI theo thời gian",
+    "chartNoData": "Chưa có dữ liệu BMI",
+    "bmiInfo": "Thông tin BMI",
+    "classification": "Phân loại",
+    "achievedGoals": "{n} đã đạt",
+    "pageTitle": "Tiến độ BMI",
+    "pageSubtitle": "Theo dõi chỉ số BMI và cân nặng của bạn",
+    "rangeLabel": "Đang xem xu hướng",
+    "customRangeUnavailable": "Khoảng thời gian tuỳ chỉnh sắp ra mắt. Hãy chọn 7, 30 hoặc 90 ngày.",
+    "bmiCategory": {
+      "underweight": "Gầy",
+      "normal": "Bình thường",
+      "overweight": "Thừa cân",
+      "obese": "Béo phì"
+    },
+    "insight": {
+      "eyebrow": "Insight hôm nay",
+      "logNow": "Ghi chỉ số mới",
+      "newUser": "Chào mừng đến HealthOS. Hãy ghi cân nặng hôm nay để bắt đầu theo dõi xu hướng.",
+      "noReadings": "Chưa có chỉ số nào. Hãy ghi cân nặng để bắt đầu theo dõi.",
+      "stale": "Đã {daysSince} ngày kể từ lần đo gần nhất. Cập nhật để xu hướng được chính xác.",
+      "stable": "BMI của bạn ổn định quanh {bmi} trong {windowDays} ngày qua.",
+      "trendingToTarget": "Bạn đã tiến gần thêm {gapClosed} so với mục tiêu ({targetBmi}) trong {windowDays} ngày qua. Tuyệt vời.",
+      "trendingAway": "BMI đã rời xa mục tiêu ({targetBmi}) thêm {gapWidened} trong {windowDays} ngày qua.",
+      "trendingTowardNoGoal": "BMI giảm {delta} trong {windowDays} ngày qua, hiện ở mức {bmi}.",
+      "trendingAwayNoGoal": "BMI tăng {delta} trong {windowDays} ngày qua, hiện ở mức {bmi}."
+    }
+  },
+  "comingSoon": {
+    "title": "Tính năng đang được phát triển",
+    "description": "Chúng tôi đang nỗ lực xây dựng tính năng này. Cảm ơn bạn đã kiên nhẫn!",
+    "estimatedTime": "Dự kiến hoàn thành: Tháng 4/2026"
+  },
+  "primitives": {
+    "source": {
+      "ariaPrefix": "Nguồn:",
+      "manual": "Nhập thủ công",
+      "apple_health": "Apple Health",
+      "google_fit": "Google Fit",
+      "fitbit": "Fitbit",
+      "garmin": "Garmin",
+      "withings": "Withings",
+      "samsung_health": "Samsung Health",
+      "health_connect": "Health Connect"
+    },
+    "freshness": {
+      "live": "Tức thời",
+      "recent": "Mới",
+      "stale": "Đã cũ",
+      "very_stale": "Rất cũ",
+      "no_data": "Chưa có dữ liệu"
+    },
+    "confidence": {
+      "ariaPrefix": "Độ tin cậy:",
+      "high": "Độ tin cậy cao",
+      "medium": "Độ tin cậy trung bình",
+      "low": "Độ tin cậy thấp — vui lòng kiểm tra",
+      "unknown": "Chưa rõ độ tin cậy"
+    },
+    "permissionBanner": {
+      "enable": "Bật",
+      "dismiss": "Đóng",
+      "notifications": {
+        "title": "Bạn đang tắt thông báo",
+        "body": "Bật thông báo để nhận nhắc thuốc, lịch khám và cảnh báo chỉ số sức khoẻ bất thường.",
+        "deniedHint": "Trình duyệt đã chặn thông báo. Mở phần cài đặt của trang web để cho phép lại."
+      },
+      "camera": {
+        "title": "Cần quyền truy cập camera",
+        "body": "Cho phép truy cập camera để chụp ảnh bữa ăn và phân tích bằng AI.",
+        "deniedHint": "Trình duyệt đã chặn camera. Mở phần cài đặt của trang web để cho phép lại."
+      },
+      "storage": {
+        "title": "Cần quyền lưu trữ",
+        "body": "Cho phép truy cập bộ nhớ để HealthOS giữ lại bản nháp giữa các phiên.",
+        "deniedHint": "Trình duyệt đã chặn quyền lưu trữ. Mở phần cài đặt của trang web để cho phép lại."
+      }
+    },
+    "dataState": {
+      "pendingTitle": "Đang xử lý",
+      "pendingBody": "Tác vụ này thường hoàn tất trong dưới một phút. Bạn có thể tiếp tục dùng các phần khác.",
+      "noPermissionTitle": "Cần cấp quyền",
+      "noPermissionBody": "Cấp quyền để xem nội dung này.",
+      "noPermissionCta": "Cấp quyền",
+      "emptyTitle": "Chưa có dữ liệu",
+      "emptyBody": "Khi bạn bắt đầu ghi nhận, dữ liệu sẽ xuất hiện ở đây.",
+      "emptyInRangeTitle": "Không có dữ liệu trong khoảng này",
+      "emptyInRangeBody": "Thử mở rộng khoảng thời gian hoặc kiểm tra thiết bị đã kết nối.",
+      "emptyInRangeCta": "Đổi khoảng thời gian",
+      "recoverableErrorTitle": "Không tải được",
+      "recoverableErrorBody": "Chúng tôi không kết nối được tới máy chủ. Vui lòng thử lại.",
+      "retry": "Thử lại",
+      "refresh": "Làm mới",
+      "hardErrorTitle": "Đã xảy ra lỗi",
+      "hardErrorBody": "Có lỗi ngoài dự kiến. Đội ngũ của chúng tôi đã được thông báo.",
+      "contactSupport": "Liên hệ hỗ trợ",
+      "missingPayload": "Không có nội dung để hiển thị.",
+      "syncingChip": "Đang đồng bộ",
+      "partialChip": "Dữ liệu một phần",
+      "degradedChip": "Dịch vụ suy giảm"
+    }
+  },
+  "state": {
+    "offline": "Ngoại tuyến",
+    "reconnecting": "Đang kết nối lại...",
+    "online": "Trực tuyến",
+    "freshness": {
+      "justNow": "Vừa xong",
+      "minAgo": "Cập nhật {n} phút trước",
+      "hrAgo": "Cập nhật {n} giờ trước",
+      "dayAgo": "Cập nhật {n} ngày trước"
+    },
+    "errors": {
+      "title": "Đã xảy ra lỗi.",
+      "description": "Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ hỗ trợ.",
+      "retry": "Thử lại",
+      "copyDetails": "Sao chép chi tiết",
+      "detailsCopied": "Đã sao chép!",
+      "goHome": "Về trang chính",
+      "notFoundTitle": "Không tìm thấy trang",
+      "notFoundDescription": "Chúng tôi không tìm thấy trang bạn yêu cầu.",
+      "permissionTitle": "Bị từ chối truy cập",
+      "permissionDescription": "Bạn không có quyền xem trang này.",
+      "offlineTitle": "Bạn đang ngoại tuyến",
+      "offlineDescription": "Hãy kết nối lại internet để tiếp tục."
+    },
+    "empty": {
+      "noResults": "Không có kết quả phù hợp.",
+      "noData": "Chưa có dữ liệu.",
+      "noDataInRange": "Không có dữ liệu trong khoảng đã chọn."
+    }
+  },
+  "onboardingV2": {
+    "title": "Thiết lập hồ sơ HealthOS của bạn",
+    "subtitle": "Vài bước nhanh để cá nhân hóa trải nghiệm. Bạn có thể chỉnh sửa sau.",
+    "stepLabels": {
+      "basics": "Cơ bản",
+      "body": "Cơ thể",
+      "contact": "Liên hệ",
+      "emergency": "Khẩn cấp",
+      "medical": "Y tế",
+      "review": "Xem lại"
+    },
+    "next": "Tiếp",
+    "back": "Quay lại",
+    "skip": "Bỏ qua",
+    "saveDraft": "Lưu nháp",
+    "draftSaved": "Đã lưu nháp",
+    "draftSavedAt": "Đã lưu nháp lúc {time}",
+    "draftFailed": "Không lưu được nháp. Tiến trình của bạn được giữ trên thiết bị.",
+    "completeButton": "Hoàn tất thiết lập",
+    "reviewTitle": "Xem lại thông tin",
+    "reviewSubtitle": "Xác nhận mọi thứ chính xác. Chúng tôi chỉ dùng dữ liệu này để cá nhân hóa HealthOS cho bạn.",
+    "reviewNoValue": "Chưa cung cấp",
+    "consentLabel": "Tôi xác nhận thông tin trên là chính xác và đồng ý cho HealthOS sử dụng để cá nhân hóa.",
+    "consentRequired": "Vui lòng xác nhận đồng ý ở trên.",
+    "optional": "Tùy chọn",
+    "required": "Bắt buộc",
+    "stepNOfM": "Bước {n} / {total}"
+  },
+  "legal": {
+    "privacy": {
+      "meta": {
+        "title": "Quyền riêng tư",
+        "description": "Cách HealthOS thu thập, sử dụng và bảo vệ dữ liệu sức khoẻ của bạn."
+      },
+      "title": "Chính sách quyền riêng tư",
+      "subtitle": "Chúng tôi chưa phải nền tảng bệnh án được cấp phép. Trang này mô tả dữ liệu hiện đang thu thập và các quyền kiểm soát mà bạn có.",
+      "lastUpdated": "Cập nhật lần cuối: tháng 4 năm 2026",
+      "sections": {
+        "collect": {
+          "title": "Chúng tôi thu thập gì",
+          "body": "Hồ sơ tài khoản, nhật ký sức khoẻ (chỉ số sinh tồn, bữa ăn, nhắc nhở, lịch khám), lịch sử hội thoại AI và dữ liệu đồng bộ từ thiết bị bạn kết nối."
+        },
+        "use": {
+          "title": "Chúng tôi dùng ra sao",
+          "body": "Để tạo báo cáo, hiển thị bảng điều khiển, tạo tóm tắt bằng AI và gửi nhắc nhở bạn bật. Email tiếp thị mặc định tắt."
+        },
+        "share": {
+          "title": "Chúng tôi chia sẻ với ai",
+          "body": "Chỉ với worker AI tạo tóm tắt (mặc định không có analytics bên thứ ba) và người bạn chủ động mời qua luồng chia sẻ báo cáo."
+        },
+        "retention": {
+          "title": "Chúng tôi lưu trong bao lâu",
+          "body": "Dữ liệu tài khoản tồn tại đến khi bạn xoá. Số liệu tổng hợp ẩn danh có thể được giữ để cải thiện dịch vụ."
+        },
+        "rights": {
+          "title": "Quyền của bạn",
+          "body": "Xuất toàn bộ dữ liệu trong Cài đặt → Quyền riêng tư → Tải xuống. Xoá tài khoản trong Cài đặt → Quyền riêng tư → Xoá. Cả hai đều không thể hoàn tác."
+        },
+        "contact": {
+          "title": "Liên hệ",
+          "body": "Gửi email tới privacy@healthos.io.vn — phản hồi trong 5 ngày làm việc."
+        }
+      },
+      "draftNote": "Trang này là bản tạm trong khi chính sách đầy đủ và bảng thời hạn lưu trữ đang được pháp lý xem xét."
+    },
+    "healthData": {
+      "meta": {
+        "title": "Chính sách dữ liệu sức khỏe",
+        "description": "Những gì HealthOS đọc từ Health Connect, cách lưu trữ và cách thu hồi quyền."
+      },
+      "title": "Chính sách dữ liệu sức khỏe",
+      "subtitle": "Trang này nói về dữ liệu chúng tôi đọc từ Android Health Connect. Xem chính sách bảo mật chung qua liên kết ở cuối trang.",
+      "lastUpdated": "Cập nhật cuối: tháng 4, 2026",
+      "sections": {
+        "what": {
+          "title": "Chúng tôi đọc gì",
+          "body": "Khi bạn kết nối Health Connect từ ứng dụng HealthOS Android, chúng tôi xin quyền chỉ-đọc cho bốn loại bản ghi: Bước chân, Nhịp tim, Giấc ngủ (chỉ thời lượng) và Cân nặng. Bạn có thể cấp một phần bất kỳ; chúng tôi chỉ xin những gì bảng điều khiển cần."
+        },
+        "how": {
+          "title": "Chúng tôi dùng dữ liệu thế nào",
+          "body": "Chúng tôi hiển thị bản ghi trên bảng điều khiển, biểu đồ xu hướng và báo cáo định kỳ. Các phép tổng hợp (trung bình, tổng theo ngày) chạy trên backend để cùng một con số xuất hiện trên web và di động. Chúng tôi không dùng dữ liệu sức khỏe của bạn để huấn luyện mô hình."
+        },
+        "storage": {
+          "title": "Chúng tôi lưu gì",
+          "body": "Chúng tôi lưu chỉ số dẫn xuất (giá trị, đơn vị, thời điểm ghi nhận), tên gói (package name) của ứng dụng nguồn trên Android (ví dụ: Samsung Health), và nhãn phương pháp ghi của Health Connect (tự động vs. thủ công). Chúng tôi không sao lưu dữ liệu thô như sóng tim, dấu vết GPS hoặc mẫu nhịp tim dưới giây."
+        },
+        "sharing": {
+          "title": "Chúng tôi chia sẻ với ai",
+          "body": "Chúng tôi không chia sẻ dữ liệu Health Connect của bạn với bên thứ ba. Cách dữ liệu rời hệ thống duy nhất là luồng chia sẻ báo cáo do bạn tự kích hoạt từ trang Báo cáo."
+        },
+        "revocation": {
+          "title": "Cách thu hồi quyền",
+          "body": "Mở ứng dụng Android Health Connect → Ứng dụng → HealthOS → Gỡ quyền truy cập. Các lần đồng bộ tiếp theo sẽ thất bại nhẹ nhàng và bạn sẽ thấy banner 'Quyền đã bị thu hồi' trong HealthOS. Dữ liệu chúng tôi đã nhập trước đó không bị ảnh hưởng; xem mục Xóa dưới đây."
+        },
+        "deletion": {
+          "title": "Cách xóa dữ liệu đã nhập",
+          "body": "Trong ứng dụng HealthOS hoặc trên web: Cài đặt → Thiết bị kết nối → Health Connect → Ngắt kết nối — sẽ dừng đồng bộ tiếp và xóa trạng thái sync. Để xóa các bản ghi đã nhập, dùng Cài đặt → Quyền riêng tư → Xóa tài khoản, sẽ xóa toàn bộ dữ liệu chúng tôi nắm giữ về bạn."
+        },
+        "contact": {
+          "title": "Câu hỏi",
+          "body": "Email privacy@healthos.io.vn — phản hồi trong vòng 5 ngày làm việc."
+        }
+      },
+      "footer": {
+        "see": "Xem thêm",
+        "generalPolicy": "chính sách bảo mật chung"
+      }
+    }
+  },
+  "publicEmergency": {
+    "meta": {
+      "title": "Thẻ y tế khẩn cấp — HealthOS",
+      "description": "Thông tin y tế quan trọng do bệnh nhân chia sẻ cho nhân viên cứu thương. Không tìm thấy qua công cụ tìm kiếm."
+    },
+    "trustNote": "Lưu trữ bởi HealthOS. Bệnh nhân kiểm soát, có thể thu hồi.",
+    "rateLimitedTitle": "Quá nhiều yêu cầu",
+    "rateLimitedBody": "Vui lòng chậm lại. Hãy thử lại sau {seconds} giây.",
+    "goneTitle": "Thẻ khẩn cấp này không còn hoạt động.",
+    "goneBody": "Vui lòng liên hệ bệnh nhân hoặc dùng giấy tờ tuỳ thân khác.",
+    "provenance": {
+      "updatedAt": "Cập nhật {date}"
+    },
+    "emergencyNumberHint": "Trong tình huống cấp cứu, hãy gọi số cấp cứu tại địa phương (115 ở Việt Nam, 911 ở Mỹ, 112 ở châu Âu)."
+  },
+  "admin": {
+    "common": {
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "retry": "Thử lại",
+      "loading": "Đang tải…",
+      "search": "Tìm kiếm…",
+      "clearFilters": "Xóa bộ lọc",
+      "noResults": "Không có kết quả",
+      "yes": "Có",
+      "no": "Không",
+      "back": "Quay lại",
+      "previous": "Trước",
+      "next": "Tiếp",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép",
+      "submitting": "Đang lưu…",
+      "actions": "Thao tác"
+    },
+    "shell": {
+      "title": "Quản trị",
+      "groups": {
+        "operations": "Vận hành",
+        "subscriptions": "Gói đăng ký",
+        "trustSafety": "An toàn & Kiểm soát"
+      },
+      "nav": {
+        "overview": "Tổng quan",
+        "users": "Người dùng",
+        "plans": "Gói",
+        "security": "Bảo mật",
+        "audit": "Nhật ký"
+      },
+      "expand": "Mở rộng thanh bên",
+      "collapse": "Thu gọn thanh bên"
+    },
+    "overview": {
+      "title": "Tổng quan",
+      "description": "Tình trạng hệ thống và hoạt động gần đây."
+    },
+    "users": {
+      "title": "Người dùng",
+      "description": "Tìm kiếm, lọc và quản lý tài khoản người dùng.",
+      "searchPlaceholder": "Tìm kiếm người dùng…",
+      "statusFilter": {
+        "all": "Tất cả",
+        "active": "Hoạt động",
+        "banned": "Bị cấm",
+        "deleted": "Đã xóa"
+      },
+      "table": {
+        "user": "Người dùng",
+        "email": "Email",
+        "status": "Trạng thái",
+        "plan": "Gói",
+        "joined": "Ngày tham gia",
+        "lastSeen": "Lần cuối truy cập"
+      },
+      "pagination": "Hiển thị {from}–{to} trong {total} người dùng",
+      "page": "Trang {page} / {pages}"
+    },
+    "userDetail": {
+      "backToUsers": "Người dùng",
+      "copyId": "Sao chép ID",
+      "cannotBanSelf": "Không thể cấm tài khoản của chính bạn",
+      "tabs": {
+        "profile": "Hồ sơ",
+        "subscription": "Gói đăng ký",
+        "activity": "Hoạt động"
+      },
+      "profile": {
+        "heading": "Hồ sơ",
+        "displayName": "Tên hiển thị",
+        "email": "Email",
+        "userId": "ID người dùng",
+        "status": "Trạng thái",
+        "roles": "Vai trò",
+        "noRoles": "Không có vai trò",
+        "createdAt": "Ngày tạo",
+        "lastSeen": "Lần cuối truy cập",
+        "noName": "(chưa đặt tên)"
+      },
+      "subscription": {
+        "heading": "Gói đăng ký",
+        "current": "Gói hiện tại",
+        "plan": "Gói",
+        "status": "Trạng thái",
+        "expiresAt": "Ngày hết hạn",
+        "noSubscription": "Chưa có gói đăng ký",
+        "assignTitle": "Gán gói đăng ký",
+        "selectPlan": "Chọn gói…",
+        "selectStatus": "Chọn trạng thái…",
+        "expiresOptional": "(tùy chọn, định dạng ISO 8601)",
+        "noteLabel": "Ghi chú quản trị",
+        "noteHint": "(tùy chọn, tối đa 500 ký tự)",
+        "notePlaceholder": "Ghi chú nội bộ chỉ hiển thị với quản trị viên…",
+        "assignButton": "Gán gói đăng ký",
+        "resetButton": "Khôi phục về hiện tại",
+        "quickActions": {
+          "title": "Thao tác nhanh",
+          "cancel": "Hủy đăng ký",
+          "extend30": "Gia hạn +30 ngày",
+          "extend90": "Gia hạn +90 ngày",
+          "resetFree": "Đặt lại về Free"
+        },
+        "history": {
+          "title": "Lịch sử gán gói",
+          "empty": "Chưa có thay đổi nào.",
+          "by": "Bởi {actor}",
+          "columns": {
+            "when": "Thời gian",
+            "actor": "Người thực hiện",
+            "plan": "Gói",
+            "status": "Trạng thái",
+            "expires": "Hết hạn",
+            "note": "Ghi chú"
+          }
+        },
+        "toasts": {
+          "updated": "Đã cập nhật gói đăng ký.",
+          "failed": "Cập nhật gói đăng ký thất bại."
+        },
+        "dialogs": {
+          "cancel": {
+            "title": "Hủy đăng ký?",
+            "description": "Gói sẽ được đánh dấu là đã hủy. Quyền truy cập vẫn còn đến ngày hết hạn hiện tại.",
+            "confirm": "Hủy đăng ký"
+          },
+          "extend30": {
+            "title": "Gia hạn thêm 30 ngày?",
+            "description": "Gói sẽ được gia hạn thêm 30 ngày từ ngày hết hạn hiện tại (hoặc hôm nay nếu đã hết hạn/hủy).",
+            "confirm": "Gia hạn +30 ngày"
+          },
+          "extend90": {
+            "title": "Gia hạn thêm 90 ngày?",
+            "description": "Gói sẽ được gia hạn thêm 90 ngày từ ngày hết hạn hiện tại (hoặc hôm nay nếu đã hết hạn/hủy).",
+            "confirm": "Gia hạn +90 ngày"
+          },
+          "resetFree": {
+            "title": "Đặt lại về gói Free?",
+            "description": "Người dùng sẽ được chuyển ngay về gói Free. Ngày hết hạn sẽ bị xóa.",
+            "confirm": "Đặt lại về Free"
+          }
+        }
+      },
+      "actionBar": {
+        "ban": "Cấm",
+        "banning": "Đang cấm…",
+        "unban": "Bỏ cấm",
+        "unbanning": "Đang bỏ cấm…"
+      },
+      "ban": {
+        "title": "Cấm người dùng",
+        "reasonLabel": "Lý do",
+        "reasonPlaceholder": "Lý do cấm người dùng này…",
+        "confirm": "Cấm người dùng",
+        "toastBanned": "Đã cấm người dùng.",
+        "toastUnbanned": "Đã bỏ cấm người dùng."
+      },
+      "activity": {
+        "heading": "Hoạt động",
+        "empty": "Không có hoạt động nào được ghi nhận.",
+        "error": "Tải hoạt động thất bại.",
+        "retry": "Thử lại"
+      }
+    },
+    "subscriptions": {
+      "title": "Gói đăng ký",
+      "description": "Quản lý bốn gói đăng ký HealthOS chính thức.",
+      "planLabels": {
+        "free": "Miễn phí",
+        "basic": "Cơ bản",
+        "family": "Gia đình",
+        "professional": "Chuyên nghiệp"
+      },
+      "table": {
+        "code": "Mã",
+        "name": "Tên",
+        "price": "Giá",
+        "billingPeriod": "Chu kỳ thanh toán",
+        "status": "Trạng thái",
+        "actions": "Thao tác"
+      },
+      "edit": {
+        "title": "Chỉnh sửa gói",
+        "submit": "Lưu thay đổi"
+      }
+    },
+    "forbidden": {
+      "title": "Từ chối truy cập",
+      "description": "Bạn không có quyền truy cập khu vực quản trị này.",
+      "back": "Về trang chủ"
+    },
+    "errors": {
+      "generic": "Lỗi không xác định.",
+      "fetchFailed": "Tải thất bại.",
+      "serverError": "Lỗi máy chủ ({status}).",
+      "timeout": "Yêu cầu hết thời gian.",
+      "noRetries": "Đã đạt số lần thử lại tối đa."
+    }
+  }
+}
