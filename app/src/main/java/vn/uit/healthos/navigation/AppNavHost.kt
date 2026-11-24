@@ -47,6 +47,7 @@ import vn.uit.healthos.core.designsystem.glass.ScrollEdgeEffect
 import vn.uit.healthos.feature.auth.authGraph
 import vn.uit.healthos.feature.chat.chatGraph
 import vn.uit.healthos.feature.dev.devGraph
+import vn.uit.healthos.feature.home.HomeNavigation
 import vn.uit.healthos.feature.home.homeGraph
 import vn.uit.healthos.feature.meals.SnapDestination
 import vn.uit.healthos.feature.meals.mealsGraph
@@ -145,6 +146,30 @@ fun AppNavHost(
         }
     }
 
+    // Opens a tab the way the bottom bar does; a chat with a prompt is a fresh entry so the prompt is applied.
+    val navigateTab: (Any) -> Unit = { target ->
+        navController.navigate(target) {
+            popUpTo(HomeRoute) { saveState = true }
+            launchSingleTop = true
+            restoreState = target !is ChatRoute || target.prompt == null
+        }
+    }
+    val homeNavigation = remember(navController) {
+        HomeNavigation(
+            onOpenMe = { navigateTab(MeRoute) },
+            onOpenSafety = { navController.navigate(SafetyRoute) },
+            onOpenLeaderboard = { navController.navigate(LeaderboardRoute) },
+            onOpenMeals = { navigateTab(MealsRoute) },
+            onOpenSnap = {
+                navigateTab(MealsRoute)
+                navController.navigate(SnapDestination)
+            },
+            onOpenPpg = { navController.navigate(PpgRoute) },
+            onOpenMeds = { navigateTab(MedsRoute) },
+            onOpenChat = { prompt -> navigateTab(ChatRoute(prompt = prompt)) },
+        )
+    }
+
     // A home-screen widget asked for a screen: open it once the session is ready (the app lock overlay still covers it).
     LaunchedEffect(pendingRoute, bootstrap) {
         val target = pendingRoute ?: return@LaunchedEffect
@@ -203,13 +228,15 @@ fun AppNavHost(
                         onboardingGraph(
                             onCompleted = { navigateRoot(HomeRoute) },
                         )
-                        homeGraph()
+                        homeGraph(navigation = homeNavigation)
                         mealsGraph(navController = navController)
                         chatGraph(onOpenSafety = { navController.navigate(SafetyRoute) })
                         medsGraph(navController = navController)
                         profileGraph(
                             navController = navController,
                             appLockManager = appLockManager,
+                            onOpenFriends = { navController.navigate(FriendsRoute) },
+                            onOpenLeaderboard = { navController.navigate(LeaderboardRoute) },
                             onOpenSafety = { navController.navigate(SafetyRoute) },
                             onOpenPpg = { navController.navigate(PpgRoute) },
                             onOpenDesignGallery = { navController.navigate(DesignGalleryRoute) },

@@ -37,6 +37,8 @@ fun NavBackStackEntry.OnEmergencyContactsSaved(onSaved: () -> Unit) {
 fun NavGraphBuilder.profileGraph(
     navController: NavController,
     appLockManager: AppLockManager,
+    onOpenFriends: () -> Unit,
+    onOpenLeaderboard: () -> Unit,
     onOpenSafety: () -> Unit,
     onOpenPpg: () -> Unit,
     onOpenDesignGallery: () -> Unit,
@@ -56,6 +58,8 @@ fun NavGraphBuilder.profileGraph(
         MeScreen(
             state = state,
             onRefresh = viewModel::refresh,
+            onOpenFriends = onOpenFriends,
+            onOpenLeaderboard = onOpenLeaderboard,
             onOpenSafety = onOpenSafety,
             onOpenPpg = onOpenPpg,
             onOpenSettings = { navController.navigate(SettingsRoute) },
@@ -76,6 +80,10 @@ fun NavGraphBuilder.profileGraph(
             canUseBiometrics = canUseBiometrics,
             onThemeModeChange = viewModel::setThemeMode,
             onDynamicColorChange = viewModel::setDynamicColor,
+            onAccentChange = viewModel::setAccentPreset,
+            onBackgroundStyleChange = viewModel::setBackgroundStyle,
+            onReducedTransparencyChange = viewModel::setReducedTransparency,
+            onLeaderboardVisibilityChange = viewModel::setLeaderboardVisibility,
             onAppLockChange = viewModel::setAppLockEnabled,
             onBack = { navController.popBackStack() },
         )

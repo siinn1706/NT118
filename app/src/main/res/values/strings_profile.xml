@@ -10,4 +10,32 @@
     <string name="profile_contact_error_too_long">Nội dung quá dài.</string>
     <string name="profile_contact_error_phone">Số điện thoại không hợp lệ (8–15 chữ số, có thể bắt đầu bằng +).</string>
     <string name="profile_contact_error_email">Email không hợp lệ.</string>
+
+    <!-- Me tab -->
+    <string name="profile_social_section">Cộng đồng</string>
+    <string name="profile_friends_title">Bạn bè</string>
+    <string name="profile_friends_subtitle">Kết bạn, lời mời và trò chuyện</string>
+    <string name="profile_leaderboard_title">Bảng xếp hạng</string>
+    <string name="profile_leaderboard_subtitle">So số bước chân với bạn bè và mọi người</string>
+
+    <!-- Settings -->
+    <string name="settings_accent_label">Màu nhấn</string>
+    <string name="settings_accent_dynamic_hint">Đang dùng màu động theo hình nền nên không chọn được màu nhấn. Tắt Màu động để chọn màu.</string>
+    <string name="settings_background_label">Kiểu nền</string>
+    <string name="settings_background_preview_cd">Xem trước kiểu nền %1$s</string>
+    <string name="settings_background_preview_sample">Thẻ kính mẫu</string>
+    <string name="settings_reduced_transparency_title">Giảm độ trong suốt</string>
+    <string name="settings_reduced_transparency_subtitle">Dùng nền đặc thay cho hiệu ứng kính để chữ dễ đọc hơn</string>
+    <string name="settings_privacy_section">Quyền riêng tư</string>
+    <string name="settings_leaderboard_title">Hiển thị trên bảng xếp hạng</string>
+    <string name="settings_leaderboard_subtitle">Ai được thấy số bước chân của bạn trên bảng xếp hạng</string>
+    <string name="settings_leaderboard_off">Tắt</string>
+    <string name="settings_leaderboard_friends">Bạn bè</string>
+    <string name="settings_leaderboard_global">Mọi người</string>
+    <string name="settings_widgets_section">Widget</string>
+    <string name="settings_add_widget_title">Thêm widget</string>
+    <string name="settings_add_widget_subtitle">Ghim widget HealthOS lên màn hình chính</string>
+    <string name="settings_add_widget_hint">Chọn một widget để ghim lên màn hình chính.</string>
+    <string name="settings_add_widget_unsupported">Trình khởi chạy này không cho ứng dụng ghim widget. Hãy nhấn giữ màn hình chính, chọn Widget rồi tìm HealthOS.</string>
+    <string name="settings_add_widget_failed">Không ghim được widget này. Hãy thử thêm từ màn hình chính.</string>
 </resources>

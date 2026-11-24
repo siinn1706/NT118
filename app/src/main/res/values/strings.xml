@@ -9,12 +9,13 @@
 
     <string name="feature_auth">Đăng nhập</string>
     <string name="feature_onboarding">Thiết lập hồ sơ</string>
-    <string name="feature_safety">Safety Net</string>
+    <string name="feature_safety">An toàn</string>
     <string name="feature_ppg">Đo nhịp tim</string>
-    <string name="feature_design_gallery">Design gallery</string>
+    <string name="feature_design_gallery">Thư viện giao diện</string>
 
     <string name="state_loading">Đang tải…</string>
     <string name="action_retry">Thử lại</string>
+    <string name="action_refresh">Làm mới</string>
     <string name="action_back">Quay lại</string>
     <string name="action_continue">Tiếp tục</string>
     <string name="action_cancel">Hủy</string>
@@ -140,7 +141,7 @@
     <string name="profile_safety_subtitle">Phát hiện té ngã, SOS và mã QR khẩn cấp</string>
     <string name="profile_ppg_subtitle">Đo nhịp tim bằng camera sau và đèn flash</string>
     <string name="profile_settings_title">Cài đặt</string>
-    <string name="profile_settings_subtitle">Giao diện, màu động và khóa sinh trắc học</string>
+    <string name="profile_settings_subtitle">Giao diện, màu nhấn, quyền riêng tư và widget</string>
     <string name="profile_gallery_subtitle">Kiểm tra bảng màu và thành phần UI</string>
     <string name="profile_emergency_contacts_section">Liên hệ khẩn cấp</string>
     <string name="profile_logout_action">Đăng xuất</string>
@@ -385,7 +386,7 @@
     <string name="accent_amber">Hổ phách</string>
     <string name="accent_forest">Xanh lá</string>
     <string name="accent_graphite">Than chì</string>
-    <string name="background_aurora">Cực quang</string>
+    <string name="background_aurora">Aurora</string>
     <string name="background_soft">Dịu</string>
     <string name="background_solid">Trơn</string>
     <string name="glass_show_password">Hiện mật khẩu</string>
