@@ -1,5 +1,6 @@
 package vn.uit.healthos.feature.onboarding
 
+import vn.uit.healthos.core.designsystem.theme.AccentPreset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,8 +40,25 @@ data class EmergencyContactForm(
     val email: String = "",
 )
 
+/** The onboarding steps in order; the last one (accent) is optional and never blocks completion. */
+object OnboardingSteps {
+    const val BODY = 0
+    const val ACTIVITY = 1
+    const val GOAL = 2
+    const val CONTACTS = 3
+    const val APPEARANCE = 4
+    const val COUNT = 5
+    const val LAST = COUNT - 1
+
+    fun next(step: Int): Int = (step + 1).coerceAtMost(LAST)
+
+    fun previous(step: Int): Int = (step - 1).coerceAtLeast(BODY)
+
+    fun isLast(step: Int): Boolean = step >= LAST
+}
+
 data class OnboardingUiState(
-    val step: Int = 0, // 0: Body, 1: Activity, 2: Goal & TDEE, 3: Emergency contacts
+    val step: Int = OnboardingSteps.BODY,
     val fullName: String = "",
     val dateOfBirth: String = "",
     val sex: BiologicalSex = BiologicalSex.MALE,
@@ -51,6 +69,8 @@ data class OnboardingUiState(
     val goalDirection: GoalDirection = GoalDirection.MAINTAIN,
     val targetWeightKg: String = "",
     val contacts: List<EmergencyContactForm> = listOf(EmergencyContactForm()),
+    val accentPreset: AccentPreset = AccentPreset.Default,
+    val dynamicColor: Boolean = false,
     val loading: Boolean = false,
     val savingDraft: Boolean = false,
     val errorMessage: UiText? = null,
@@ -97,6 +117,11 @@ class OnboardingViewModel @Inject constructor(
 
     init {
         loadInitialData()
+        viewModelScope.launch {
+            preferencesRepository.preferences.collect { prefs ->
+                _state.update { it.copy(accentPreset = prefs.accentPreset, dynamicColor = prefs.dynamicColor) }
+            }
+        }
     }
 
     private fun loadInitialData() {
@@ -140,6 +165,12 @@ class OnboardingViewModel @Inject constructor(
     fun onBloodTypeChange(v: String) = _state.update { it.copy(bloodType = v.uppercase().take(4)) }
     fun onActivityChange(v: ActivityLevel) = _state.update { it.copy(activityLevel = v) }
     fun onGoalDirectionChange(v: GoalDirection) = _state.update { it.copy(goalDirection = v) }
+    /** Applies the accent at once (the whole app recolours as a preview) and syncs it like Settings does. */
+    fun onAccentChange(preset: AccentPreset) {
+        _state.update { it.copy(accentPreset = preset) }
+        viewModelScope.launch { profileRepository.setAccentPreset(preset) }
+    }
+
     fun onTargetWeightChange(v: String) = _state.update { it.copy(targetWeightKg = v.filter { c -> c.isDigit() || c == '.' }, validationError = null) }
 
     fun onContactChange(index: Int, updated: EmergencyContactForm) {
@@ -167,7 +198,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun previousStep() {
-        _state.update { it.copy(step = (it.step - 1).coerceAtLeast(0), validationError = null, errorMessage = null) }
+        _state.update { it.copy(step = OnboardingSteps.previous(it.step), validationError = null, errorMessage = null) }
     }
 
     fun nextStep() {
@@ -177,7 +208,7 @@ class OnboardingViewModel @Inject constructor(
             _state.update { it.copy(validationError = error) }
             return
         }
-        val next = (current.step + 1).coerceAtMost(3)
+        val next = OnboardingSteps.next(current.step)
         _state.update {
             // The goal step starts from the weight just entered rather than an invented number.
             it.copy(step = next, targetWeightKg = it.targetWeightKg.ifBlank { it.weightKg }, validationError = null, errorMessage = null)
@@ -239,18 +270,18 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun validateStep(s: OnboardingUiState): String? = when (s.step) {
-        0 -> when {
+        OnboardingSteps.BODY -> when {
             s.fullName.isBlank() -> "NAME_REQUIRED"
             s.ageYears == null -> "DOB_INVALID"
             s.heightCm.toDoubleOrNull()?.let { it in 50.0..300.0 } != true -> "HEIGHT_INVALID"
             s.weightKg.toDoubleOrNull()?.let { it in 20.0..500.0 } != true -> "WEIGHT_INVALID"
             else -> null
         }
-        2 -> when {
+        OnboardingSteps.GOAL -> when {
             s.targetWeightKg.toDoubleOrNull()?.let { it in 30.0..200.0 } != true -> "TARGET_WEIGHT_INVALID"
             else -> null
         }
-        3 -> if (s.contacts.map { it.toInput() }.toContactsOrNull() == null) "CONTACT_INCOMPLETE" else null
+        OnboardingSteps.CONTACTS -> if (s.contacts.map { it.toInput() }.toContactsOrNull() == null) "CONTACT_INCOMPLETE" else null
         else -> null
     }
 

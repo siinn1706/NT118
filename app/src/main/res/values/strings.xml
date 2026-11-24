@@ -76,6 +76,8 @@
     <string name="auth_error_invalid_mfa">Mã xác thực tối thiểu 6 ký tự</string>
 
     <!-- Onboarding -->
+    <string name="onboarding_appearance_title">Chọn màu cho ứng dụng</string>
+    <string name="onboarding_appearance_subtitle">Không bắt buộc. Bạn có thể đổi lại bất cứ lúc nào trong Cài đặt.</string>
     <string name="onboarding_step_progress">Bước %1$d / %2$d</string>
     <string name="onboarding_body_title">Chỉ số cơ thể</string>
     <string name="onboarding_body_subtitle">Giúp HealthOS tính toán BMR, BMI và nhu cầu năng lượng chính xác.</string>
