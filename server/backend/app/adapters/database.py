@@ -27,20 +27,40 @@ def _build_async_engine_options(app_settings):
     return options
 
 
+class _UnconfiguredEngine:
+    """Stand-in engine used when DATABASE_URL is empty.
+
+    Settings allow an empty DATABASE_URL outside production, so importing this
+    module must not fail; tests and tooling that never touch the database (unit
+    tests, OpenAPI dumps) can then import the app. Any real use of the engine
+    raises a clear error instead of SQLAlchemy's URL parse error at import.
+    """
+
+    def __getattr__(self, name: str):
+        raise RuntimeError("DATABASE_URL is not set; the database is unavailable")
+
+    async def dispose(self) -> None:
+        return None
+
+
 _async_engine_options = _build_async_engine_options(settings)
 
-engine = create_async_engine(settings.database_url, **_async_engine_options)
+if settings.database_url:
+    engine = create_async_engine(settings.database_url, **_async_engine_options)
+
+    # Sync engine for Celery tasks
+    sync_engine = create_engine(
+        settings.database_url.replace("+asyncpg", ""),
+        pool_size=20,
+        max_overflow=10,
+        pool_pre_ping=True,
+        pool_recycle=300,
+    )
+else:
+    engine = _UnconfiguredEngine()
+    sync_engine = _UnconfiguredEngine()
 
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
-
-# Sync engine for Celery tasks
-sync_engine = create_engine(
-    settings.database_url.replace("+asyncpg", ""),
-    pool_size=20,
-    max_overflow=10,
-    pool_pre_ping=True,
-    pool_recycle=300,
-)
 SyncSessionLocal = sessionmaker(bind=sync_engine)
 
 
