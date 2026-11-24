@@ -1,5 +1,6 @@
 package vn.uit.healthos.feature.dev
 
+import vn.uit.healthos.core.designsystem.glass.GlassRoot
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,42 +60,43 @@ fun DesignGalleryScreen(onBack: () -> Unit, viewModel: DesignGalleryViewModel = 
     val ping by viewModel.ping.collectAsStateWithLifecycle()
 
     HealthOsTheme(themeMode = mode) {
-        DetailScaffold(title = "Design gallery", onBack = onBack) { padding ->
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ThemeMode.entries.forEach { option ->
-                        FilterChip(selected = mode == option, onClick = { mode = option }, label = { Text(option.name) })
+        GlassRoot {
+            DetailScaffold(title = "Design gallery", onBack = onBack) { padding ->
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ThemeMode.entries.forEach { option ->
+                            FilterChip(selected = mode == option, onClick = { mode = option }, label = { Text(option.name) })
+                        }
                     }
+                    OrbSection()
+                    SectionHeader("Metric tiles")
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        MetricTile("Bước chân", "6 482", Modifier.weight(1f), unit = "bước", icon = Icons.AutoMirrored.Rounded.DirectionsWalk, caption = "65% mục tiêu")
+                        MetricTile("Calo", "1 240", Modifier.weight(1f), unit = "kcal", icon = Icons.Rounded.LocalFireDepartment, iconTint = LocalVitalColors.current.energy)
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        MetricTile("Nước", "1.5", Modifier.weight(1f), unit = "L", icon = Icons.Rounded.WaterDrop)
+                        MetricTile("Nhịp tim", "72", Modifier.weight(1f), unit = "bpm", icon = Icons.Rounded.Favorite, iconTint = MaterialTheme.colorScheme.tertiary)
+                    }
+                    SectionHeader("Colour roles", actionLabel = "Action", onAction = {})
+                    ColorSwatches()
+                    SectionHeader("Buttons")
+                    PrimaryButton("Primary", onClick = {}, modifier = Modifier.fillMaxWidth())
+                    PrimaryButton("Loading", onClick = {}, loading = true, modifier = Modifier.fillMaxWidth())
+                    SecondaryButton("Secondary", onClick = {}, modifier = Modifier.fillMaxWidth())
+                    SectionHeader("Typography")
+                    TypographySamples()
+                    SectionHeader("Backend")
+                    BackendPing(viewModel.baseUrl, ping, viewModel::pingBackend)
+                    SectionHeader("Error state")
+                    BentoCard { ErrorState("Không kết nối được máy chủ.", onRetry = {}) }
                 }
-                OrbSection()
-                SectionHeader("Metric tiles")
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MetricTile("Bước chân", "6 482", Modifier.weight(1f), unit = "bước", icon = Icons.AutoMirrored.Rounded.DirectionsWalk, caption = "65% mục tiêu")
-                    MetricTile("Calo", "1 240", Modifier.weight(1f), unit = "kcal", icon = Icons.Rounded.LocalFireDepartment, iconTint = LocalVitalColors.current.energy)
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MetricTile("Nước", "1.5", Modifier.weight(1f), unit = "L", icon = Icons.Rounded.WaterDrop)
-                    MetricTile("Nhịp tim", "72", Modifier.weight(1f), unit = "bpm", icon = Icons.Rounded.Favorite, iconTint = MaterialTheme.colorScheme.tertiary)
-                }
-                SectionHeader("Colour roles", actionLabel = "Action", onAction = {})
-                ColorSwatches()
-                SectionHeader("Buttons")
-                PrimaryButton("Primary", onClick = {}, modifier = Modifier.fillMaxWidth())
-                PrimaryButton("Loading", onClick = {}, loading = true, modifier = Modifier.fillMaxWidth())
-                SecondaryButton("Secondary", onClick = {}, modifier = Modifier.fillMaxWidth())
-                SectionHeader("Typography")
-                TypographySamples()
-                SectionHeader("Backend")
-                BackendPing(viewModel.baseUrl, ping, viewModel::pingBackend)
-                SectionHeader("Error state")
-                BentoCard { ErrorState("Không kết nối được máy chủ.", onRetry = {}) }
             }
         }
     }

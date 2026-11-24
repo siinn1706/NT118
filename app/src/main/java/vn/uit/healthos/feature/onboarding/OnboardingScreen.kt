@@ -1,5 +1,10 @@
 package vn.uit.healthos.feature.onboarding
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.Box
+import vn.uit.healthos.core.designsystem.glass.GlassStyle
+import vn.uit.healthos.core.designsystem.glass.GlassTokens
+import vn.uit.healthos.core.designsystem.glass.liquidGlass
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,13 +67,17 @@ fun OnboardingScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = Color.Transparent,
         bottomBar = {
-            Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .liquidGlass(shape = GlassTokens.CardShape, style = GlassStyle.Chrome),
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .padding(horizontal = 12.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     if (state.step > 0) {

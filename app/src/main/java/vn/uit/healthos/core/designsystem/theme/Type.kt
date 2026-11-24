@@ -23,22 +23,27 @@ private fun style(size: Int, lineHeight: Int, weight: FontWeight, letterSpacing:
     letterSpacing = letterSpacing.sp,
 )
 
+/*
+ * Scale modelled on Apple's text styles (Large Title 34, Title 1 28, Title 2 22, Title 3 20, Headline 17, Body,
+ * Subheadline 15, Footnote 13, Caption 12/11) with the tight negative tracking of SF at display sizes. Body text
+ * stays at 16sp because Be Vietnam Pro is wider than SF and Vietnamese diacritics need the extra line height.
+ */
 internal val HealthOsTypography = Typography(
-    displayLarge = style(48, 56, FontWeight.Bold, -0.5f),
-    displayMedium = style(40, 48, FontWeight.Bold, -0.25f),
-    displaySmall = style(36, 44, FontWeight.SemiBold),
-    headlineLarge = style(30, 38, FontWeight.SemiBold),
-    headlineMedium = style(26, 34, FontWeight.SemiBold),
-    headlineSmall = style(24, 32, FontWeight.SemiBold),
-    titleLarge = style(22, 28, FontWeight.SemiBold),
-    titleMedium = style(18, 24, FontWeight.SemiBold),
-    titleSmall = style(16, 22, FontWeight.Medium),
-    bodyLarge = style(16, 24, FontWeight.Normal),
-    bodyMedium = style(14, 20, FontWeight.Normal),
-    bodySmall = style(12, 16, FontWeight.Normal),
-    labelLarge = style(14, 20, FontWeight.Medium),
+    displayLarge = style(48, 56, FontWeight.Bold, -1.2f),
+    displayMedium = style(40, 48, FontWeight.Bold, -1f),
+    displaySmall = style(34, 41, FontWeight.Bold, -0.8f),
+    headlineLarge = style(30, 37, FontWeight.Bold, -0.6f),
+    headlineMedium = style(28, 34, FontWeight.Bold, -0.5f),
+    headlineSmall = style(22, 28, FontWeight.Bold, -0.35f),
+    titleLarge = style(20, 26, FontWeight.SemiBold, -0.3f),
+    titleMedium = style(17, 22, FontWeight.SemiBold, -0.25f),
+    titleSmall = style(15, 20, FontWeight.SemiBold, -0.15f),
+    bodyLarge = style(16, 23, FontWeight.Normal, -0.2f),
+    bodyMedium = style(15, 21, FontWeight.Normal, -0.15f),
+    bodySmall = style(13, 18, FontWeight.Normal, -0.05f),
+    labelLarge = style(15, 20, FontWeight.Medium, -0.15f),
     labelMedium = style(12, 16, FontWeight.Medium),
-    labelSmall = style(11, 16, FontWeight.Medium),
+    labelSmall = style(11, 14, FontWeight.Medium, 0.05f),
 )
 
 /** Tabular figures so metric values do not jitter when they update. */

@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -109,6 +110,17 @@ fun VitalOrb(
                     center = Offset(center.x - base * 0.3f, center.y - base * 0.35f),
                     radius = base * 1.7f,
                 ),
+            )
+            // Specular sheen so the orb reads as a glass bead lit from the top left.
+            val sheenCenter = Offset(center.x - base * 0.28f, center.y - base * 0.5f)
+            drawOval(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color.White.copy(alpha = 0.55f), Color.White.copy(alpha = 0f)),
+                    center = sheenCenter,
+                    radius = base * 0.5f,
+                ),
+                topLeft = Offset(sheenCenter.x - base * 0.5f, sheenCenter.y - base * 0.28f),
+                size = Size(base, base * 0.56f),
             )
         }
         content()

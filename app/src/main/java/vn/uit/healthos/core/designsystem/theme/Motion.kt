@@ -20,6 +20,12 @@ object VbMotion {
         spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
     fun <T> gentle(): FiniteAnimationSpec<T> =
         spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow)
+
+    /** Apple-style "snappy" spring: quick settle with a hint of overshoot, used for selection and indicators. */
+    fun <T> snappy(): FiniteAnimationSpec<T> = spring(dampingRatio = 0.78f, stiffness = 420f)
+
+    /** Press feedback for glass surfaces: fast in, slightly springy out. */
+    fun <T> press(): FiniteAnimationSpec<T> = spring(dampingRatio = 0.6f, stiffness = 700f)
 }
 
 /** True when the user turned animations off in system settings (Remove animations). */

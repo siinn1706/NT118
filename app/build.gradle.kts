@@ -101,6 +101,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.vico.compose.m3)
+    implementation(libs.kyant.backdrop)
+    implementation(libs.kyant.shapes)
     implementation(libs.play.services.location)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)

@@ -1,5 +1,13 @@
 package vn.uit.healthos.feature.chat
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
+import vn.uit.healthos.core.designsystem.glass.GlassStyle
+import vn.uit.healthos.core.designsystem.glass.GlassTokens
+import vn.uit.healthos.core.designsystem.glass.LocalBottomChromeInset
+import vn.uit.healthos.core.designsystem.glass.liquidGlass
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -67,6 +75,7 @@ import vn.uit.healthos.core.ui.asString
  */
 private const val IMAGE_ATTACH_ENABLED = false
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ChatScreen(
     state: ChatUiState,
@@ -159,13 +168,14 @@ fun ChatScreen(
             .imePadding(),
     ) {
         // Header + AI disclaimer
-        Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+        // Large title on the ambient backdrop, iOS style.
+        Box {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 12.dp),
             ) {
-                Text(stringResource(R.string.nav_chat), style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.nav_chat), style = MaterialTheme.typography.displaySmall)
                 Text(
                     text = stringResource(R.string.chat_disclaimer),
                     style = MaterialTheme.typography.bodySmall,
@@ -313,12 +323,17 @@ fun ChatScreen(
             }
         }
 
-        // Suggested prompts + Input composer
-        Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+        // Suggested prompts + Input composer on a floating Liquid Glass panel above the tab bar.
+        val bottomInset = if (WindowInsets.isImeVisible) 0.dp else LocalBottomChromeInset.current
+        Box(
+            modifier = Modifier
+                .padding(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 8.dp + bottomInset)
+                .liquidGlass(shape = GlassTokens.CardShape, style = GlassStyle.Chrome),
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 SuggestedPrompts(onSelectPrompt = onSendPrompt)

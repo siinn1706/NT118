@@ -25,6 +25,7 @@ Native Android client (Kotlin, Jetpack Compose, Material 3) for the HealthOS bac
 ## Project layout
 
 - `app/src/main/java/vn/uit/healthos/core/designsystem` — Vital Bloom theme (colours, Be Vietnam Pro type, shapes, motion) and shared components (`VitalOrb`, `BentoCard`, `MetricTile`, buttons, state views).
+- `core/designsystem/glass` — Liquid Glass layer built on [Kyant backdrop](https://github.com/Kyant0/AndroidLiquidGlass): `GlassRoot` paints the ambient backdrop, `Modifier.liquidGlass` draws frosted, refracting surfaces (Chrome for navigation, Material for cards, Control for buttons). Blur needs Android 12+ and refraction Android 13+; older devices get an opaque fallback. Tab screens pad their scroll content with `LocalBottomChromeInset` so it can pass under the floating tab bar.
 - `core/network` — Retrofit/OkHttp setup, bearer auth with single-flight token refresh, `ApiResult` error mapping, SSE client.
 - `core/data` — encrypted session store (DataStore + Tink), Room database, offline outbox (`OutboxRepository` + `OutboxWorker`).
 - `navigation` — routes, bottom bar and `AppNavHost`; each feature adds one `xxxGraph()` call.

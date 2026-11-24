@@ -1,5 +1,13 @@
 package vn.uit.healthos.feature.chat
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.isSpecified
+import vn.uit.healthos.core.designsystem.glass.GlassStyle
+import vn.uit.healthos.core.designsystem.glass.liquidGlass
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import vn.uit.healthos.R
-import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 
 data class ChatMessageUi(
     val id: String,
@@ -59,7 +66,7 @@ fun MessageBubble(
     val containerColor = when {
         message.isEmergency -> MaterialTheme.colorScheme.errorContainer
         message.isUser -> MaterialTheme.colorScheme.primary
-        else -> LocalVitalColors.current.cardSurface
+        else -> Color.Unspecified
     }
     val contentColor = when {
         message.isEmergency -> MaterialTheme.colorScheme.onErrorContainer
@@ -76,10 +83,11 @@ fun MessageBubble(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = alignment,
     ) {
-        Surface(
-            color = containerColor,
+        BubbleSurface(
+            tint = containerColor,
             contentColor = contentColor,
             shape = bubbleShape,
+            style = if (message.isUser) GlassStyle.Control else GlassStyle.Material,
             modifier = Modifier.widthIn(max = 312.dp),
         ) {
             Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
@@ -195,5 +203,26 @@ private fun AnnotatedString.Builder.appendInlineMarkdown(line: String) {
         }
         append(line[i])
         i++
+    }
+}
+
+/** Chat bubble drawn as Liquid Glass: the assistant's bubbles are frosted, the user's are tinted with the brand. */
+@Composable
+private fun BubbleSurface(
+    tint: Color,
+    contentColor: Color,
+    shape: Shape,
+    style: GlassStyle,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = modifier.liquidGlass(
+            shape = shape,
+            style = style,
+            tint = if (tint.isSpecified) tint.copy(alpha = 0.94f) else Color.Unspecified,
+        ),
+    ) {
+        CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
     }
 }

@@ -1,5 +1,6 @@
 package vn.uit.healthos.feature.auth
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -56,7 +57,7 @@ fun SignInScreen(
 
     Surface(
         modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background,
+        color = Color.Transparent,
     ) {
         Column(
             modifier = Modifier

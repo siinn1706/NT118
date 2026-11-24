@@ -1,5 +1,21 @@
 package vn.uit.healthos.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import vn.uit.healthos.core.designsystem.glass.GlassBackdrops
+import vn.uit.healthos.core.designsystem.glass.LocalBottomChromeInset
+import vn.uit.healthos.core.designsystem.glass.LocalGlassBackdrops
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -119,57 +135,80 @@ fun AppNavHost(
         }
     }
 
+    val glass = LocalGlassBackdrops.current
+    val screensLayer = rememberLayerBackdrop()
+    val chromeBackdrop: Backdrop? = glass?.let { rememberCombinedBackdrop(it.background, screensLayer) }
+    val navBarBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val bottomChromeInset = if (showBottomBar) TabBarFootprint + navBarBottom + 8.dp else 0.dp
+
     Scaffold(
         modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = {
-            if (showBottomBar) {
-                BottomBar(
-                    currentDestination = currentDestination,
-                    onSelect = { destination ->
-                        navController.navigate(destination.route) {
-                            // Home is the root of every signed-in stack; the graph's start may be the auth screen.
-                            popUpTo(HomeRoute) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                )
-            }
-        },
+        containerColor = Color.Transparent,
+        snackbarHost = { SnackbarHost(snackbarHostState, modifier = Modifier.padding(bottom = bottomChromeInset)) },
     ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = initialDestination,
-            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-        ) {
-            val back: () -> Unit = { navController.popBackStack() }
-            authGraph(
-                navController = navController,
-                onAuthenticatedHome = { navigateRoot(HomeRoute) },
-                onAuthenticatedOnboarding = { navigateRoot(OnboardingRoute) },
-            )
-            onboardingGraph(
-                onCompleted = { navigateRoot(HomeRoute) },
-            )
-            homeGraph()
-            mealsGraph(navController = navController)
-            chatGraph(onOpenSafety = { navController.navigate(SafetyRoute) })
-            medsGraph(navController = navController)
-            profileGraph(
-                navController = navController,
-                appLockManager = appLockManager,
-                onOpenSafety = { navController.navigate(SafetyRoute) },
-                onOpenPpg = { navController.navigate(PpgRoute) },
-                onOpenDesignGallery = { navController.navigate(DesignGalleryRoute) },
-                onSignedOut = { navigateRoot(AuthRoute) },
-            )
-            safetyGraph(
-                onBack = back,
-                onEditContacts = { navController.navigate(EmergencyContactsRoute) },
-            )
-            ppgGraph(onBack = back)
-            devGraph(onBack = back)
+        Box(Modifier.fillMaxSize()) {
+            // Screens are recorded as a layer so the floating tab bar can refract whatever scrolls beneath it.
+            Box(Modifier.fillMaxSize().then(if (glass != null) Modifier.layerBackdrop(screensLayer) else Modifier)) {
+                CompositionLocalProvider(LocalBottomChromeInset provides bottomChromeInset) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = initialDestination,
+                        modifier = Modifier
+                            .padding(
+                                top = padding.calculateTopPadding(),
+                                // Tab screens scroll under the floating bar and pad themselves with LocalBottomChromeInset.
+                                bottom = if (showBottomBar) 0.dp else padding.calculateBottomPadding(),
+                            )
+                            .consumeWindowInsets(padding),
+                    ) {
+                        val back: () -> Unit = { navController.popBackStack() }
+                        authGraph(
+                            navController = navController,
+                            onAuthenticatedHome = { navigateRoot(HomeRoute) },
+                            onAuthenticatedOnboarding = { navigateRoot(OnboardingRoute) },
+                        )
+                        onboardingGraph(
+                            onCompleted = { navigateRoot(HomeRoute) },
+                        )
+                        homeGraph()
+                        mealsGraph(navController = navController)
+                        chatGraph(onOpenSafety = { navController.navigate(SafetyRoute) })
+                        medsGraph(navController = navController)
+                        profileGraph(
+                            navController = navController,
+                            appLockManager = appLockManager,
+                            onOpenSafety = { navController.navigate(SafetyRoute) },
+                            onOpenPpg = { navController.navigate(PpgRoute) },
+                            onOpenDesignGallery = { navController.navigate(DesignGalleryRoute) },
+                            onSignedOut = { navigateRoot(AuthRoute) },
+                        )
+                        safetyGraph(
+                            onBack = back,
+                            onEditContacts = { navController.navigate(EmergencyContactsRoute) },
+                        )
+                        ppgGraph(onBack = back)
+                        devGraph(onBack = back)
+                    }
+                }
+            }
+            if (showBottomBar) {
+                CompositionLocalProvider(
+                    LocalGlassBackdrops provides glass?.let { GlassBackdrops(it.background, chromeBackdrop ?: it.chrome) },
+                ) {
+                    BottomBar(
+                        currentDestination = currentDestination,
+                        onSelect = { destination ->
+                            navController.navigate(destination.route) {
+                                // Home is the root of every signed-in stack; the graph's start may be the auth screen.
+                                popUpTo(HomeRoute) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                    )
+                }
+            }
         }
     }
 }

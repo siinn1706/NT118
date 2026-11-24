@@ -5,7 +5,6 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,6 +38,7 @@ import vn.uit.healthos.core.data.session.AppPreferencesRepository
 import vn.uit.healthos.core.data.session.SessionRepository
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.VitalOrb
+import vn.uit.healthos.core.designsystem.glass.GlassRoot
 import vn.uit.healthos.core.designsystem.theme.HealthOsTheme
 import vn.uit.healthos.feature.profile.NutritionTargetRestorer
 import vn.uit.healthos.feature.auth.AuthRepository
@@ -88,7 +88,7 @@ class MainActivity : FragmentActivity() {
                 themeMode = prefs.themeMode,
                 dynamicColor = prefs.dynamicColor,
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
+                GlassRoot {
                     AppNavHost(
                         sessionRepository = sessionRepository,
                         preferencesRepository = preferencesRepository,

@@ -8,6 +8,9 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
+import vn.uit.healthos.core.designsystem.glass.DarkGlassColors
+import vn.uit.healthos.core.designsystem.glass.LightGlassColors
+import vn.uit.healthos.core.designsystem.glass.LocalGlassColors
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
@@ -30,7 +33,10 @@ fun HealthOsTheme(
         dark -> DarkColors
         else -> LightColors
     }
-    CompositionLocalProvider(LocalVitalColors provides if (dark) DarkVitalColors else LightVitalColors) {
+    CompositionLocalProvider(
+        LocalVitalColors provides if (dark) DarkVitalColors else LightVitalColors,
+        LocalGlassColors provides if (dark) DarkGlassColors else LightGlassColors,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = HealthOsTypography,

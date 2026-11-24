@@ -50,6 +50,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.glass.LocalBottomChromeInset
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.ErrorState
 import vn.uit.healthos.core.designsystem.component.MetricTile
@@ -128,7 +129,7 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp + LocalBottomChromeInset.current),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // Greeting + refresh
