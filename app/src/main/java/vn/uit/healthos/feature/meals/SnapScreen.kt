@@ -1,5 +1,18 @@
 package vn.uit.healthos.feature.meals
 
+import vn.uit.healthos.core.designsystem.component.BentoCard
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
+import vn.uit.healthos.core.designsystem.component.GlassSpinner
+import vn.uit.healthos.core.designsystem.glass.GlassStyle
+import vn.uit.healthos.core.designsystem.glass.GlassTokens
+import vn.uit.healthos.core.designsystem.glass.LocalInsideGlass
+import vn.uit.healthos.core.designsystem.glass.liquidGlass
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.PaddingValues
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,23 +27,17 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.PhotoLibrary
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -40,7 +47,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -106,32 +112,50 @@ fun SnapScreen(
                 .padding(padding),
         ) {
             if (state.analyzing) {
-                // Blurred photo backdrop with progress overlay
-                state.capturedPhotoUri?.let { uri ->
+                // The captured photo is recorded as a layer so the glass panel frosts and refracts it directly,
+                // instead of a blurred copy under a scrim and an opaque card.
+                val photoLayer = rememberLayerBackdrop()
+                val photoUri = state.capturedPhotoUri
+                photoUri?.let { uri ->
                     AsyncImage(
                         model = uri,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize().blur(18.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(GlassTokens.CardShape)
+                            .layerBackdrop(photoLayer),
                     )
                 }
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Surface(
-                        shape = MaterialTheme.shapes.large,
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.padding(24.dp),
+                    Box(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .then(
+                                if (photoUri != null) {
+                                    Modifier.liquidGlass(
+                                        GlassTokens.CardShape,
+                                        GlassStyle.Material,
+                                        backdrop = photoLayer,
+                                    )
+                                } else {
+                                    Modifier.liquidGlass(GlassTokens.CardShape, GlassStyle.Material)
+                                },
+                            ),
                     ) {
+                        CompositionLocalProvider(LocalInsideGlass provides true) {
                         Column(
                             modifier = Modifier.padding(24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            CircularProgressIndicator(modifier = Modifier.size(44.dp))
+                            GlassSpinner(
+                                size = 44.dp,
+                                contentDescription = stringResource(R.string.meals_analyzing_title),
+                            )
                             Text(
                                 stringResource(R.string.meals_analyzing_title),
                                 style = MaterialTheme.typography.titleMedium,
@@ -145,6 +169,7 @@ fun SnapScreen(
                                 text = stringResource(R.string.action_cancel),
                                 onClick = onCancelAnalysis,
                             )
+                        }
                         }
                     }
                 }
@@ -162,21 +187,26 @@ fun SnapScreen(
                             CameraPreviewSurface(
                                 imageCapture = imageCapture,
                                 lifecycleOwner = lifecycleOwner,
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(GlassTokens.CardShape),
                             )
                         }
                     } else {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(1f)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.large),
+                                .weight(1f),
                             contentAlignment = Alignment.Center,
                         ) {
+                            BentoCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(24.dp),
+                            ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                                modifier = Modifier.padding(24.dp),
+                                modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Text(
                                     stringResource(R.string.meals_camera_permission_needed),
@@ -187,30 +217,20 @@ fun SnapScreen(
                                     onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
                                 )
                             }
+                            }
                         }
                     }
 
                     val errorText = state.analysisError?.asString()
                         ?: if (captureFailed) stringResource(R.string.meals_error_capture_failed) else null
                     if (errorText != null) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = MaterialTheme.shapes.medium,
+                        GlassBanner(
+                            message = errorText,
+                            tone = GlassBannerTone.Error,
+                            actionLabel = stringResource(R.string.meals_manual_action),
+                            onAction = onFallbackManual,
                             modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Text(
-                                    text = errorText,
-                                    color = MaterialTheme.colorScheme.onErrorContainer,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                                Spacer(Modifier.height(6.dp))
-                                SecondaryButton(
-                                    text = stringResource(R.string.meals_manual_action),
-                                    onClick = onFallbackManual,
-                                )
-                            }
-                        }
+                        )
                     }
 
                     Row(
