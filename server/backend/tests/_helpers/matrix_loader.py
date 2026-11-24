@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 _PLAN_DIR = Path(__file__).parents[3] / "plans" / "260522-1931-backend-authz-idor-audit"
+REST_MATRIX_PATH = _PLAN_DIR / "idor-audit-matrix.md"
 
 
 @dataclass
@@ -40,7 +41,7 @@ class WsMatrixRow:
 
 def load_rest_matrix(path: Path | None = None) -> list[RestMatrixRow]:
     """Parse REST audit matrix; return rows that have a resource ID path param."""
-    src = path or (_PLAN_DIR / "idor-audit-matrix.md")
+    src = path or REST_MATRIX_PATH
     rows: list[RestMatrixRow] = []
     for line in src.read_text(encoding="utf-8").splitlines():
         if not line.startswith("|") or line.startswith("| Module") or line.startswith("|---"):

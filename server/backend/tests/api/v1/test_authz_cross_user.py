@@ -28,7 +28,13 @@ from app.models.core import (
     User,
     WearableSourceEnum,
 )
-from tests._helpers.matrix_loader import RestMatrixRow, load_rest_matrix
+from tests._helpers.matrix_loader import REST_MATRIX_PATH, RestMatrixRow, load_rest_matrix
+
+if not REST_MATRIX_PATH.is_file():
+    pytest.skip(
+        f"IDOR audit matrix not found at {REST_MATRIX_PATH}",
+        allow_module_level=True,
+    )
 
 _NOW = datetime.datetime.now(datetime.timezone.utc)
 
