@@ -36,6 +36,7 @@ from app.schemas.chat import (
     ReplyPreviewDTO,
     UserLookupResult,
 )
+from app.services.user_visibility import LIKE_ESCAPE_CHAR, discoverable_user_clause, escape_like
 
 AI_CONVERSATION_TITLE = "HealthOS AI Assistant"
 
@@ -500,7 +501,16 @@ async def create_direct_conversation(
     If one doesn't exist, create it with the target's membership as is_accepted=False
     (stranger-request flow). If this is the second conversation attempt (target already
     blocked the user) just raise ValueError.
+
+    Friends skip the stranger-request flow: a new conversation starts accepted for
+    both members, and an existing one still pending from before the friendship is
+    accepted on reuse.
     """
+    # Local import: the friends service imports this module.
+    from app.services.friends import are_friends
+
+    friends = await are_friends(db, initiator_id, target_id)
+
     # Check for existing direct conversation between the two users
     subq = (
         select(ConversationMember.conversation_id)
@@ -528,6 +538,12 @@ async def create_direct_conversation(
     )
     existing = result.scalar_one_or_none()
     if existing:
+        if friends:
+            pending = [m for m in existing.members if not m.is_accepted]
+            for member in pending:
+                member.is_accepted = True
+            if pending:
+                await db.flush()
         return existing
 
     # Create new
@@ -548,7 +564,8 @@ async def create_direct_conversation(
         conversation_id=conv.id,
         user_id=target_id,
         role="member",
-        is_accepted=False,  # stranger request — target must accept
+        # Stranger request: the target must accept. Friends are accepted up front.
+        is_accepted=friends,
     )
     db.add_all([initiator_member, target_member])
     await db.flush()
@@ -1422,16 +1439,22 @@ async def lookup_users(
     exclude_user_id: uuid.UUID,
     limit: int = 10,
 ) -> list[UserLookupResult]:
-    """Search users by display_name or email (case-insensitive, partial match)."""
+    """Search users by display_name or email (case-insensitive, partial match).
+
+    Wildcards in ``query`` match literally. The AI bot, deleted accounts and
+    actively banned accounts are never returned.
+    """
+    pattern = f"%{escape_like(query)}%"
     result = await db.execute(
         select(User)
         .options(selectinload(User.profile))
         .where(
             and_(
                 User.id != exclude_user_id,
+                discoverable_user_clause(),
                 or_(
-                    User.display_name.ilike(f"%{query}%"),
-                    User.email.ilike(f"%{query}%"),
+                    User.display_name.ilike(pattern, escape=LIKE_ESCAPE_CHAR),
+                    User.email.ilike(pattern, escape=LIKE_ESCAPE_CHAR),
                 ),
             )
         )

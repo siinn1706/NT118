@@ -147,3 +147,7 @@ rate_limit_conversation_create = user_rate_limiter(
 rate_limit_health_metric_create = user_rate_limiter(
     max_requests=60, window_seconds=60, route_key="health_metric_create"
 )
+# Friend requests — 20 per hour per user to curb request spam.
+rate_limit_friend_request = user_rate_limiter(
+    max_requests=20, window_seconds=3600, route_key="friend_request"
+)

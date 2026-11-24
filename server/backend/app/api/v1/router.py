@@ -12,6 +12,7 @@ from app.api.v1.endpoints import (
     devices,
     emergency,
     emergency_public,
+    friends,
     goals,
     health,
     health_goals,
@@ -61,6 +62,7 @@ router.include_router(reports.router)
 router.include_router(mfa.router)
 router.include_router(security_logs.router)
 router.include_router(preferences.router)
+router.include_router(friends.router)
 router.include_router(notifications.router)
 router.include_router(subscriptions.router)
 router.include_router(prescriptions.router)
