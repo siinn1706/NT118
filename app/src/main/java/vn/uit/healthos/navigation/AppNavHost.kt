@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -19,7 +21,6 @@ import vn.uit.healthos.core.designsystem.glass.LocalGlassBackdrops
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +40,10 @@ import vn.uit.healthos.core.data.session.AppLockManager
 import vn.uit.healthos.core.data.session.AppPreferencesRepository
 import vn.uit.healthos.core.data.session.SessionCleaner
 import vn.uit.healthos.core.data.session.SessionRepository
+import vn.uit.healthos.core.designsystem.component.GlassSnackbarHost
 import vn.uit.healthos.core.designsystem.component.LoadingState
+import vn.uit.healthos.core.designsystem.glass.ScrollEdge
+import vn.uit.healthos.core.designsystem.glass.ScrollEdgeEffect
 import vn.uit.healthos.feature.auth.authGraph
 import vn.uit.healthos.feature.chat.chatGraph
 import vn.uit.healthos.feature.dev.devGraph
@@ -52,6 +56,9 @@ import vn.uit.healthos.feature.profile.EmergencyContactsRoute
 import vn.uit.healthos.feature.profile.NutritionTargetRestorer
 import vn.uit.healthos.feature.profile.profileGraph
 import vn.uit.healthos.feature.safety.safetyGraph
+
+/** How far above the tab bar the bottom scroll edge effect fades out. */
+private val BottomEdgeFade = 24.dp
 
 private enum class SessionBootstrapState { LOADING, SIGNED_OUT, NEEDS_ONBOARDING, READY }
 
@@ -141,10 +148,19 @@ fun AppNavHost(
     val navBarBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val bottomChromeInset = if (showBottomBar) TabBarFootprint + navBarBottom + 8.dp else 0.dp
 
+    val chromeBackdrops = remember(glass, chromeBackdrop) {
+        glass?.let { GlassBackdrops(it.background, chromeBackdrop ?: it.chrome) }
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(snackbarHostState, modifier = Modifier.padding(bottom = bottomChromeInset)) },
+        snackbarHost = {
+            // Snackbars float above the screens, so they refract them like the tab bar does.
+            CompositionLocalProvider(LocalGlassBackdrops provides chromeBackdrops) {
+                GlassSnackbarHost(snackbarHostState, modifier = Modifier.padding(bottom = bottomChromeInset))
+            }
+        },
     ) { padding ->
         Box(Modifier.fillMaxSize()) {
             // Screens are recorded as a layer so the floating tab bar can refract whatever scrolls beneath it.
@@ -192,9 +208,17 @@ fun AppNavHost(
                 }
             }
             if (showBottomBar) {
-                CompositionLocalProvider(
-                    LocalGlassBackdrops provides glass?.let { GlassBackdrops(it.background, chromeBackdrop ?: it.chrome) },
-                ) {
+                // Scroll edge effect: content scrolling under the tab bar is blurred and faded out behind it. It sits
+                // between the screens and the bar, so the bar still refracts the raw content.
+                ScrollEdgeEffect(
+                    edge = ScrollEdge.Bottom,
+                    backdrop = chromeBackdrop,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(bottomChromeInset + BottomEdgeFade),
+                )
+                CompositionLocalProvider(LocalGlassBackdrops provides chromeBackdrops) {
                     BottomBar(
                         currentDestination = currentDestination,
                         onSelect = { destination ->
