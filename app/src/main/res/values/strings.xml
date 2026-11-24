@@ -321,9 +321,7 @@
     <!-- Safety Net -->
     <string name="action_close">Đóng</string>
     <string name="safety_tile_label">Thẻ y tế khẩn</string>
-    <string name="safety_widget_desc">Truy cập nhanh Thẻ khẩn cấp và nút SOS</string>
     <string name="safety_widget_card_btn">Thẻ khẩn cấp</string>
-    <string name="safety_widget_sos_btn">SOS ngay</string>
     <string name="safety_channel_monitor_name">Phát hiện té ngã</string>
     <string name="safety_channel_sos_name">Cảnh báo SOS khẩn cấp</string>
     <string name="safety_monitor_notif_title">Safety Net đang bảo vệ bạn</string>

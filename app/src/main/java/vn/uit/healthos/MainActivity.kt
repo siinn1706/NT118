@@ -1,5 +1,12 @@
 package vn.uit.healthos
 
+import android.content.Intent
+import kotlinx.coroutines.flow.MutableStateFlow
+import vn.uit.healthos.feature.meals.SnapDestination
+import vn.uit.healthos.feature.widget.WidgetIntents
+import vn.uit.healthos.navigation.ChatRoute
+import vn.uit.healthos.navigation.HomeRoute
+import vn.uit.healthos.navigation.MedsRoute
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
@@ -89,9 +96,13 @@ class MainActivity : FragmentActivity() {
     @Volatile
     private var contentReady = false
 
+    /** Screen a home-screen widget asked to open; handed to [AppNavHost], which navigates once the app is ready. */
+    private val pendingWidgetRoute = MutableStateFlow<Any?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) captureWidgetRoute(intent)
         enableEdgeToEdge()
         // Until the app lock setting is known, assume it is on: health data must never reach a screenshot, a screen
         // recording or the recents thumbnail during the first frames.
@@ -102,6 +113,7 @@ class MainActivity : FragmentActivity() {
             val signedInFlow = remember(sessionRepository) { sessionRepository.isSignedIn.map<Boolean, Boolean?> { it } }
             val signedIn by signedInFlow.collectAsStateWithLifecycle(initialValue = null)
             val isLocked by appLockManager.isLocked.collectAsStateWithLifecycle()
+            val pendingRoute by pendingWidgetRoute.collectAsStateWithLifecycle()
             val loaded = prefs
             val gate = resolveLockGate(
                 prefsLoaded = loaded != null,
@@ -158,6 +170,8 @@ class MainActivity : FragmentActivity() {
                                 appLockManager = appLockManager,
                                 sessionCleaner = sessionCleaner,
                                 nutritionTargetRestorer = nutritionTargetRestorer,
+                                pendingRoute = pendingRoute,
+                                onPendingRouteHandled = { pendingWidgetRoute.value = null },
                             )
                         }
                     }
@@ -172,6 +186,24 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        captureWidgetRoute(intent)
+    }
+
+    /** Turns a widget intent into a route and clears its extras so a rotation or replay does not open it again. */
+    private fun captureWidgetRoute(intent: Intent?) {
+        val route: Any = when (WidgetIntents.destinationFrom(intent) ?: return) {
+            WidgetIntents.Destination.CHAT -> WidgetIntents.chatRouteFrom(intent) ?: ChatRoute()
+            WidgetIntents.Destination.MEDS -> MedsRoute
+            WidgetIntents.Destination.HOME -> HomeRoute
+            WidgetIntents.Destination.MEAL_SNAP -> SnapDestination
+        }
+        WidgetIntents.consume(intent)
+        pendingWidgetRoute.value = route
     }
 }
 

@@ -5,8 +5,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 
 /**
- * Wipes rows that belong to the signed-in account. `daily_steps` stays: it is the phone's own pedometer
- * history and holds the sensor baseline needed to count steps correctly.
+ * Wipes rows that belong to the signed-in account. `daily_steps` stays here because it holds the sensor baseline;
+ * the step repository clears it (and the baseline) itself when a different account signs in.
  */
 @Dao
 abstract class UserDataDao {

@@ -14,7 +14,8 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import vn.uit.healthos.navigation.MealsRoute
 
-@Serializable private data object SnapDestination
+/** Camera screen for logging a meal; public so home-screen widgets can open it directly. */
+@Serializable data object SnapDestination
 @Serializable private data object AnalysisResultDestination
 @Serializable private data object ManualEntryDestination
 

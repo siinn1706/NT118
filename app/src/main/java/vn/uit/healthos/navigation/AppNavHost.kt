@@ -48,6 +48,7 @@ import vn.uit.healthos.feature.auth.authGraph
 import vn.uit.healthos.feature.chat.chatGraph
 import vn.uit.healthos.feature.dev.devGraph
 import vn.uit.healthos.feature.home.homeGraph
+import vn.uit.healthos.feature.meals.SnapDestination
 import vn.uit.healthos.feature.meals.mealsGraph
 import vn.uit.healthos.feature.meds.medsGraph
 import vn.uit.healthos.feature.onboarding.onboardingGraph
@@ -73,6 +74,8 @@ fun AppNavHost(
     sessionCleaner: SessionCleaner,
     nutritionTargetRestorer: NutritionTargetRestorer,
     modifier: Modifier = Modifier,
+    pendingRoute: Any? = null,
+    onPendingRouteHandled: () -> Unit = {},
 ) {
     val bootstrapFlow = remember(sessionRepository, preferencesRepository) {
         combine(sessionRepository.isSignedIn, preferencesRepository.onboardingStatus) { signedIn, status ->
@@ -140,6 +143,20 @@ fun AppNavHost(
             popUpTo(0) { inclusive = true }
             launchSingleTop = true
         }
+    }
+
+    // A home-screen widget asked for a screen: open it once the session is ready (the app lock overlay still covers it).
+    LaunchedEffect(pendingRoute, bootstrap) {
+        val target = pendingRoute ?: return@LaunchedEffect
+        if (bootstrap != SessionBootstrapState.READY) return@LaunchedEffect
+        val topLevel = if (target is SnapDestination) MealsRoute else target
+        navController.navigate(topLevel) {
+            popUpTo(HomeRoute) { saveState = true }
+            launchSingleTop = true
+            restoreState = target !is ChatRoute
+        }
+        if (target is SnapDestination) navController.navigate(SnapDestination)
+        onPendingRouteHandled()
     }
 
     val glass = LocalGlassBackdrops.current
