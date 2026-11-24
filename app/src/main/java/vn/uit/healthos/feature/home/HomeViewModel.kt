@@ -24,9 +24,10 @@ import vn.uit.healthos.core.time.localDayTicker
 import vn.uit.healthos.feature.profile.ProfileRepository
 import vn.uit.healthos.feature.steps.DailyStepEntity
 import vn.uit.healthos.feature.steps.StepCounterRepository
-import java.time.Instant
+import vn.uit.healthos.feature.widget.TodaySnapshotRepository
+import vn.uit.healthos.feature.widget.WidgetKind
+import vn.uit.healthos.feature.widget.WidgetUpdater
 import java.time.LocalDate
-import java.time.ZoneId
 import javax.inject.Inject
 
 enum class TrendMetric { STEPS, HEART_RATE }
@@ -70,6 +71,8 @@ class HomeViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val preferencesRepository: AppPreferencesRepository,
     private val outboxRepository: OutboxRepository,
+    private val todaySnapshotRepository: TodaySnapshotRepository,
+    private val widgetUpdater: WidgetUpdater,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState(isRefreshing = true))
@@ -111,6 +114,7 @@ class HomeViewModel @Inject constructor(
                         errorMessage = current.errorMessage,
                     )
                 }
+                shareHydrationTarget(computed)
             }
         }
     }
@@ -159,6 +163,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Widgets cannot fetch the weather themselves, so the climate- and weight-adjusted water goal is remembered for
+     * them; once it is known (climate or weight loaded), a changed goal refreshes the widgets that show it.
+     */
+    private suspend fun shareHydrationTarget(state: HomeUiState) {
+        if (climateFlow.value == null && profileWeightFlow.value == null) return
+        if (todaySnapshotRepository.rememberHydrationTarget(state.climateAdvice.totalHydrationTargetMl)) {
+            widgetUpdater.update(WidgetKind.HYDRATION_DEPENDENT)
+        }
+    }
+
     private fun buildUiState(
         base: BaseSnapshot,
         climate: ClimateConditions?,
@@ -166,34 +181,15 @@ class HomeViewModel @Inject constructor(
         pendingCount: Int,
     ): HomeUiState {
         val summary = base.cached?.summary
-        val fetchedOn = base.cached?.let {
-            Instant.ofEpochMilli(it.updatedAtMs).atZone(ZoneId.systemDefault()).toLocalDate()
-        }
-        val kpis = (summary?.toKpis() ?: DashboardKpis()).let { all ->
-            if (fetchedOn == null) all else all.forDay(fetchedOn = fetchedOn, today = base.today)
-        }
         val todayIso = base.today.toString()
-        val sensorSteps = base.localStepDays.firstOrNull { it.date == todayIso }?.steps ?: 0
-        val stepsToday = maxOf(sensorSteps, kpis.steps ?: 0)
-        val stepGoal = kpis.stepTarget ?: base.prefs.stepGoal
-
-        val calories = kpis.caloriesIn
-        val calorieTarget = base.prefs.dailyCalorieTarget ?: kpis.calorieTarget
-
-        val hydrationMl = maxOf(base.localHydration, kpis.hydrationMl ?: 0)
-
-        val hr = kpis.heartRateBpm
-            ?: base.cached?.vitals?.lastOrNull { it.heartRate != null }?.heartRate
-
         val climateAdvice = ClimateCoach.evaluate(climate, weightKg)
-        val score = VitalScore.compute(
-            steps = stepsToday.takeIf { it > 0 || kpis.steps != null },
-            stepGoal = stepGoal,
-            caloriesConsumed = calories,
-            calorieTarget = calorieTarget,
-            hydrationMl = hydrationMl.takeIf { it > 0 || kpis.hydrationMl != null },
+        val metrics = TodayMetrics.compute(
+            cached = base.cached,
+            today = base.today,
+            localStepsToday = base.localStepDays.firstOrNull { it.date == todayIso }?.steps ?: 0,
+            localHydrationMl = base.localHydration,
+            prefs = base.prefs,
             hydrationTargetMl = climateAdvice.totalHydrationTargetMl,
-            restingHeartRateBpm = hr,
         )
 
         val serverVitals = base.cached?.vitals.orEmpty()
@@ -215,13 +211,13 @@ class HomeViewModel @Inject constructor(
 
         return HomeUiState(
             userName = summary?.userName.orEmpty(),
-            vitalScore = score,
-            stepsToday = stepsToday,
-            stepGoal = stepGoal,
-            caloriesToday = calories,
-            calorieTarget = calorieTarget,
-            restingHeartRate = hr,
-            hydrationMl = hydrationMl,
+            vitalScore = metrics.vitalScore,
+            stepsToday = metrics.stepsToday,
+            stepGoal = metrics.stepGoal,
+            caloriesToday = metrics.caloriesIn,
+            calorieTarget = metrics.calorieTarget,
+            restingHeartRate = metrics.restingHeartRate,
+            hydrationMl = metrics.hydrationMl,
             climateConditions = climate,
             climateAdvice = climateAdvice,
             aiAdvice = base.cached?.aiAdvice,

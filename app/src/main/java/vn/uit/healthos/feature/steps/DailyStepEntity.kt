@@ -31,6 +31,10 @@ interface DailyStepDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: DailyStepEntity)
+
+    /** Forgets every day and the sensor anchor, so the next reading starts a fresh count at zero. */
+    @Query("DELETE FROM daily_steps")
+    suspend fun deleteAll()
 }
 
 /**

@@ -15,6 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import vn.uit.healthos.MainActivity
 import vn.uit.healthos.R
+import vn.uit.healthos.feature.widget.WidgetKind
+import vn.uit.healthos.feature.widget.WidgetUpdater
 import javax.inject.Inject
 
 /**
@@ -28,6 +30,9 @@ class DoseAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var doseCacheDao: DoseCacheDao
 
+    @Inject
+    lateinit var widgetUpdater: WidgetUpdater
+
     override fun onReceive(context: Context, intent: Intent) {
         val occurrenceId = intent.getStringExtra(DoseAlarmScheduler.EXTRA_OCCURRENCE_ID) ?: return
         val pendingResult = goAsync()
@@ -36,6 +41,8 @@ class DoseAlarmReceiver : BroadcastReceiver() {
                 val dose = doseCacheDao.getById(occurrenceId)
                 if (dose != null && DoseStatus.of(dose.status).isOpen) {
                     showNotification(context, dose)
+                    // The dose that is due now becomes (or stays) the widget's "next dose".
+                    widgetUpdater.update(WidgetKind.NEXT_DOSE)
                 }
             } catch (e: CancellationException) {
                 throw e
