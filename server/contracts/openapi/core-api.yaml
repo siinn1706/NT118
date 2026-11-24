@@ -479,6 +479,32 @@ components:
       - status
       title: AnalysisJobResponse
       type: object
+    AppearanceData:
+      properties:
+        background:
+          default: aurora
+          enum:
+          - aurora
+          - soft
+          - solid
+          title: Background
+          type: string
+      title: AppearanceData
+      type: object
+    AppearanceUpdate:
+      description: Partial appearance update; omitted keys keep their stored value.
+      properties:
+        background:
+          anyOf:
+          - enum:
+            - aurora
+            - soft
+            - solid
+            type: string
+          - type: 'null'
+          title: Background
+      title: AppearanceUpdate
+      type: object
     AppointmentAssetDTO:
       properties:
         appointment_id:
@@ -2552,6 +2578,173 @@ components:
       - data
       title: ExtendedVitalsTimeseriesResponse
       type: object
+    FriendDTO:
+      properties:
+        direct_conversation_id:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Direct Conversation Id
+        since:
+          format: date-time
+          title: Since
+          type: string
+        user:
+          $ref: '#/components/schemas/FriendUserDTO'
+      required:
+      - user
+      - since
+      title: FriendDTO
+      type: object
+    FriendListResponse:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/FriendDTO'
+          title: Data
+          type: array
+      required:
+      - data
+      title: FriendListResponse
+      type: object
+    FriendRequestDTO:
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        direction:
+          enum:
+          - incoming
+          - outgoing
+          title: Direction
+          type: string
+        id:
+          format: uuid
+          title: Id
+          type: string
+        status:
+          enum:
+          - pending
+          - accepted
+          - declined
+          - blocked
+          title: Status
+          type: string
+        user:
+          $ref: '#/components/schemas/FriendUserDTO'
+      required:
+      - id
+      - status
+      - direction
+      - user
+      - created_at
+      title: FriendRequestDTO
+      type: object
+    FriendRequestListResponse:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/FriendRequestDTO'
+          title: Data
+          type: array
+      required:
+      - data
+      title: FriendRequestListResponse
+      type: object
+    FriendRequestResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/FriendRequestDTO'
+      required:
+      - data
+      title: FriendRequestResponse
+      type: object
+    FriendResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/FriendDTO'
+      required:
+      - data
+      title: FriendResponse
+      type: object
+    FriendSearchResponse:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/FriendSearchResult'
+          title: Data
+          type: array
+      required:
+      - data
+      title: FriendSearchResponse
+      type: object
+    FriendSearchResult:
+      properties:
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        display_name:
+          title: Display Name
+          type: string
+        friendship_status:
+          anyOf:
+          - enum:
+            - friends
+            - outgoing
+            - incoming
+            type: string
+          - type: 'null'
+          title: Friendship Status
+        id:
+          format: uuid
+          title: Id
+          type: string
+        request_id:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Request Id
+        username:
+          title: Username
+          type: string
+      required:
+      - id
+      - username
+      - display_name
+      title: FriendSearchResult
+      type: object
+    FriendUserDTO:
+      properties:
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        display_name:
+          title: Display Name
+          type: string
+        id:
+          format: uuid
+          title: Id
+          type: string
+        is_online:
+          default: false
+          title: Is Online
+          type: boolean
+        username:
+          title: Username
+          type: string
+      required:
+      - id
+      - username
+      - display_name
+      title: FriendUserDTO
+      type: object
     GoalProgressPoint:
       properties:
         date:
@@ -2944,6 +3137,102 @@ components:
           - type: 'null'
           title: Target
       title: KpiValue
+      type: object
+    LeaderboardDTO:
+      properties:
+        entries:
+          items:
+            $ref: '#/components/schemas/LeaderboardEntryDTO'
+          title: Entries
+          type: array
+        generated_at:
+          format: date-time
+          title: Generated At
+          type: string
+        me:
+          anyOf:
+          - $ref: '#/components/schemas/LeaderboardEntryDTO'
+          - type: 'null'
+        metric:
+          const: steps
+          default: steps
+          title: Metric
+          type: string
+        period:
+          enum:
+          - day
+          - week
+          title: Period
+          type: string
+        range_end:
+          format: date
+          title: Range End
+          type: string
+        range_start:
+          format: date
+          title: Range Start
+          type: string
+        scope:
+          enum:
+          - friends
+          - global
+          title: Scope
+          type: string
+        timezone:
+          title: Timezone
+          type: string
+      required:
+      - period
+      - scope
+      - timezone
+      - range_start
+      - range_end
+      - entries
+      - generated_at
+      title: LeaderboardDTO
+      type: object
+    LeaderboardEntryDTO:
+      properties:
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        display_name:
+          title: Display Name
+          type: string
+        is_me:
+          default: false
+          title: Is Me
+          type: boolean
+        rank:
+          title: Rank
+          type: integer
+        steps:
+          title: Steps
+          type: integer
+        user_id:
+          format: uuid
+          title: User Id
+          type: string
+        username:
+          title: Username
+          type: string
+      required:
+      - rank
+      - user_id
+      - username
+      - display_name
+      - steps
+      title: LeaderboardEntryDTO
+      type: object
+    LeaderboardResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/LeaderboardDTO'
+      required:
+      - data
+      title: LeaderboardResponse
       type: object
     LoginBody:
       description: Request body for identifier (email or username) + password login.
@@ -6214,6 +6503,24 @@ components:
       - data
       title: RiskPredictionResponse
       type: object
+    SendFriendRequestBody:
+      description: Exactly one of `username` or `user_id` identifies the target.
+      properties:
+        user_id:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: User Id
+        username:
+          anyOf:
+          - maxLength: 50
+            minLength: 3
+            type: string
+          - type: 'null'
+          title: Username
+      title: SendFriendRequestBody
+      type: object
     SendMessageBody:
       properties:
         attachments:
@@ -7238,6 +7545,16 @@ components:
           - type: string
           - type: 'null'
           title: Accent Color
+        appearance:
+          $ref: '#/components/schemas/AppearanceData'
+        leaderboard_visibility:
+          default: friends
+          enum:
+          - 'off'
+          - friends
+          - global
+          title: Leaderboard Visibility
+          type: string
         locale:
           default: en
           title: Locale
@@ -7264,6 +7581,19 @@ components:
             type: string
           - type: 'null'
           title: Accent Color
+        appearance:
+          anyOf:
+          - $ref: '#/components/schemas/AppearanceUpdate'
+          - type: 'null'
+        leaderboard_visibility:
+          anyOf:
+          - enum:
+            - 'off'
+            - friends
+            - global
+            type: string
+          - type: 'null'
+          title: Leaderboard Visibility
         locale:
           anyOf:
           - enum:
@@ -14712,6 +15042,446 @@ paths:
       summary: Replace sync-state tokens for a device
       tags:
       - Devices
+  /v1/friends:
+    get:
+      operationId: list_friends_v1_friends_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendListResponse'
+          description: Successful Response
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: List accepted friends with presence and direct conversation id
+      tags:
+      - Friends
+  /v1/friends/requests:
+    get:
+      operationId: list_requests_v1_friends_requests_get
+      parameters:
+      - in: query
+        name: direction
+        required: false
+        schema:
+          default: incoming
+          enum:
+          - incoming
+          - outgoing
+          title: Direction
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequestListResponse'
+          description: Successful Response
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: List pending friend requests (incoming or outgoing)
+      tags:
+      - Friends
+    post:
+      operationId: send_request_v1_friends_requests_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendFriendRequestBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequestResponse'
+          description: The target already had a pending request to you; it was accepted.
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequestResponse'
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Conflict
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: Send a friend request by username or user_id
+      tags:
+      - Friends
+  /v1/friends/requests/{request_id}:
+    delete:
+      operationId: cancel_request_v1_friends_requests__request_id__delete
+      parameters:
+      - in: path
+        name: request_id
+        required: true
+        schema:
+          format: uuid
+          title: Request Id
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: Cancel a friend request you sent
+      tags:
+      - Friends
+  /v1/friends/requests/{request_id}/accept:
+    post:
+      operationId: accept_request_v1_friends_requests__request_id__accept_post
+      parameters:
+      - in: path
+        name: request_id
+        required: true
+        schema:
+          format: uuid
+          title: Request Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendResponse'
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: Accept an incoming friend request
+      tags:
+      - Friends
+  /v1/friends/requests/{request_id}/decline:
+    post:
+      operationId: decline_request_v1_friends_requests__request_id__decline_post
+      parameters:
+      - in: path
+        name: request_id
+        required: true
+        schema:
+          format: uuid
+          title: Request Id
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: Decline an incoming friend request
+      tags:
+      - Friends
+  /v1/friends/search:
+    get:
+      operationId: search_users_v1_friends_search_get
+      parameters:
+      - description: Username or prefix
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Username or prefix
+          maxLength: 50
+          minLength: 1
+          title: Q
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 20
+          minimum: 1
+          title: Limit
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendSearchResponse'
+          description: Successful Response
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: Find people by username (exact or prefix match)
+      tags:
+      - Friends
+  /v1/friends/{user_id}:
+    delete:
+      operationId: unfriend_v1_friends__user_id__delete
+      parameters:
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          title: User Id
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: Remove a friend
+      tags:
+      - Friends
   /v1/goals/progress:
     get:
       operationId: get_goal_progress_v1_goals_progress_get
@@ -15661,6 +16431,83 @@ paths:
       summary: Refresh health risk predictions
       tags:
       - Health Insights
+  /v1/leaderboard/steps:
+    get:
+      description: 'Days are local days in Asia/Ho_Chi_Minh; a week starts on Monday.
+
+
+        Users who set `leaderboard_visibility` to `off` are hidden (the caller still
+
+        sees the board, with `me` null). The global board only lists users who opted
+
+        in with `global`.'
+      operationId: steps_leaderboard_v1_leaderboard_steps_get
+      parameters:
+      - in: query
+        name: period
+        required: false
+        schema:
+          default: day
+          enum:
+          - day
+          - week
+          title: Period
+          type: string
+      - in: query
+        name: scope
+        required: false
+        schema:
+          default: friends
+          enum:
+          - friends
+          - global
+          title: Scope
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderboardResponse'
+          description: Successful Response
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Rate limit exceeded
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error
+      security:
+      - HTTPBearer: []
+      summary: Steps leaderboard for today or this week, among friends or globally
+      tags:
+      - Leaderboard
   /v1/meals:
     get:
       operationId: list_meals_v1_meals_get
