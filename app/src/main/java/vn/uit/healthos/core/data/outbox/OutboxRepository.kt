@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
+import vn.uit.healthos.core.data.session.TokenStore
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,12 +19,16 @@ class OutboxRepository @Inject constructor(
     private val dao: OutboxDao,
     private val workManager: WorkManager,
     private val json: Json,
+    private val tokenStore: TokenStore,
 ) {
     val pendingCount: Flow<Int> = dao.observeCount()
 
     fun pendingCount(type: String): Flow<Int> = dao.observeCountByType(type)
 
-    /** Queues [payload]; with a [dedupeKey], older pending items carrying the same key are dropped first. */
+    /**
+     * Queues [payload] for the signed-in account; with a [dedupeKey], older pending items carrying the same key are
+     * dropped first.
+     */
     suspend fun <T> enqueue(type: String, payload: T, serializer: KSerializer<T>, dedupeKey: String? = null) {
         if (dedupeKey != null) dao.deleteByDedupeKey(dedupeKey)
         dao.insert(
@@ -32,6 +37,7 @@ class OutboxRepository @Inject constructor(
                 payloadJson = json.encodeToString(serializer, payload),
                 createdAt = System.currentTimeMillis(),
                 dedupeKey = dedupeKey,
+                ownerUserId = tokenStore.current()?.userId,
             ),
         )
         scheduleSync()
