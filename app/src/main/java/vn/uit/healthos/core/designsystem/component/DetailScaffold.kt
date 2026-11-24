@@ -1,7 +1,6 @@
 package vn.uit.healthos.core.designsystem.component
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,21 +14,22 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -39,19 +39,21 @@ import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.kyant.shapes.Capsule
 import vn.uit.healthos.R
-import vn.uit.healthos.core.designsystem.glass.GlassStyle
-import vn.uit.healthos.core.designsystem.glass.GlassTokens
 import vn.uit.healthos.core.designsystem.glass.LocalGlassBackdrops
-import vn.uit.healthos.core.designsystem.glass.liquidGlass
-import vn.uit.healthos.core.designsystem.glass.rememberPressScale
+import vn.uit.healthos.core.designsystem.glass.ScrollEdge
+import vn.uit.healthos.core.designsystem.glass.ScrollEdgeEffect
+import vn.uit.healthos.core.designsystem.theme.LocalReducedMotion
+import vn.uit.healthos.core.designsystem.theme.VbMotion
 
 private val TopBarHeight = 56.dp
+private val EdgeFade = 24.dp
 
 /**
  * Scaffold for pushed (non-tab) screens in the iOS 26 style: a floating Liquid Glass back button and an inline title
- * directly on the ambient backdrop. The screen content is recorded as a layer so the back button refracts it.
+ * directly on the ambient backdrop. The screen content is recorded as a layer so the back button refracts it, and a
+ * scroll edge effect (blur and fade) appears under the bar as soon as the content has scrolled, keeping the title
+ * legible. Apply the [PaddingValues] as the scroll container's content padding to let content scroll under the bar.
  */
 @Composable
 fun DetailScaffold(
@@ -64,13 +66,45 @@ fun DetailScaffold(
     val screenLayer = rememberLayerBackdrop()
     val chrome: Backdrop? = parent?.let { rememberCombinedBackdrop(it.background, screenLayer) }
 
+    // Distance scrolled from the top, tracked from nested scroll so it works for any scrolling child.
+    val scrolled = remember { mutableFloatStateOf(0f) }
+    val scrollTracker = remember {
+        object : NestedScrollConnection {
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                scrolled.floatValue = (scrolled.floatValue - consumed.y).coerceAtLeast(0f)
+                return Offset.Zero
+            }
+        }
+    }
+    val contentUnderBar by remember { derivedStateOf { scrolled.floatValue > 0.5f } }
+    val edgeAlpha = animateFloatAsState(
+        targetValue = if (contentUnderBar) 1f else 0f,
+        animationSpec = VbMotion.orSnap(LocalReducedMotion.current, VbMotion.enter()),
+        label = "scrollEdge",
+    )
+
     Scaffold(
         modifier = modifier,
         containerColor = Color.Transparent,
         topBar = { GlassTopBar(title = title, onBack = onBack, backdrop = chrome) },
     ) { padding ->
-        Box(Modifier.fillMaxSize().then(if (parent != null) Modifier.layerBackdrop(screenLayer) else Modifier)) {
-            content(padding)
+        Box(Modifier.fillMaxSize()) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .then(if (parent != null) Modifier.layerBackdrop(screenLayer) else Modifier)
+                    .nestedScroll(scrollTracker),
+            ) {
+                content(padding)
+            }
+            ScrollEdgeEffect(
+                edge = ScrollEdge.Top,
+                backdrop = chrome,
+                visibility = { edgeAlpha.value },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(padding.calculateTopPadding() + EdgeFade),
+            )
         }
     }
 }
@@ -87,7 +121,7 @@ private fun GlassTopBar(title: String, onBack: () -> Unit, backdrop: Backdrop?) 
             onClick = onBack,
             contentDescription = stringResource(R.string.action_back),
             backdrop = backdrop,
-            modifier = Modifier.align(Alignment.CenterStart).padding(start = 12.dp),
+            modifier = Modifier.align(Alignment.CenterStart).padding(start = 8.dp),
         ) {
             Icon(
                 Icons.AutoMirrored.Rounded.ArrowBackIos,
@@ -98,6 +132,7 @@ private fun GlassTopBar(title: String, onBack: () -> Unit, backdrop: Backdrop?) 
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
@@ -108,44 +143,3 @@ private fun GlassTopBar(title: String, onBack: () -> Unit, backdrop: Backdrop?) 
         )
     }
 }
-
-/** 44dp circular Liquid Glass button for toolbar actions (back, close, more). */
-@Composable
-fun GlassIconButton(
-    onClick: () -> Unit,
-    contentDescription: String,
-    modifier: Modifier = Modifier,
-    backdrop: Backdrop? = LocalGlassBackdrops.current?.chrome,
-    content: @Composable () -> Unit,
-) {
-    val shape = Capsule()
-    val interactionSource = remember { MutableInteractionSource() }
-    val scale by rememberPressScale(interactionSource, pressedScale = 0.9f)
-    Box(
-        modifier = modifier
-            .size(GlassTokens.NavButtonSize)
-            .liquidGlass(
-                shape = shape,
-                style = GlassStyle.Chrome,
-                backdrop = backdrop,
-                layerBlock = {
-                    scaleX = scale
-                    scaleY = scale
-                },
-            )
-            .clip(shape)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                role = Role.Button,
-                onClick = onClick,
-            )
-            .semantics { this.contentDescription = contentDescription },
-        contentAlignment = Alignment.Center,
-    ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-            content()
-        }
-    }
-}
-
