@@ -378,4 +378,18 @@
     <string name="ppg_saved_confirmation">Đã lưu nhịp tim (sẽ tự đồng bộ lên HealthOS).</string>
     <string name="ppg_measure_again">Đo lại</string>
     <string name="ppg_medical_disclaimer">Chỉ mang tính tham khảo sức khỏe cá nhân — không thay thế thiết bị y tế chuyên dụng.</string>
+
+    <!-- Appearance and design system -->
+    <string name="accent_teal">Xanh ngọc</string>
+    <string name="accent_ocean">Đại dương</string>
+    <string name="accent_violet">Tím</string>
+    <string name="accent_rose">Hồng</string>
+    <string name="accent_amber">Hổ phách</string>
+    <string name="accent_forest">Xanh lá</string>
+    <string name="accent_graphite">Than chì</string>
+    <string name="background_aurora">Cực quang</string>
+    <string name="background_soft">Dịu</string>
+    <string name="background_solid">Trơn</string>
+    <string name="glass_show_password">Hiện mật khẩu</string>
+    <string name="glass_hide_password">Ẩn mật khẩu</string>
 </resources>

@@ -13,6 +13,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import vn.uit.healthos.core.designsystem.theme.AccentPreset
+import vn.uit.healthos.core.designsystem.theme.BackgroundStyle
 import vn.uit.healthos.core.designsystem.theme.ThemeMode
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,6 +33,10 @@ data class AppPreferences(
     val activityLevel: String? = null,
     val goalDirection: String? = null,
     val stepGoal: Int = 8_000,
+    val accentPreset: AccentPreset = AccentPreset.Default,
+    val backgroundStyle: BackgroundStyle = BackgroundStyle.Default,
+    /** Opaque surfaces instead of see-through glass (in-app counterpart of iOS Reduce Transparency). */
+    val reducedTransparency: Boolean = false,
 )
 
 @Singleton
@@ -52,6 +58,9 @@ class AppPreferencesRepository @Inject constructor(
             activityLevel = prefs[KEY_ACTIVITY_LEVEL],
             goalDirection = prefs[KEY_GOAL_DIRECTION],
             stepGoal = prefs[KEY_STEP_GOAL] ?: 8_000,
+            accentPreset = AccentPreset.fromName(prefs[KEY_ACCENT_PRESET]),
+            backgroundStyle = BackgroundStyle.fromName(prefs[KEY_BACKGROUND_STYLE]),
+            reducedTransparency = prefs[KEY_REDUCED_TRANSPARENCY] ?: false,
         )
     }
 
@@ -60,6 +69,9 @@ class AppPreferencesRepository @Inject constructor(
     val appLockEnabled: Flow<Boolean> = preferences.map { it.appLockEnabled }
     val onboardingStatus: Flow<String?> = preferences.map { it.onboardingStatus }
     val dailyCalorieTarget: Flow<Int?> = preferences.map { it.dailyCalorieTarget }
+    val accentPreset: Flow<AccentPreset> = preferences.map { it.accentPreset }
+    val backgroundStyle: Flow<BackgroundStyle> = preferences.map { it.backgroundStyle }
+    val reducedTransparency: Flow<Boolean> = preferences.map { it.reducedTransparency }
 
     suspend fun current(): AppPreferences = preferences.first()
 
@@ -69,6 +81,18 @@ class AppPreferencesRepository @Inject constructor(
 
     suspend fun setDynamicColor(enabled: Boolean) {
         dataStore.edit { it[KEY_DYNAMIC_COLOR] = enabled }
+    }
+
+    suspend fun setAccentPreset(preset: AccentPreset) {
+        dataStore.edit { it[KEY_ACCENT_PRESET] = preset.name }
+    }
+
+    suspend fun setBackgroundStyle(style: BackgroundStyle) {
+        dataStore.edit { it[KEY_BACKGROUND_STYLE] = style.name }
+    }
+
+    suspend fun setReducedTransparency(enabled: Boolean) {
+        dataStore.edit { it[KEY_REDUCED_TRANSPARENCY] = enabled }
     }
 
     suspend fun setAppLockEnabled(enabled: Boolean) {
@@ -136,5 +160,8 @@ class AppPreferencesRepository @Inject constructor(
         val KEY_GOAL_DIRECTION = stringPreferencesKey("goal_direction")
         val KEY_STEP_GOAL = intPreferencesKey("step_goal")
         val KEY_LOCAL_DATA_OWNER = stringPreferencesKey("local_data_owner")
+        val KEY_ACCENT_PRESET = stringPreferencesKey("accent_preset")
+        val KEY_BACKGROUND_STYLE = stringPreferencesKey("background_style")
+        val KEY_REDUCED_TRANSPARENCY = booleanPreferencesKey("reduced_transparency")
     }
 }

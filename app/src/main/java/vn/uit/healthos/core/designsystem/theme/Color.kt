@@ -1,5 +1,6 @@
 package vn.uit.healthos.core.designsystem.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
@@ -13,7 +14,7 @@ import androidx.compose.ui.graphics.Color
  * Liquid Glass surfaces: light mode is built on systemGroupedBackground, dark mode on true black.
  */
 internal val LightColors = lightColorScheme(
-    primary = Color(0xFF0F766E),
+    primary = Color(0xFF0D6E67),
     onPrimary = Color(0xFFFFFFFF),
     primaryContainer = Color(0xFFD3F5EE),
     onPrimaryContainer = Color(0xFF053B36),
@@ -32,7 +33,7 @@ internal val LightColors = lightColorScheme(
     onSurface = Color(0xFF1C1C1E),
     surfaceVariant = Color(0xFFE5E5EA),
     onSurfaceVariant = Color(0xFF636366),
-    surfaceTint = Color(0xFF0F766E),
+    surfaceTint = Color(0xFF0D6E67),
     surfaceContainerLowest = Color(0xFFFFFFFF),
     surfaceContainerLow = Color(0xFFFFFFFF),
     surfaceContainer = Color(0xFFF7F7FA),
@@ -54,7 +55,7 @@ internal val DarkColors = darkColorScheme(
     onPrimary = Color(0xFF04201C),
     primaryContainer = Color(0xFF0E4F48),
     onPrimaryContainer = Color(0xFFCCFBF1),
-    inversePrimary = Color(0xFF0F766E),
+    inversePrimary = Color(0xFF0D6E67),
     secondary = Color(0xFFB1CCC6),
     onSecondary = Color(0xFF1C3531),
     secondaryContainer = Color(0xFF2C3E3A),
@@ -85,6 +86,22 @@ internal val DarkColors = darkColorScheme(
     onErrorContainer = Color(0xFFFFE5E7),
     scrim = Color(0xFF000000),
 )
+
+/**
+ * Replaces the accent roles of this scheme with [preset] for the given appearance. The neutral roles (surfaces,
+ * outlines, error) stay untouched so the Liquid Glass materials keep their tuned contrast.
+ */
+fun ColorScheme.withAccent(preset: AccentPreset, dark: Boolean): ColorScheme {
+    val accent = preset.colors(dark)
+    return copy(
+        primary = accent.primary,
+        onPrimary = accent.onPrimary,
+        primaryContainer = accent.primaryContainer,
+        onPrimaryContainer = accent.onPrimaryContainer,
+        inversePrimary = preset.colors(!dark).primary,
+        surfaceTint = accent.primary,
+    )
+}
 
 /**
  * Status colours for the Vital Orb and health states: good = teal, watch = amber, alert = coral.
