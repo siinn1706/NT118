@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared widget states -->
+    <string name="widget_locked_title">Mở khóa để xem</string>
+    <string name="widget_locked_body">Số liệu đang ẩn vì bạn bật khóa ứng dụng</string>
+    <string name="widget_signed_out_title">Chưa đăng nhập</string>
+    <string name="widget_signed_out_body">Mở HealthOS để đăng nhập</string>
+
+    <!-- Vital score -->
+    <string name="widget_vital_name">Chỉ số sức khỏe</string>
+    <string name="widget_vital_desc">Điểm sức khỏe hôm nay từ bước chân, nước uống, calo và nhịp tim</string>
+    <string name="widget_vital_good">Tốt</string>
+    <string name="widget_vital_watch">Cần chú ý</string>
+    <string name="widget_vital_alert">Cảnh báo</string>
+    <string name="widget_vital_empty">Chưa có dữ liệu hôm nay</string>
+    <string name="widget_vital_score_cd">Chỉ số sức khỏe %1$d trên 100</string>
+    <string name="widget_metric_steps">Bước</string>
+    <string name="widget_metric_water">Nước</string>
+    <string name="widget_metric_calories">Calo</string>
+
+    <!-- Steps -->
+    <string name="widget_steps_name">Bước chân</string>
+    <string name="widget_steps_desc">Số bước hôm nay và tiến độ so với mục tiêu</string>
+    <string name="widget_steps_unit">bước</string>
+    <string name="widget_steps_goal">Mục tiêu %1$s</string>
+    <string name="widget_steps_sync">Đồng bộ</string>
+    <string name="widget_steps_sync_cd">Đồng bộ số bước hôm nay lên máy chủ</string>
+
+    <!-- Hydration -->
+    <string name="widget_hydration_name">Nước uống</string>
+    <string name="widget_hydration_desc">Lượng nước hôm nay và nút thêm nhanh một cốc</string>
+    <string name="widget_hydration_value">%1$s / %2$s ml</string>
+    <string name="widget_hydration_add">+1 cốc</string>
+    <string name="widget_hydration_add_cd">Thêm một cốc nước 250 ml</string>
+
+    <!-- Next dose -->
+    <string name="widget_dose_name">Liều thuốc tiếp theo</string>
+    <string name="widget_dose_desc">Liều thuốc sắp tới với nút Đã uống và Hoãn 10 phút</string>
+    <string name="widget_dose_title">Liều tiếp theo</string>
+    <string name="widget_dose_none">Không còn liều nào sắp tới</string>
+    <string name="widget_dose_at">Lúc %1$s</string>
+    <string name="widget_dose_snoozed_until">Đã hoãn tới %1$s</string>
+    <string name="widget_dose_taken">Đã uống</string>
+    <string name="widget_dose_snooze">Hoãn 10\'</string>
+    <string name="widget_dose_taken_cd">Đánh dấu đã uống %1$s</string>
+    <string name="widget_dose_snooze_cd">Hoãn %1$s thêm 10 phút</string>
+    <string name="widget_dose_later">Còn lại hôm nay</string>
+
+    <!-- SOS -->
+    <string name="widget_sos_name">SOS khẩn cấp</string>
+    <string name="widget_sos_desc">Nút SOS có đếm ngược để hủy, kèm Thẻ khẩn cấp</string>
+    <string name="widget_sos_button">SOS</string>
+    <string name="widget_sos_cd">Bắt đầu đếm ngược gửi SOS</string>
+    <string name="widget_sos_hint">Có đếm ngược để hủy</string>
+    <string name="widget_sos_no_contacts">Chưa có liên hệ khẩn cấp</string>
+    <plurals name="widget_sos_contacts">
+        <item quantity="other">%d liên hệ khẩn cấp</item>
+    </plurals>
+
+    <!-- Ask AI -->
+    <string name="widget_ask_name">Hỏi Bác sĩ AI</string>
+    <string name="widget_ask_desc">Mở trò chuyện với Bác sĩ AI, có sẵn câu hỏi gợi ý</string>
+    <string name="widget_ask_hint">Hỏi Bác sĩ AI…</string>
+
+    <!-- Calories -->
+    <string name="widget_calories_name">Calo hôm nay</string>
+    <string name="widget_calories_desc">Calo đã nạp so với mục tiêu và nút chụp bữa ăn</string>
+    <string name="widget_calories_unit">kcal</string>
+    <string name="widget_calories_remaining">Còn %1$s kcal</string>
+    <string name="widget_calories_over">Vượt %1$s kcal</string>
+    <string name="widget_calories_target">Mục tiêu %1$s kcal</string>
+    <string name="widget_calories_no_target">Chưa đặt mục tiêu calo</string>
+    <string name="widget_calories_snap">Chụp bữa ăn</string>
+
+    <!-- Widget picker previews (illustrative values shown only in the launcher's widget list) -->
+    <string name="widget_preview_score">82</string>
+    <string name="widget_preview_steps">6.420</string>
+    <string name="widget_preview_hydration">1.250 / 2.300 ml</string>
+    <string name="widget_preview_dose_name">Metformin 500 mg</string>
+    <string name="widget_preview_dose_time">Lúc 20:00</string>
+    <string name="widget_preview_calories">1.430</string>
+    <string name="widget_preview_calories_remaining">Còn 570 kcal</string>
+    <string name="widget_preview_sos_contacts">2 liên hệ khẩn cấp</string>
+</resources>

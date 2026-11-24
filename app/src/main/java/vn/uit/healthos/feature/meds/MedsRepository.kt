@@ -12,6 +12,8 @@ import vn.uit.healthos.core.data.outbox.OutboxRepository
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.apiCall
 import vn.uit.healthos.core.time.localDayTicker
+import vn.uit.healthos.feature.widget.WidgetKind
+import vn.uit.healthos.feature.widget.WidgetUpdater
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -26,6 +28,7 @@ class MedsRepository @Inject constructor(
     private val outboxRepository: OutboxRepository,
     private val outboxDao: OutboxDao,
     private val workManager: WorkManager,
+    private val widgetUpdater: WidgetUpdater,
     private val json: Json,
 ) {
     private val zone: ZoneId = ZoneId.of(DEFAULT_MED_TZID)
@@ -92,11 +95,17 @@ class MedsRepository @Inject constructor(
      * and enqueues the backend sync in the outbox. Doses that are no longer open (taken, skipped, cancelled…) are
      * left untouched so repeated taps or stale notifications cannot send duplicate actions.
      */
-    suspend fun recordDoseAction(dose: DoseCacheEntity, action: String) = cacheMutex.withLock {
+    suspend fun recordDoseAction(dose: DoseCacheEntity, action: String) {
+        val recorded = cacheMutex.withLock { recordDoseActionLocked(dose, action) }
+        if (recorded) widgetUpdater.update(WidgetKind.NEXT_DOSE)
+    }
+
+    /** Returns true when the action was recorded. */
+    private suspend fun recordDoseActionLocked(dose: DoseCacheEntity, action: String): Boolean {
         val current = doseCacheDao.getById(dose.occurrenceId) ?: dose
         alarmScheduler.dismissNotification(current.occurrenceId)
-        if (!DoseStatus.of(current.status).isOpen) return@withLock
-        val spec = mapDoseAction(action, current.reminderId, current.occurrenceId) ?: return@withLock
+        if (!DoseStatus.of(current.status).isOpen) return false
+        val spec = mapDoseAction(action, current.reminderId, current.occurrenceId) ?: return false
         val snoozeUntil = if (action == DoseActionReceiver.ACTION_SNOOZE) {
             alarmScheduler.scheduleSnooze(current, minutes = spec.payload.snoozeMinutes)
         } else {
@@ -109,6 +118,7 @@ class MedsRepository @Inject constructor(
             payload = spec.payload,
             serializer = DoseActionOutboxPayload.serializer(),
         )
+        return true
     }
 
     /**
@@ -132,6 +142,7 @@ class MedsRepository @Inject constructor(
 
         // Network calls stay outside the lock so an offline refresh never delays a dose action.
         cacheMutex.withLock { reconcile(todayRes, occRes, fromMs, toMs, nowMs) }
+        widgetUpdater.update(WidgetKind.NEXT_DOSE)
         return if (todayRes is ApiResult.Failure) todayRes else ApiResult.Success(Unit)
     }
 
@@ -188,13 +199,16 @@ class MedsRepository @Inject constructor(
     }
 
     /** Stops every open cached dose of a plan right away, so a paused/deleted plan goes quiet even offline. */
-    private suspend fun stopPlanDoses(planId: String, reminderIds: Collection<String>) = cacheMutex.withLock {
-        doseCacheDao.getForPlan(planId, reminderIds.toList())
-            .filter { DoseStatus.of(it.status).isOpen }
-            .forEach { dose ->
-                alarmScheduler.stop(dose.occurrenceId)
-                doseCacheDao.updateStatus(dose.occurrenceId, DoseStatus.CANCELLED.wire, null)
-            }
+    private suspend fun stopPlanDoses(planId: String, reminderIds: Collection<String>) {
+        cacheMutex.withLock {
+            doseCacheDao.getForPlan(planId, reminderIds.toList())
+                .filter { DoseStatus.of(it.status).isOpen }
+                .forEach { dose ->
+                    alarmScheduler.stop(dose.occurrenceId)
+                    doseCacheDao.updateStatus(dose.occurrenceId, DoseStatus.CANCELLED.wire, null)
+                }
+        }
+        widgetUpdater.update(WidgetKind.NEXT_DOSE)
     }
 
     private suspend fun queuedDoseActionIds(): Set<String> {
