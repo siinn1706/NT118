@@ -10,4 +10,10 @@
     <string name="chat_voice_no_match">Chưa nghe rõ. Hãy nói lại gần micro hơn.</string>
     <string name="chat_voice_network">Nhận diện giọng nói cần kết nối mạng.</string>
     <string name="chat_voice_failed">Không nhận diện được giọng nói. Thử lại sau.</string>
+    <string name="chat_image_sent">Đã gửi hình ảnh</string>
+    <string name="chat_image_default_prompt">Phân tích hình ảnh này giúp tôi.</string>
+    <string name="chat_reminder_default_title">Nhắc nhở từ Bác sĩ AI</string>
+    <string name="chat_input_label">Tin nhắn cho Bác sĩ AI</string>
+    <string name="chat_loading_older">Đang tải tin nhắn cũ…</string>
+    <string name="chat_reminder_type_label">Loại nhắc nhở</string>
 </resources>
