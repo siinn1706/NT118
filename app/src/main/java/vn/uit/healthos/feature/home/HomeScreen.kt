@@ -298,7 +298,7 @@ private fun HomeHeader(
                     stringResource(R.string.home_greeting_default)
                 },
                 style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.semantics { heading() },
             )

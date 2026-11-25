@@ -1,5 +1,7 @@
 package vn.uit.healthos.navigation
 
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.spring
@@ -451,12 +453,12 @@ private fun RowScope.TabItem(
             tint = color,
             modifier = Modifier.size(24.dp),
         )
-        Text(
+        // Shrinks instead of truncating when the user's font size is large (Dynamic Type style).
+        BasicText(
             text = stringResource(destination.label),
-            style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, fontWeight = FontWeight.SemiBold),
-            color = color,
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = color),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = 11.sp, stepSize = 0.5.sp),
         )
     }
 }

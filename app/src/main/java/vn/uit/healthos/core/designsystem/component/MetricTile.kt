@@ -1,5 +1,8 @@
 package vn.uit.healthos.core.designsystem.component
 
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,17 +43,22 @@ fun MetricTile(
             Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Spacer(Modifier.height(12.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(value, style = MaterialTheme.typography.headlineMedium.tabular(), modifier = Modifier.alignByBaseline())
-            if (unit != null) {
-                Text(
-                    unit,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.alignByBaseline(),
-                )
-            }
-        }
+        // One text so that, with large font sizes, the unit wraps to the next line as a whole word instead of being
+        // squeezed into a narrow column next to the value.
+        val unitStyle = MaterialTheme.typography.bodyMedium
+        val unitColor = MaterialTheme.colorScheme.onSurfaceVariant
+        Text(
+            text = buildAnnotatedString {
+                append(value)
+                if (unit != null) {
+                    append(" ")
+                    withStyle(SpanStyle(fontSize = unitStyle.fontSize, fontWeight = unitStyle.fontWeight, color = unitColor)) {
+                        append(unit)
+                    }
+                }
+            },
+            style = MaterialTheme.typography.headlineMedium.tabular(),
+        )
         if (caption != null) {
             Spacer(Modifier.height(4.dp))
             Text(caption, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
