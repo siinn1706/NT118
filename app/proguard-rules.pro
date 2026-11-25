@@ -1,21 +1,10 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# R8 rules for the app's own code. The libraries (kotlinx.serialization, Retrofit, OkHttp, Room, Hilt, WorkManager
+# and hilt-work, Glance, CameraX, Coil, Tink, Play services) ship consumer rules that R8 merges automatically; only
+# what those rules miss belongs here.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Glance stores an ActionCallback by class name (actionRunCallback<T>()) and creates it later through its no-arg
+# constructor by reflection. Glance's own rule keeps the class but not that constructor, so R8 full mode strips it
+# and tapping a widget action (add water, dose taken, dose snooze) would crash.
+-keepclassmembers class * implements androidx.glance.appwidget.action.ActionCallback {
+    public <init>();
+}
