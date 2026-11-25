@@ -64,9 +64,7 @@ async def list_requests(
     db: Annotated[AsyncSession, Depends(get_db)],
     direction: Annotated[Literal["incoming", "outgoing"], Query()] = "incoming",
 ) -> FriendRequestListResponse:
-    requests = await friends_svc.list_requests(
-        db, current_user.id, direction, ws_manager.get_presence_map()
-    )
+    requests = await friends_svc.list_requests(db, current_user.id, direction)
     return FriendRequestListResponse(data=requests)
 
 

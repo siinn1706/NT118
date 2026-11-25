@@ -251,6 +251,71 @@ async def test_send_request_auto_accept_returns_200(client, me, monkeypatch):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("auto_accepted", "expected_status", "expected_online"),
+    [(False, 201, False), (True, 200, True)],
+)
+async def test_send_request_shows_presence_only_for_friends(
+    client, me, monkeypatch, auto_accepted, expected_status, expected_online
+):
+    """A pending request must not reveal whether the target is online right now."""
+    from app.api.v1.endpoints import friends as friends_ep
+
+    target = SimpleNamespace(
+        id=uuid.uuid4(), username="lan_nguyen", display_name="Lan Nguyen", profile=None
+    )
+    friendship = SimpleNamespace(
+        id=uuid.uuid4(),
+        requester_id=me.id,
+        addressee_id=target.id,
+        status="accepted" if auto_accepted else "pending",
+        created_at=NOW,
+    )
+
+    async def fake_send(_db, _requester_id, *, username=None, user_id=None):
+        return friendship, auto_accepted
+
+    async def fake_load_user(_db, user_id):
+        assert user_id == target.id
+        return target
+
+    async def fake_notify(*_args, **_kwargs):
+        return None
+
+    monkeypatch.setattr(friends_svc, "send_request", fake_send)
+    monkeypatch.setattr(friends_svc, "_load_user", fake_load_user)
+    monkeypatch.setattr(friends_svc, "notify_request_received", fake_notify)
+    monkeypatch.setattr(friends_svc, "notify_request_accepted", fake_notify)
+    monkeypatch.setattr(friends_ep.ws_manager, "get_presence_map", lambda: {str(target.id): True})
+
+    res = await client.post("/v1/friends/requests", json={"username": "lan_nguyen"})
+    assert res.status_code == expected_status
+    assert res.json()["data"]["user"]["is_online"] is expected_online
+
+
+@pytest.mark.asyncio
+async def test_list_requests_does_not_read_presence(client, monkeypatch):
+    """Pending requests are never paired with the live presence map."""
+    from app.api.v1.endpoints import friends as friends_ep
+
+    calls: list[tuple] = []
+
+    async def fake_list(_db, _me, direction, *args, **kwargs):
+        calls.append((direction, args, kwargs))
+        return []
+
+    def presence_must_not_be_read():
+        raise AssertionError("presence map read for pending requests")
+
+    monkeypatch.setattr(friends_svc, "list_requests", fake_list)
+    monkeypatch.setattr(friends_ep.ws_manager, "get_presence_map", presence_must_not_be_read)
+
+    res = await client.get("/v1/friends/requests", params={"direction": "outgoing"})
+    assert res.status_code == 200
+    assert calls == [("outgoing", (), {})]
+
+
+@pytest.mark.asyncio
 async def test_accept_request_returns_friend(client, me, monkeypatch):
     request_id = uuid.uuid4()
     conversation_id = uuid.uuid4()

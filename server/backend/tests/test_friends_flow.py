@@ -119,6 +119,32 @@ async def test_request_accept_and_list_friends(pg_db):
     assert await friends_svc.list_requests(db, bob.id, "incoming") == []
 
 
+async def test_pending_requests_hide_presence_until_accepted(pg_db, monkeypatch):
+    from app.api.v1.endpoints import friends as friends_ep
+
+    db, ids = pg_db
+    alice = await _create_user(db, ids)
+    bob = await _create_user(db, ids)
+    await db.commit()
+    online = {str(alice.id): True, str(bob.id): True}
+    monkeypatch.setattr(friends_ep.ws_manager, "get_presence_map", lambda: online)
+
+    friendship, _ = await friends_svc.send_request(db, alice.id, user_id=bob.id)
+    await db.commit()
+    sent = await friends_svc.build_request_dto(db, friendship, alice.id, online)
+    assert sent.user.id == bob.id and sent.user.is_online is False
+
+    outgoing = await friends_ep.list_requests(current_user=alice, db=db, direction="outgoing")
+    assert [(r.user.id, r.user.is_online) for r in outgoing.data] == [(bob.id, False)]
+    incoming = await friends_ep.list_requests(current_user=bob, db=db, direction="incoming")
+    assert [(r.user.id, r.user.is_online) for r in incoming.data] == [(alice.id, False)]
+
+    accepted, _ = await friends_svc.accept_request(db, friendship.id, bob.id)
+    await db.commit()
+    now_friends = await friends_svc.build_request_dto(db, accepted, alice.id, online)
+    assert now_friends.user.is_online is True
+
+
 async def test_only_addressee_can_accept_or_decline(pg_db):
     db, ids = pg_db
     alice = await _create_user(db, ids)

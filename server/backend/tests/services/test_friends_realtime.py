@@ -79,7 +79,8 @@ async def test_request_received_frame_and_inbox(wired):
     assert payload["direction"] == "incoming"
     assert payload["status"] == "pending"
     assert payload["user"]["id"] == str(wired.requester.id)
-    assert payload["user"]["is_online"] is True
+    # The requester is online, but the addressee is not a friend yet.
+    assert payload["user"]["is_online"] is False
     assert "timestamp" in frame
 
     assert len(wired.rec.notifications) == 1
@@ -90,6 +91,17 @@ async def test_request_received_frame_and_inbox(wired):
     assert note["commit"] is True
     assert note["title"] == "Lời mời kết bạn mới"
     assert "Minh" in note["body"]
+
+
+@pytest.mark.parametrize(("status", "expected"), [("pending", False), ("declined", False), ("accepted", True)])
+def test_request_dto_shows_presence_only_once_accepted(wired, status, expected):
+    wired.friendship.status = status
+    presence = {str(wired.addressee.id): True, str(wired.requester.id): True}
+
+    dto = friends_svc._request_dto(wired.friendship, wired.requester.id, wired.addressee, presence)
+
+    assert dto.direction == "outgoing"
+    assert dto.user.is_online is expected
 
 
 @pytest.mark.asyncio

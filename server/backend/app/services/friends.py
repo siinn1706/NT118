@@ -107,11 +107,14 @@ def _request_dto(
     other: User,
     presence: dict[str, bool] | None = None,
 ) -> FriendRequestDTO:
+    # Live presence is for accepted friends only: a pending (or declined) request
+    # must not let either side watch when the other comes online.
+    visible_presence = presence if friendship.status == ACCEPTED else None
     return FriendRequestDTO(
         id=friendship.id,
         status=friendship.status,
         direction="outgoing" if friendship.requester_id == viewer_id else "incoming",
-        user=_user_dto(other, presence),
+        user=_user_dto(other, visible_presence),
         created_at=friendship.created_at,
     )
 
@@ -255,8 +258,8 @@ async def list_requests(
     db: AsyncSession,
     me: uuid.UUID,
     direction: Literal["incoming", "outgoing"],
-    presence: dict[str, bool] | None = None,
 ) -> list[FriendRequestDTO]:
+    """Pending requests; the other user's ``is_online`` is always false (not friends yet)."""
     if direction == "incoming":
         mine, other_col = Friendship.addressee_id, Friendship.requester_id
     else:
@@ -268,7 +271,7 @@ async def list_requests(
         .where(mine == me, Friendship.status == PENDING, discoverable_user_clause())
         .order_by(Friendship.created_at.desc(), Friendship.id)
     )
-    return [_request_dto(friendship, me, user, presence) for friendship, user in result.all()]
+    return [_request_dto(friendship, me, user) for friendship, user in result.all()]
 
 
 async def search_users(
