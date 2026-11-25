@@ -1,5 +1,9 @@
 package vn.uit.healthos.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -29,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
@@ -63,6 +68,18 @@ import vn.uit.healthos.feature.safety.safetyGraph
 
 /** How far above the tab bar the bottom scroll edge effect fades out. */
 private val BottomEdgeFade = 24.dp
+
+/** Switching between tabs is a quick crossfade, so a tap on the tab bar shows the tab at once. */
+private const val TAB_SWITCH_FADE_MS = 150
+
+/** Every other screen change keeps Navigation's default fade. */
+private const val DEFAULT_FADE_MS = 700
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.fadeMillis(): Int {
+    val fromTab = TopLevelDestination.entries.any { initialState.destination.isOn(it) }
+    val toTab = TopLevelDestination.entries.any { targetState.destination.isOn(it) }
+    return if (fromTab && toTab) TAB_SWITCH_FADE_MS else DEFAULT_FADE_MS
+}
 
 private enum class SessionBootstrapState { LOADING, SIGNED_OUT, NEEDS_ONBOARDING, READY }
 
@@ -218,6 +235,8 @@ fun AppNavHost(
                     NavHost(
                         navController = navController,
                         startDestination = initialDestination,
+                        enterTransition = { fadeIn(tween(fadeMillis())) },
+                        exitTransition = { fadeOut(tween(fadeMillis())) },
                         modifier = Modifier
                             .padding(
                                 top = padding.calculateTopPadding(),
