@@ -142,7 +142,22 @@ class MainActivity : FragmentActivity() {
                 backgroundStyle = loaded?.backgroundStyle ?: BackgroundStyle.Default,
                 reducedTransparency = loaded?.reducedTransparency ?: false,
             ) {
-                GlassRoot {
+                // The lock screen is drawn above GlassDialog overlays, and those overlays are not shown at all while the
+                // app is not open, so a dialog left open on a screen can neither show health data over the lock screen
+                // nor be used before unlocking.
+                GlassRoot(
+                    overlaysSuppressed = gate != LockGate.Open,
+                    foreground = {
+                        if (gate == LockGate.Locked) {
+                            AppLockOverlay(
+                                activity = this@MainActivity,
+                                appLockManager = appLockManager,
+                                onUnlocked = { ColdStartLock.settled = true },
+                                onSignOut = { lifecycleScope.launch { authRepository.logout() } },
+                            )
+                        }
+                    },
+                ) {
                     // Composed for the first time only once the app is open, then kept (with its back stack) while a
                     // later lock covers it, hidden from accessibility services and keyboard focus.
                     var navHostComposed by remember { mutableStateOf(false) }
@@ -174,14 +189,6 @@ class MainActivity : FragmentActivity() {
                                 onPendingRouteHandled = { pendingWidgetRoute.value = null },
                             )
                         }
-                    }
-                    if (gate == LockGate.Locked) {
-                        AppLockOverlay(
-                            activity = this@MainActivity,
-                            appLockManager = appLockManager,
-                            onUnlocked = { ColdStartLock.settled = true },
-                            onSignOut = { lifecycleScope.launch { authRepository.logout() } },
-                        )
                     }
                 }
             }

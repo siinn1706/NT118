@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -45,9 +46,18 @@ import vn.uit.healthos.core.designsystem.theme.VbMotion
  *
  * Roots can be nested (for example a screen previewing another theme): the aurora is laid out in window coordinates
  * so nested roots line up with their parent, and the parent's light sensor is reused.
+ *
+ * [foreground] is drawn above the overlays (the app lock screen). While [overlaysSuppressed] is true the overlays are
+ * not composed at all, so they cannot be seen, focused or tapped, and they no longer hide [content] from
+ * accessibility services; they come back unchanged when it turns false.
  */
 @Composable
-fun GlassRoot(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
+fun GlassRoot(
+    modifier: Modifier = Modifier,
+    overlaysSuppressed: Boolean = false,
+    foreground: @Composable BoxScope.() -> Unit = {},
+    content: @Composable BoxScope.() -> Unit,
+) {
     val background = rememberLayerBackdrop()
     val contentLayer = rememberLayerBackdrop()
     val backdrops = remember(background) { GlassBackdrops(background = background, chrome = background) }
@@ -56,6 +66,7 @@ fun GlassRoot(modifier: Modifier = Modifier, content: @Composable BoxScope.() ->
     val host = remember { GlassOverlayHost() }
     val overlayBackdrop = rememberCombinedBackdrop(background, contentLayer)
     val overlayBackdrops = remember(overlayBackdrop) { GlassBackdrops(overlayBackdrop, overlayBackdrop) }
+    SideEffect { host.suppressed = overlaysSuppressed }
 
     Box(modifier.fillMaxSize()) {
         AmbientBackground(Modifier.fillMaxSize().layerBackdrop(background))
@@ -71,7 +82,7 @@ fun GlassRoot(modifier: Modifier = Modifier, content: @Composable BoxScope.() ->
                     // A modal overlay hides everything behind it from accessibility services and keyboard focus, like
                     // a real dialog window.
                     .then(
-                        if (host.hasModal) {
+                        if (host.hasModal && !overlaysSuppressed) {
                             Modifier
                                 .clearAndSetSemantics {}
                                 .focusProperties { onEnter = { cancelFocusChange() } }
@@ -83,8 +94,14 @@ fun GlassRoot(modifier: Modifier = Modifier, content: @Composable BoxScope.() ->
             ) {
                 content()
             }
-            CompositionLocalProvider(LocalGlassBackdrops provides overlayBackdrops) {
-                GlassOverlayLayer(host)
+            if (!overlaysSuppressed) {
+                CompositionLocalProvider(LocalGlassBackdrops provides overlayBackdrops) {
+                    GlassOverlayLayer(host)
+                }
+            }
+            // A dialog opened from the foreground falls back to its own window, which stays above everything.
+            CompositionLocalProvider(LocalGlassOverlayHost provides null) {
+                foreground()
             }
         }
     }
@@ -159,8 +176,16 @@ class GlassOverlayHost internal constructor() {
         entry.visibility.targetState = true
     }
 
+    /** Set while the root does not draw its overlays; a dialog closed meanwhile then leaves without an animation. */
+    internal var suppressed = false
+        set(value) {
+            field = value
+            if (value) entries.removeAll { !it.visibility.targetState }
+        }
+
     internal fun hide(entry: GlassOverlayEntry) {
         entry.visibility.targetState = false
+        if (suppressed) entries.remove(entry)
     }
 }
 
