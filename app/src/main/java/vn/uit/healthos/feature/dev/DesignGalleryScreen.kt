@@ -49,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.AccentPicker
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
@@ -140,13 +141,12 @@ fun DesignGalleryScreen(onBack: () -> Unit, viewModel: DesignGalleryViewModel = 
                     }
                     OrbSection()
                     SectionHeader("Metric tiles")
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        MetricTile("Bước chân", "6 482", Modifier.weight(1f), unit = "bước", icon = Icons.AutoMirrored.Rounded.DirectionsWalk, caption = "65% mục tiêu")
-                        MetricTile("Calo", "1 240", Modifier.weight(1f), unit = "kcal", icon = Icons.Rounded.LocalFireDepartment, iconTint = LocalVitalColors.current.energy)
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        MetricTile("Nước", "1.5", Modifier.weight(1f), unit = "L", icon = Icons.Rounded.WaterDrop)
-                        MetricTile("Nhịp tim", "72", Modifier.weight(1f), unit = "bpm", icon = Icons.Rounded.Favorite, iconTint = MaterialTheme.colorScheme.tertiary)
+                    // Two columns while every tile fits its half unbroken, one full-width column otherwise.
+                    AdaptiveColumns(maxColumns = 2, horizontalSpacing = 12.dp, equalHeight = true) {
+                        MetricTile("Bước chân", "6 482", unit = "bước", icon = Icons.AutoMirrored.Rounded.DirectionsWalk, caption = "65% mục tiêu")
+                        MetricTile("Calo", "1 240", unit = "kcal", icon = Icons.Rounded.LocalFireDepartment, iconTint = LocalVitalColors.current.energy)
+                        MetricTile("Nước", "1.5", unit = "L", icon = Icons.Rounded.WaterDrop)
+                        MetricTile("Nhịp tim", "72", unit = "bpm", icon = Icons.Rounded.Favorite, iconTint = MaterialTheme.colorScheme.tertiary)
                     }
                     SectionHeader("Chuyển động")
                     MotionSection()

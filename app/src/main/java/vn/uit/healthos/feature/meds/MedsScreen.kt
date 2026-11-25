@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.glass.LocalBottomChromeInset
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.SectionHeader
@@ -165,26 +166,33 @@ fun MedsScreen(
 
                         if (DoseStatus.of(dose.status).isOpen) {
                             Spacer(Modifier.height(10.dp))
-                            Row(
+                            // The taken button fills the line beside snooze and skip while its label fits unbroken;
+                            // otherwise it takes the full width and the other two move under it.
+                            AdaptiveRow(
                                 modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                minFlexibleFraction = 1f,
+                                spacing = 8.dp,
                             ) {
                                 PrimaryButton(
                                     text = stringResource(R.string.meds_action_taken),
                                     onClick = { onMarkDone(dose) },
                                     leadingIcon = Icons.Rounded.Check,
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.fillMaxWidth(),
                                 )
-                                SecondaryButton(
-                                    text = stringResource(R.string.meds_action_snooze_short),
-                                    onClick = { onSnoozeDose(dose) },
-                                    leadingIcon = Icons.Rounded.Snooze,
-                                )
-                                PlainButton(
-                                    text = stringResource(R.string.meds_action_skip),
-                                    onClick = { onSkipDose(dose) },
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    SecondaryButton(
+                                        text = stringResource(R.string.meds_action_snooze_short),
+                                        onClick = { onSnoozeDose(dose) },
+                                        leadingIcon = Icons.Rounded.Snooze,
+                                    )
+                                    PlainButton(
+                                        text = stringResource(R.string.meds_action_skip),
+                                        onClick = { onSkipDose(dose) },
+                                    )
+                                }
                             }
                         }
                     }

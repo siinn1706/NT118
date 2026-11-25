@@ -1,5 +1,6 @@
 package vn.uit.healthos.feature.meals
 
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.ErrorState
 import vn.uit.healthos.core.designsystem.component.GlassChip
 import vn.uit.healthos.core.designsystem.component.GlassIconButton
@@ -111,9 +112,12 @@ fun AnalysisResultScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    Row(
+                    // Three macros on one line when they fit, otherwise a grid; they never run into each other.
+                    AdaptiveColumns(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        maxColumns = 3,
+                        horizontalSpacing = 12.dp,
+                        verticalSpacing = 4.dp,
                     ) {
                         Text(
                             stringResource(R.string.meals_macro_protein, draft.proteinG.roundToInt()),
@@ -216,20 +220,16 @@ fun AnalysisResultScreen(
                 )
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
+            // Side by side only while both labels fit on one line; otherwise stacked at full width.
+            AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp) {
                 SecondaryButton(
                     text = stringResource(R.string.action_cancel),
                     onClick = onDiscard,
-                    modifier = Modifier.weight(1f),
                 )
                 PrimaryButton(
                     text = stringResource(R.string.action_save),
                     onClick = onSave,
                     loading = state.saving,
-                    modifier = Modifier.weight(1f),
                 )
             }
         }

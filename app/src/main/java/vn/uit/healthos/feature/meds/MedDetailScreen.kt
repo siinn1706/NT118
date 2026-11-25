@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
 import vn.uit.healthos.core.designsystem.component.LoadingState
@@ -138,7 +139,8 @@ fun MedDetailScreen(
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+            // Side by side only while both labels fit on one line; otherwise stacked at full width.
+            AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp) {
                 PrimaryButton(
                     text = if (plan.status == "paused") {
                         stringResource(R.string.meds_resume_action)
@@ -147,12 +149,10 @@ fun MedDetailScreen(
                     },
                     onClick = onTogglePause,
                     loading = state.saving,
-                    modifier = Modifier.weight(1f),
                 )
                 SecondaryButton(
                     text = stringResource(R.string.meds_refill_action),
                     onClick = { showRefillDialog = true },
-                    modifier = Modifier.weight(1f),
                 )
             }
 
@@ -186,7 +186,8 @@ private fun AdherenceBreakdownBar(
         Segment(weight = pending.toFloat() / total, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f))
     }
     Spacer(Modifier.height(8.dp))
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    // One line of three counts when they fit, otherwise a grid; the counts never run into each other.
+    AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 3, horizontalSpacing = 12.dp, verticalSpacing = 4.dp) {
         Text(stringResource(R.string.meds_adherence_taken, taken), style = MaterialTheme.typography.labelSmall.tabular())
         Text(stringResource(R.string.meds_adherence_skipped, skipped), style = MaterialTheme.typography.labelSmall.tabular())
         Text(stringResource(R.string.meds_adherence_missed, missed), style = MaterialTheme.typography.labelSmall.tabular())

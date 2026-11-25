@@ -48,6 +48,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.SecondaryButton
@@ -156,20 +158,21 @@ fun OnboardingScreen(
         )
 
         // Two separate glass capsules float on the background (iOS 26 bottom toolbar), never glass inside a glass slab.
-        Row(
+        // They share the line only while both labels fit on one line; otherwise they stack at full width.
+        AdaptiveColumns(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .onSizeChanged { barHeightPx = it.height }
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            maxColumns = 2,
+            horizontalSpacing = 12.dp,
         ) {
             if (state.step > OnboardingSteps.BODY) {
                 SecondaryButton(
                     text = stringResource(R.string.action_back),
                     onClick = onPrevious,
                     enabled = !state.loading,
-                    modifier = Modifier.weight(1f),
                 )
             }
             if (!OnboardingSteps.isLast(state.step)) {
@@ -177,14 +180,12 @@ fun OnboardingScreen(
                     text = stringResource(R.string.action_continue),
                     onClick = onNext,
                     loading = state.loading,
-                    modifier = Modifier.weight(1f),
                 )
             } else {
                 PrimaryButton(
                     text = stringResource(R.string.onboarding_complete_action),
                     onClick = onComplete,
                     loading = state.loading,
-                    modifier = Modifier.weight(1f),
                 )
             }
         }
@@ -229,20 +230,19 @@ private fun BodyStep(
                 onSelect = { onSexChange(BiologicalSex.entries[it]) },
                 modifier = Modifier.fillMaxWidth(),
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            // Side by side only while both fields fit their half; otherwise one under the other.
+            AdaptiveColumns(maxColumns = 2, horizontalSpacing = 12.dp) {
                 GlassTextField(
                     value = state.heightCm,
                     onValueChange = onHeightChange,
                     label = stringResource(R.string.onboarding_height_cm),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.weight(1f),
                 )
                 GlassTextField(
                     value = state.weightKg,
                     onValueChange = onWeightChange,
                     label = stringResource(R.string.onboarding_weight_kg),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.weight(1f),
                 )
             }
             GlassTextField(
@@ -360,9 +360,11 @@ private fun GoalTdeeStep(
 
 @Composable
 private fun FormulaRow(label: String, value: String) {
-    Row(
+    // The value moves under its label when keeping it beside would squeeze the label.
+    AdaptiveRow(
         modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top,
+        verticalSpacing = 0.dp,
     ) {
         Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
         Text(

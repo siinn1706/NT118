@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -44,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.glass.LocalBottomChromeInset
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.SecondaryButton
@@ -110,10 +113,9 @@ fun MealsScreen(
 
             // Calorie Ring Card
             BentoCard(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                ) {
+                // The text sits beside the ring only while its lines fit unbroken; with a large font it goes under
+                // the ring.
+                AdaptiveRow(flexibleIndex = 1, minFlexibleFraction = 1f, spacing = 20.dp, verticalSpacing = 12.dp) {
                     val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
                     val ringColor = if (overTarget) LocalVitalColors.current.alert else LocalVitalColors.current.good
                     Box(modifier = Modifier.size(112.dp), contentAlignment = Alignment.Center) {
@@ -137,7 +139,7 @@ fun MealsScreen(
                             )
                         }
                     }
-                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(stringResource(R.string.meals_today_ring_title), style = MaterialTheme.typography.titleMedium)
                         Text(
                             stringResource(R.string.meals_target_kcal, target),
@@ -159,21 +161,17 @@ fun MealsScreen(
             }
 
             // Action Buttons: Snap Photo & Manual Entry
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
+            // Side by side only while both labels fit on one line; otherwise stacked at full width.
+            AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp) {
                 PrimaryButton(
                     text = stringResource(R.string.meals_snap_action),
                     onClick = onOpenSnap,
                     leadingIcon = Icons.Rounded.CameraAlt,
-                    modifier = Modifier.weight(1f),
                 )
                 SecondaryButton(
                     text = stringResource(R.string.meals_manual_action),
                     onClick = onOpenManual,
                     leadingIcon = Icons.Rounded.Add,
-                    modifier = Modifier.weight(1f),
                 )
             }
 
@@ -307,7 +305,7 @@ private fun WeeklyCaloriesBarCard(
     val maxVal = maxOf(targetCalories.toDouble(), points.maxOfOrNull { it.totalCalories } ?: 1.0, 1.0)
     BentoCard(modifier = Modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.fillMaxWidth().height(120.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
@@ -323,10 +321,12 @@ private fun WeeklyCaloriesBarCard(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom,
                 ) {
+                    // Never broken across lines: a number split in two reads as two numbers.
                     Text(
                         text = "${pt.totalCalories.roundToInt()}",
                         style = MaterialTheme.typography.labelSmall.tabular(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        softWrap = false,
                     )
                     Spacer(Modifier.height(4.dp))
                     Box(

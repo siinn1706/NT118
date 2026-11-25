@@ -1,5 +1,6 @@
 package vn.uit.healthos.feature.meals
 
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.GlassBanner
 import vn.uit.healthos.core.designsystem.component.GlassBannerTone
@@ -30,7 +31,6 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -233,10 +233,8 @@ fun SnapScreen(
                         )
                     }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
+                    // Side by side only while both labels fit on one line; otherwise stacked at full width.
+                    AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp) {
                         SecondaryButton(
                             text = stringResource(R.string.meals_pick_gallery),
                             onClick = {
@@ -245,7 +243,6 @@ fun SnapScreen(
                                 )
                             },
                             leadingIcon = Icons.Rounded.PhotoLibrary,
-                            modifier = Modifier.weight(1f),
                         )
                         if (cameraGranted) {
                             PrimaryButton(
@@ -270,7 +267,6 @@ fun SnapScreen(
                                     )
                                 },
                                 leadingIcon = Icons.Rounded.CameraAlt,
-                                modifier = Modifier.weight(1f),
                             )
                         }
                     }

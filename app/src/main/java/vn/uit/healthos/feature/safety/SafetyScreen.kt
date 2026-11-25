@@ -56,6 +56,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
@@ -356,23 +357,19 @@ fun SafetyScreen(
                         )
                     }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
+                    // Side by side only while both labels fit on one line; otherwise stacked at full width.
+                    AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 10.dp) {
                         PrimaryButton(
                             text = stringResource(R.string.safety_mint_qr_action),
                             onClick = onMintQrToken,
                             loading = state.mintingToken,
                             leadingIcon = Icons.Rounded.QrCode2,
-                            modifier = Modifier.weight(1f),
                         )
                         SecondaryButton(
                             text = stringResource(R.string.safety_open_card_action),
                             onClick = {
                                 context.startActivity(Intent(context, EmergencyCardActivity::class.java))
                             },
-                            modifier = Modifier.weight(1f),
                         )
                     }
                 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
@@ -143,18 +144,17 @@ fun MedPlanFormScreen(
 
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    // Side by side only while both fields fit their half; otherwise one under the other.
+                    AdaptiveColumns(maxColumns = 2, horizontalSpacing = 12.dp) {
                         GlassTextField(
                             value = form.startDate,
                             onValueChange = { v -> onUpdateForm { it.copy(startDate = v) } },
                             label = stringResource(R.string.meds_start_date),
-                            modifier = Modifier.weight(1f),
                         )
                         GlassTextField(
                             value = form.endDate,
                             onValueChange = { v -> onUpdateForm { it.copy(endDate = v) } },
                             label = stringResource(R.string.meds_end_date_optional),
-                            modifier = Modifier.weight(1f),
                         )
                     }
                     GlassTextField(

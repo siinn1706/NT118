@@ -110,7 +110,7 @@
     <string name="goal_gain">Tăng cân (+300)</string>
     <string name="onboarding_target_weight_kg">Cân nặng mục tiêu (kg)</string>
     <string name="onboarding_tdee_card_title">Mục tiêu năng lượng hằng ngày</string>
-    <string name="onboarding_tdee_target_value">%1$d kcal/ngày</string>
+    <string name="onboarding_tdee_target_value">%1$d\u00A0kcal/ngày</string>
     <string name="onboarding_tdee_bmr">Tỷ lệ trao đổi chất (BMR)</string>
     <string name="onboarding_tdee_activity_mult">Hệ số vận động</string>
     <string name="onboarding_tdee_maintenance">TDEE duy trì</string>
@@ -137,7 +137,7 @@
     <string name="profile_blood_type_badge">Nhóm máu %1$s</string>
     <string name="profile_metric_bmi">BMI</string>
     <string name="profile_metric_calorie_goal">Mục tiêu calo</string>
-    <string name="profile_target_weight_caption">Mục tiêu %1$s kg</string>
+    <string name="profile_target_weight_caption">Mục tiêu %1$s\u00A0kg</string>
     <string name="unit_kcal">kcal</string>
     <string name="profile_tools_section">Tiện ích sức khỏe</string>
     <string name="profile_safety_subtitle">Phát hiện té ngã, SOS và mã QR khẩn cấp</string>
@@ -191,13 +191,13 @@
     <string name="home_metric_hr">Nhịp tim</string>
     <string name="unit_steps">bước</string>
     <string name="unit_bpm">bpm</string>
-    <string name="unit_minutes_short">%1$d phút</string>
-    <string name="home_steps_goal_caption">Mục tiêu %1$d bước</string>
-    <string name="home_calories_goal_caption">TDEE %1$d kcal</string>
+    <string name="unit_minutes_short">%1$d\u00A0phút</string>
+    <string name="home_steps_goal_caption">Mục tiêu %1$d\u00A0bước</string>
+    <string name="home_calories_goal_caption">TDEE %1$d\u00A0kcal</string>
     <string name="home_hydration_title">Nước uống hôm nay</string>
-    <string name="home_hydration_heat_bonus">Đã cộng +%1$d ml do trời nóng</string>
+    <string name="home_hydration_heat_bonus">Đã cộng +%1$d\u00A0ml do trời nóng</string>
     <string name="home_hydration_add_250">+250 ml</string>
-    <string name="home_hydration_value">%1$d / %2$d ml</string>
+    <string name="home_hydration_value">%1$d / %2$d\u00A0ml</string>
     <string name="home_ai_advice_section">Lời khuyên AI</string>
     <string name="home_ai_advice_default_title">Gợi ý sức khỏe hôm nay</string>
     <string name="home_exercises_section">Gợi ý vận động</string>
@@ -221,9 +221,9 @@
 
     <!-- Meals Snap -->
     <string name="meals_today_ring_title">Năng lượng hôm nay</string>
-    <string name="meals_target_kcal">Mục tiêu: %1$d kcal</string>
-    <string name="meals_remaining_kcal">Còn lại %1$d kcal</string>
-    <string name="meals_over_kcal">Vượt %1$d kcal</string>
+    <string name="meals_target_kcal">Mục tiêu: %1$d\u00A0kcal</string>
+    <string name="meals_remaining_kcal">Còn lại %1$d\u00A0kcal</string>
+    <string name="meals_over_kcal">Vượt %1$d\u00A0kcal</string>
     <string name="meals_snap_action">Chụp món ăn</string>
     <string name="meals_manual_action">Nhập thủ công</string>
     <string name="meals_pending_section">Đang chờ đồng bộ</string>
@@ -371,7 +371,7 @@
     <string name="ppg_status_collecting">Đang thu tín hiệu mạch đập…</string>
     <string name="ppg_status_reposition">Đặt lại ngón tay nhẹ hơn và giữ yên</string>
     <string name="ppg_status_good">Tín hiệu ổn định — giữ nguyên ngón tay</string>
-    <string name="ppg_progress_seconds">%1$d / %2$d giây</string>
+    <string name="ppg_progress_seconds">%1$d / %2$d\u00A0giây</string>
     <string name="ppg_waveform_label">Sóng PPG thời gian thực</string>
     <string name="ppg_result_title">Kết quả đo nhịp tim</string>
     <string name="ppg_confidence_label">Độ tin cậy tín hiệu: %1$d%%</string>

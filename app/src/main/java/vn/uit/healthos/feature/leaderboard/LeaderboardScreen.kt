@@ -293,7 +293,7 @@ private fun PodiumPlace(entry: LeaderboardEntryDto, modifier: Modifier = Modifie
             text = name,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = if (entry.isMe) FontWeight.Bold else FontWeight.SemiBold,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
         )
@@ -332,7 +332,7 @@ private fun RankRow(entry: LeaderboardEntryDto) {
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = if (entry.isMe) FontWeight.Bold else FontWeight.Normal,
             color = if (entry.isMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )

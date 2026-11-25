@@ -1,6 +1,7 @@
 package vn.uit.healthos.feature.safety
 
 import vn.uit.healthos.core.data.session.AppPreferencesRepository
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.GlassSpinner
 import vn.uit.healthos.core.designsystem.glass.GlassStyle
 import vn.uit.healthos.core.designsystem.glass.liquidGlass
@@ -16,7 +17,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -301,10 +301,8 @@ private fun DispatchDetails(event: SosEvent) {
             Text(contact.name, style = MaterialTheme.typography.titleSmall)
             Text(contact.phone, style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(4.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
+            // Both delivery statuses on one line while they fit, otherwise one under the other.
+            AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp, verticalSpacing = 2.dp) {
                 Text(
                     text = stringResource(R.string.safety_sos_sms_label, smsStatusLabel(contact.sms.status)),
                     style = MaterialTheme.typography.labelMedium,

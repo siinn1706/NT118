@@ -74,6 +74,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.kyant.shapes.Capsule
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.ErrorState
 import vn.uit.healthos.core.designsystem.component.GlassBanner
@@ -414,14 +416,16 @@ private fun SetupCard(items: List<SetupItem>) {
 private fun BentoGrid(state: HomeUiState, actions: HomeActions, navigation: HomeNavigation) {
     val tiles = state.layout.visible.filter { tile -> tile.hasContent(state) }
     HomeLayout.rows(tiles).forEach { row ->
-        Row(
+        // A pair of half tiles shares the row only while both fit their column unbroken at the current font size;
+        // otherwise each takes the full width.
+        AdaptiveColumns(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            maxColumns = 2,
+            horizontalSpacing = 12.dp,
+            equalHeight = true,
         ) {
             row.forEach { tile ->
-                Box(Modifier.weight(1f)) {
-                    HomeTileContent(tile = tile, state = state, actions = actions, navigation = navigation)
-                }
+                HomeTileContent(tile = tile, state = state, actions = actions, navigation = navigation)
             }
         }
     }
@@ -582,12 +586,9 @@ private fun NextDoseTile(
             )
             return@BentoCard
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
+        // The "taken" button moves under the dose details when keeping it beside them would squeeze the text.
+        AdaptiveRow(modifier = Modifier.fillMaxWidth()) {
+            Column {
                 Text(
                     text = if (overdue) {
                         stringResource(R.string.home_next_dose_overdue, time)
@@ -597,7 +598,7 @@ private fun NextDoseTile(
                     style = MaterialTheme.typography.titleMedium.tabular(),
                     color = MaterialTheme.colorScheme.primary,
                 )
-                Text(dose.planName, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(dose.planName, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 dose.strength?.takeIf { it.isNotBlank() }?.let {
                     Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
@@ -708,20 +709,10 @@ private fun LayoutEditor(
             )
         }
     }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        SecondaryButton(
-            text = stringResource(R.string.home_edit_layout_reset),
-            onClick = onReset,
-            modifier = Modifier.weight(1f),
-        )
-        PrimaryButton(
-            text = stringResource(R.string.home_edit_layout_done),
-            onClick = onDone,
-            modifier = Modifier.weight(1f),
-        )
+    // Side by side only while both labels fit on one line; otherwise stacked at full width.
+    AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp) {
+        SecondaryButton(text = stringResource(R.string.home_edit_layout_reset), onClick = onReset)
+        PrimaryButton(text = stringResource(R.string.home_edit_layout_done), onClick = onDone)
     }
 }
 

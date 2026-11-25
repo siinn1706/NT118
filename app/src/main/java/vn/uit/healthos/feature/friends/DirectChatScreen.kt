@@ -49,6 +49,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -297,10 +298,13 @@ private fun Composer(input: String, peerName: String, onInputChange: (String) ->
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         if (input.isEmpty()) {
+                            // One line: a wrapping hint makes the empty field look taller than what it holds.
                             Text(
                                 text = stringResource(R.string.dm_input_placeholder, peerName),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = scheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
                         inner()

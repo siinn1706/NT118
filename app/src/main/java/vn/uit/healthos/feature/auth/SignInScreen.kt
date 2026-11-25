@@ -2,6 +2,8 @@ package vn.uit.healthos.feature.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +34,7 @@ import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.VitalOrb
 import vn.uit.healthos.core.ui.asString
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SignInScreen(
     state: AuthUiState,
@@ -121,9 +124,10 @@ fun SignInScreen(
             }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        // The sign-up link wraps onto its own centred line when it does not fit beside the question.
+        FlowRow(
             horizontalArrangement = Arrangement.Center,
+            itemVerticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(R.string.auth_no_account),

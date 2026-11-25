@@ -50,6 +50,8 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
 import vn.uit.healthos.core.designsystem.component.GlassBanner
@@ -212,19 +214,20 @@ private fun LazyListScope.requestsSection(state: FriendsUiState, actions: Friend
                 state.incoming.forEachIndexed { index, request ->
                     val busy = request.id in state.busyIds
                     RequestRow(request) {
-                        PrimaryButton(
-                            text = stringResource(R.string.friends_accept),
-                            onClick = { actions.onAccept(request) },
-                            enabled = !busy,
-                            loading = busy,
-                            modifier = Modifier.weight(1f),
-                        )
-                        SecondaryButton(
-                            text = stringResource(R.string.friends_decline),
-                            onClick = { actions.onDecline(request) },
-                            enabled = !busy,
-                            modifier = Modifier.weight(1f),
-                        )
+                        // Side by side only while both labels fit on one line; otherwise stacked at full width.
+                        AdaptiveColumns(modifier = Modifier.weight(1f), maxColumns = 2, horizontalSpacing = 8.dp) {
+                            PrimaryButton(
+                                text = stringResource(R.string.friends_accept),
+                                onClick = { actions.onAccept(request) },
+                                enabled = !busy,
+                                loading = busy,
+                            )
+                            SecondaryButton(
+                                text = stringResource(R.string.friends_decline),
+                                onClick = { actions.onDecline(request) },
+                                enabled = !busy,
+                            )
+                        }
                     }
                     if (index < state.incoming.lastIndex) RowDivider()
                 }
@@ -344,7 +347,7 @@ private fun FriendRow(row: FriendRowUi, busy: Boolean, onOpen: () -> Unit, onUnf
             Text(
                 text = name,
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
@@ -417,7 +420,7 @@ private fun RequestRow(request: FriendRequestDto, buttons: @Composable RowScope.
                 Text(
                     request.user.displayName,
                     style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
@@ -440,16 +443,16 @@ private fun RequestRow(request: FriendRequestDto, buttons: @Composable RowScope.
 
 @Composable
 private fun SearchResultRow(result: FriendSearchResultDto, busy: Boolean, actions: FriendsActions) {
-    Row(
+    // The action moves under the person when keeping it beside them would squeeze the name.
+    AdaptiveRow(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 72.dp)
             .padding(horizontal = 16.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        stackedAlignment = Alignment.End,
     ) {
         Row(
-            modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
+            modifier = Modifier.semantics(mergeDescendants = true) {},
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -458,7 +461,7 @@ private fun SearchResultRow(result: FriendSearchResultDto, busy: Boolean, action
                 Text(
                     result.displayName,
                     style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(

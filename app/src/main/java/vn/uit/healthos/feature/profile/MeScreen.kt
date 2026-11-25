@@ -41,6 +41,7 @@ import coil3.compose.AsyncImage
 import com.kyant.shapes.Capsule
 import vn.uit.healthos.BuildConfig
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.GlassBanner
 import vn.uit.healthos.core.designsystem.component.GlassBannerTone
@@ -161,19 +162,22 @@ private fun MeContent(
     } else {
         null
     }
-    Row(
+    // Two tiles side by side only while both fit their column unbroken; otherwise one full-width tile each.
+    AdaptiveColumns(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        maxColumns = 2,
+        horizontalSpacing = 12.dp,
+        equalHeight = true,
     ) {
         MetricTile(
             label = stringResource(R.string.profile_metric_bmi),
             value = bmiValue?.toString() ?: "—",
             caption = if (heightCm != null && weightKg != null) {
-                "${heightCm.roundToInt()} cm · $weightKg kg"
+                // Non-breaking spaces keep each number with its unit.
+                "${heightCm.roundToInt()} cm · $weightKg kg"
             } else {
                 null
             },
-            modifier = Modifier.weight(1f),
         )
         MetricTile(
             label = stringResource(R.string.profile_metric_calorie_goal),
@@ -183,7 +187,6 @@ private fun MeContent(
                 stringResource(R.string.profile_target_weight_caption, it.toString())
             },
             iconTint = LocalVitalColors.current.energy,
-            modifier = Modifier.weight(1f),
         )
     }
 
@@ -324,7 +327,7 @@ private fun ProfileHeaderCard(profile: UserProfileDto?) {
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
