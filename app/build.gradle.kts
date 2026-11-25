@@ -44,6 +44,16 @@ android {
                 "proguard-rules.pro"
             )
         }
+        // Release-like build for measuring real performance on a device: not debuggable (Compose runs without debug
+        // checks and ART optimises the code), signed with the debug key so it installs over a debug build, and
+        // cleartext allowed so it can reach a local backend.
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
