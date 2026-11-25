@@ -148,6 +148,8 @@ fun DesignGalleryScreen(onBack: () -> Unit, viewModel: DesignGalleryViewModel = 
                         MetricTile("Nước", "1.5", Modifier.weight(1f), unit = "L", icon = Icons.Rounded.WaterDrop)
                         MetricTile("Nhịp tim", "72", Modifier.weight(1f), unit = "bpm", icon = Icons.Rounded.Favorite, iconTint = MaterialTheme.colorScheme.tertiary)
                     }
+                    SectionHeader("Chuyển động")
+                    MotionSection()
                     SectionHeader("Buttons on the backdrop")
                     ButtonsSection()
                     SectionHeader("Buttons inside a card (inset)")
