@@ -130,3 +130,23 @@ Việc còn mở, sẽ làm trước phase 2:
 - Khi đổi hình, app chỉ đạt khoảng 24 khung/giây (41,7 ms mỗi khung).
 - Toàn bộ màn hình bị ghi vào layer ở mọi khung để thanh tab lấy mẫu, kể cả ở chế độ nền đặc.
 - Mục tiêu: trung vị dưới 12 ms khi cuộn, và từ 60 khung/giây trở lên khi đổi hình.
+
+### Gói hiệu năng (xong)
+Đo trên Galaxy S21 (Android 15, cỡ chữ 1,3 lần). Cột "bây giờ" là bản benchmark có R8, baseline profile và biên dịch speed-profile, tương đương bản cài từ Google Play.
+
+| Chỉ số | Bản debug ban đầu | Bây giờ |
+|---|---|---|
+| Mở app lạnh | 1.050 ms | 169–192 ms |
+| Chuyển tab, khung giật nhất (p99) | 150–600 ms | 29–125 ms |
+| Cuộn Home, trung vị | 47 ms | 12,8 ms (9 % số khung quá 16 ms) |
+| Cuộn màn Tôi, trung vị | 22–25 ms | 12,2 ms |
+| Home đứng yên | 50–60 khung/giây | 0 khung |
+
+Nguyên nhân và cách sửa:
+- **Bản debug:** Compose chạy kèm các kiểm tra debug và mã không được tối ưu. Đã bật R8, sinh baseline profile trên chính máy này, và thêm build type `benchmark` để đo.
+- **Kính lấy mẫu backdrop thừa:**
+  - Viên chọn và hàng icon ẩn của thanh tab giờ chỉ lấy mẫu khi đang nhấn.
+  - Hiệu ứng mép cuộn dùng gradient thay cho blur trực tiếp.
+  - Kính chỉ nằm trên nền tĩnh và thẻ nội dung không còn lấy mẫu trực tiếp.
+- **Chuyển tab:** NavHost trước đây dùng fade mặc định 700 ms. Giờ là crossfade 150 ms, và các tab hiện dữ liệu đã lưu ngay (snapshot_cache trong Room, dữ liệu được coi là mới trong 60 giây).
+- **R8:** đã thêm keep rule cho constructor của ActionCallback của widget, vì R8 xóa chúng làm nút widget crash. Kho token mã hóa vẫn giữ phiên sau 4 lần đóng hẳn app.
