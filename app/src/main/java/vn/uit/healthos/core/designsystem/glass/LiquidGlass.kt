@@ -15,8 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -27,6 +29,7 @@ import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.colorControls
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
@@ -203,15 +206,35 @@ fun Modifier.liquidGlass(
     layerBlock: (GraphicsLayerScope.() -> Unit)? = null,
     tintMode: GlassTintMode = GlassTintMode.Wash,
     exportedBackdrop: LayerBackdrop? = null,
+): Modifier = glassSurface(shape, style, tint, backdrop, layerBlock, tintMode, exportedBackdrop, materialize = null)
+
+/**
+ * [liquidGlass] with an optional [materialize] provider (0 = absent, 1 = fully present). The provider is only read in
+ * effect, draw and layer lambdas, so animating it redraws the surface without recomposing.
+ */
+@Composable
+internal fun Modifier.glassSurface(
+    shape: Shape,
+    style: GlassStyle,
+    tint: Color,
+    backdrop: Backdrop?,
+    layerBlock: (GraphicsLayerScope.() -> Unit)?,
+    tintMode: GlassTintMode,
+    exportedBackdrop: LayerBackdrop?,
+    materialize: (() -> Float)?,
 ): Modifier {
     val colors = LocalGlassColors.current
     val rendering = glassRendering(backdrop)
     val light = LocalGlassLight.current ?: FixedGlassLight
-    val glass = remember(rendering, shape, style, tint, tintMode, colors, backdrop, layerBlock, exportedBackdrop, light) {
+    val glass = remember(
+        rendering, shape, style, tint, tintMode, colors, backdrop, layerBlock, exportedBackdrop, light, materialize,
+    ) {
         if (rendering == GlassRendering.Solid || backdrop == null) {
-            solidGlass(shape, colors, tint, tintMode, layerBlock)
+            solidGlass(shape, colors, tint, tintMode, layerBlock, materialize)
         } else {
-            backdropGlass(rendering, shape, style, colors, tint, tintMode, backdrop, layerBlock, exportedBackdrop, light)
+            backdropGlass(
+                rendering, shape, style, colors, tint, tintMode, backdrop, layerBlock, exportedBackdrop, light, materialize,
+            )
         }
     }
     return this.then(glass)
@@ -223,6 +246,7 @@ private fun solidGlass(
     tint: Color,
     tintMode: GlassTintMode,
     layerBlock: (GraphicsLayerScope.() -> Unit)?,
+    materialize: (() -> Float)?,
 ): Modifier {
     val fill = when {
         tint.isSpecified && tintMode == GlassTintMode.Prominent -> tint.copy(alpha = 1f)
@@ -230,6 +254,8 @@ private fun solidGlass(
     }
     return Modifier
         .then(if (layerBlock != null) Modifier.graphicsLayer(layerBlock) else Modifier)
+        // A solid surface has no refraction to ramp, so it can only fade along the same density curve.
+        .then(if (materialize != null) Modifier.graphicsLayer { alpha = glassDensity(materialize()) } else Modifier)
         .background(fill, shape)
         .then(if (tint.isSpecified && tintMode == GlassTintMode.Wash) Modifier.background(tint, shape) else Modifier)
         .border(GlassTokens.Hairline, colors.rim, shape)
@@ -247,6 +273,7 @@ private fun backdropGlass(
     layerBlock: (GraphicsLayerScope.() -> Unit)?,
     exportedBackdrop: LayerBackdrop?,
     light: GlassLight,
+    materialize: (() -> Float)?,
 ): Modifier {
     val lite = rendering == GlassRendering.Lite
     val blur = if (lite) liteBlur(style) else style.blur
@@ -262,12 +289,14 @@ private fun backdropGlass(
         backdrop = backdrop,
         shape = { shape },
         effects = {
-            vibrancy()
-            blur(blur.toPx())
-            if (style.hasLens) {
+            // Density stays 1 without a materialize provider, which keeps the static surface unchanged.
+            val density = densityOf(materialize)
+            if (density >= 1f) vibrancy() else colorControls(saturation = 1f + (VibrantSaturation - 1f) * density)
+            blur(blur.toPx() * density)
+            if (style.hasLens && density > 0f) {
                 lens(
-                    style.lensHeight.toPx(),
-                    style.lensAmount.toPx(),
+                    style.lensHeight.toPx() * density,
+                    style.lensAmount.toPx() * density,
                     depthEffect = style.depthEffect,
                     chromaticAberration = style.chromaticAberration,
                 )
@@ -275,39 +304,86 @@ private fun backdropGlass(
         },
         highlight = when {
             lite -> {
-                { Highlight(width = 0.5.dp, alpha = style.highlightAlpha, style = HighlightStyle.Plain) }
+                {
+                    Highlight(
+                        width = 0.5.dp,
+                        alpha = style.highlightAlpha * densityOf(materialize),
+                        style = HighlightStyle.Plain,
+                    )
+                }
             }
             style.kind == GlassStyle.Kind.Material -> {
-                { Highlight(width = 0.5.dp, alpha = style.highlightAlpha, style = MaterialRim) }
+                {
+                    Highlight(
+                        width = 0.5.dp,
+                        alpha = style.highlightAlpha * densityOf(materialize),
+                        style = MaterialRim,
+                    )
+                }
             }
             else -> {
                 {
                     Highlight(
                         width = GlassTokens.Hairline,
-                        alpha = style.highlightAlpha,
+                        alpha = style.highlightAlpha * densityOf(materialize),
                         style = HighlightStyle.Default(angle = light.angle, falloff = SpecularFalloff),
                     )
                 }
             }
         },
         shadow = if (style.shadowRadius > 0.dp) {
-            { Shadow(radius = style.shadowRadius, color = shadowColor) }
+            { Shadow(radius = style.shadowRadius, color = shadowColor, alpha = densityOf(materialize)) }
         } else {
             null
         },
         layerBlock = layerBlock,
         exportedBackdrop = exportedBackdrop,
+        onDrawBackdrop = { drawBackdrop ->
+            // While dissolving, the refracted sample gives way to what is really behind the surface; the surface and
+            // its content are not faded as a whole.
+            val density = densityOf(materialize)
+            when {
+                density >= 1f -> drawBackdrop()
+                density > 0f -> {
+                    val canvas = drawContext.canvas
+                    canvas.saveLayer(
+                        Rect(-size.width, -size.height, size.width * 2f, size.height * 2f),
+                        Paint().apply { alpha = density },
+                    )
+                    drawBackdrop()
+                    canvas.restore()
+                }
+            }
+        },
         onDrawSurface = {
+            val density = densityOf(materialize)
             if (prominent) {
-                drawRect(tint.copy(alpha = 1f), blendMode = BlendMode.Hue)
-                drawRect(tint)
+                drawRect(tint.copy(alpha = density), blendMode = BlendMode.Hue)
+                drawRect(tint.copy(alpha = tint.alpha * density))
             } else {
-                drawRect(fill)
-                if (tint.isSpecified) drawRect(tint)
+                drawRect(fill.copy(alpha = fill.alpha * density))
+                if (tint.isSpecified) drawRect(tint.copy(alpha = tint.alpha * density))
             }
         },
     )
 }
+
+private fun densityOf(materialize: (() -> Float)?): Float = if (materialize != null) glassDensity(materialize()) else 1f
+
+/**
+ * How dense a glass surface is at materialize [progress] (0 = absent, 1 = present): fully dense down to
+ * [MaterializeDenseFrom], then it dissolves along a smoothstep to nothing at 0. Refraction, frost, rim, fill and
+ * shadow all scale with it, instead of the surface fading by alpha.
+ */
+fun glassDensity(progress: Float): Float {
+    if (progress >= MaterializeDenseFrom) return 1f
+    if (progress <= 0f) return 0f
+    val x = progress / MaterializeDenseFrom
+    return x * x * (3f - 2f * x)
+}
+
+/** Materialize progress below which glass starts to dissolve (the last quarter of the way out). */
+const val MaterializeDenseFrom = 0.25f
 
 /**
  * Flat material for a control that sits inside another glass surface: no backdrop sampling (so no hole through the
@@ -352,5 +428,6 @@ private fun liteBlur(style: GlassStyle): Dp = when (style.kind) {
 }
 
 private const val LiteFillBoost = 0.15f
+private const val VibrantSaturation = 1.5f
 private const val SpecularFalloff = 1.5f
 private val MaterialRim = HighlightStyle.Ambient(intensity = 0.22f)
