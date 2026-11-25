@@ -173,9 +173,14 @@ fun AppNavHost(
     }
 
     // A home-screen widget asked for a screen: open it once the session is ready (the app lock overlay still covers it).
-    LaunchedEffect(pendingRoute, bootstrap) {
+    // Sign-in and onboarding turn the session READY before they navigate to Home with a cleared back stack, so the
+    // route stays pending until Home is actually on the stack; otherwise that navigation would wipe the screen.
+    val homeOnStack = remember(backStackEntry) {
+        backStackEntry != null && runCatching { navController.getBackStackEntry(HomeRoute) }.isSuccess
+    }
+    LaunchedEffect(pendingRoute, bootstrap, homeOnStack) {
         val target = pendingRoute ?: return@LaunchedEffect
-        if (bootstrap != SessionBootstrapState.READY) return@LaunchedEffect
+        if (bootstrap != SessionBootstrapState.READY || !homeOnStack) return@LaunchedEffect
         val topLevel = if (target is SnapDestination) MealsRoute else target
         navController.navigate(topLevel) {
             popUpTo(HomeRoute) { saveState = true }
