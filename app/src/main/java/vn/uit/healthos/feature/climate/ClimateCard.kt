@@ -1,5 +1,7 @@
 package vn.uit.healthos.feature.climate
 
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Air
-import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material.icons.rounded.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 import vn.uit.healthos.core.designsystem.theme.tabular
@@ -42,11 +44,9 @@ fun ClimateCard(
         .format(DateTimeFormatter.ofPattern("HH:mm"))
 
     BentoCard(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
+        // The source and time stay at the end of the title line only while both fit unbroken; otherwise they wrap
+        // under the title.
+        AdaptiveRow(modifier = Modifier.fillMaxWidth(), minFlexibleFraction = 1f, verticalSpacing = 2.dp) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -68,9 +68,12 @@ fun ClimateCard(
 
         Spacer(Modifier.height(12.dp))
 
-        Row(
+        // Three equal columns when every reading fits, else two, else one; each label stays above its own value.
+        AdaptiveColumns(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            maxColumns = 3,
+            horizontalSpacing = 16.dp,
+            verticalSpacing = 12.dp,
         ) {
             ClimateStat(
                 label = stringResource(R.string.climate_temp_label),
@@ -91,29 +94,11 @@ fun ClimateCard(
 
         if (advice.outdoorWarning != OutdoorWarning.NONE) {
             Spacer(Modifier.height(12.dp))
-            Surface(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = MaterialTheme.shapes.medium,
+            GlassBanner(
+                message = outdoorWarningText(advice.outdoorWarning),
+                tone = GlassBannerTone.Warning,
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.WarningAmber,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        modifier = Modifier.size(20.dp),
-                    )
-                    Text(
-                        text = outdoorWarningText(advice.outdoorWarning),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    )
-                }
-            }
+            )
         } else {
             Spacer(Modifier.height(10.dp))
             Row(

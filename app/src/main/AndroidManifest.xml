@@ -103,13 +103,80 @@
         </receiver>
         <receiver
             android:name=".feature.safety.card.EmergencyCardWidgetReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/widget_sos_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/emergency_card_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.VitalScoreWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_vital_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/vital_score_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.StepsWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_steps_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/steps_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.HydrationWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_hydration_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/hydration_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.NextDoseWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_dose_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/next_dose_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.AskAiWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_ask_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ask_ai_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.CaloriesWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_calories_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/calories_widget_info" />
         </receiver>
 
         <receiver
@@ -118,6 +185,14 @@
         <receiver
             android:name=".feature.meds.DoseActionReceiver"
             android:exported="false" />
+        <receiver
+            android:name=".feature.steps.StepBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".feature.meds.BootReceiver"
             android:exported="true">

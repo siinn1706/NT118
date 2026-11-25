@@ -1,5 +1,13 @@
 package vn.uit.healthos.feature.safety
 
+import vn.uit.healthos.core.designsystem.component.PlainButton
+import vn.uit.healthos.core.designsystem.component.GlassSwitch
+import vn.uit.healthos.core.designsystem.glass.GlassTokens
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.semantics.Role
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
 import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
@@ -28,14 +36,9 @@ import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.QrCode2
 import androidx.compose.material.icons.rounded.Sos
 import androidx.compose.material.icons.rounded.WarningAmber
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,6 +56,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
@@ -126,8 +130,8 @@ fun SafetyScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -194,7 +198,8 @@ fun SafetyScreen(
                             color = MaterialTheme.colorScheme.onErrorContainer,
                         )
                     }
-                    TextButton(
+                    PlainButton(
+                        text = stringResource(R.string.safety_sos_perm_open_settings),
                         onClick = {
                             val intent = Intent(
                                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -202,12 +207,12 @@ fun SafetyScreen(
                             )
                             runCatching { context.startActivity(intent) }
                         },
-                    ) {
-                        Text(stringResource(R.string.safety_sos_perm_open_settings))
-                    }
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                    )
                     Spacer(Modifier.height(4.dp))
                 }
-                Button(
+                PrimaryButton(
+                    text = stringResource(R.string.safety_trigger_sos_action),
                     onClick = {
                         val missing = context.missingPermissions(sosPermissions())
                         if (missing.isEmpty()) {
@@ -216,18 +221,10 @@ fun SafetyScreen(
                             sosPermissionLauncher.launch(missing)
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError,
-                    ),
-                    modifier = Modifier.fillMaxWidth().height(54.dp),
-                ) {
-                    Icon(Icons.Rounded.Sos, contentDescription = null)
-                    Text(
-                        text = stringResource(R.string.safety_trigger_sos_action),
-                        modifier = Modifier.padding(start = 8.dp),
-                    )
-                }
+                    leadingIcon = Icons.Rounded.Sos,
+                    destructive = true,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
+                )
             }
 
             if (!canFullScreen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -250,7 +247,8 @@ fun SafetyScreen(
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier.weight(1f),
                         )
-                        TextButton(
+                        PlainButton(
+                            text = stringResource(R.string.action_enable),
                             onClick = {
                                 val intent = Intent(
                                     Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
@@ -258,9 +256,7 @@ fun SafetyScreen(
                                 )
                                 runCatching { context.startActivity(intent) }
                             },
-                        ) {
-                            Text(stringResource(R.string.action_enable))
-                        }
+                        )
                     }
                 }
             }
@@ -269,8 +265,29 @@ fun SafetyScreen(
             SectionHeader(title = stringResource(R.string.safety_fall_section))
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    val onFallToggle: (Boolean) -> Unit = { enable ->
+                        if (enable) {
+                            val missing = context.missingPermissions(
+                                sosPermissions() + Manifest.permission.ACTIVITY_RECOGNITION,
+                            )
+                            if (missing.isEmpty()) {
+                                enableFallDetection()
+                            } else {
+                                fallPermissionLauncher.launch(missing)
+                            }
+                        } else {
+                            onToggleFallDetection(false)
+                        }
+                    }
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = GlassTokens.MinTouchTarget)
+                            .toggleable(
+                                value = state.local.fallDetectionEnabled,
+                                role = Role.Switch,
+                                onValueChange = onFallToggle,
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
@@ -282,23 +299,7 @@ fun SafetyScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
-                        Switch(
-                            checked = state.local.fallDetectionEnabled,
-                            onCheckedChange = { enable ->
-                                if (enable) {
-                                    val missing = context.missingPermissions(
-                                        sosPermissions() + Manifest.permission.ACTIVITY_RECOGNITION,
-                                    )
-                                    if (missing.isEmpty()) {
-                                        enableFallDetection()
-                                    } else {
-                                        fallPermissionLauncher.launch(missing)
-                                    }
-                                } else {
-                                    onToggleFallDetection(false)
-                                }
-                            },
-                        )
+                        GlassSwitch(checked = state.local.fallDetectionEnabled, onCheckedChange = null)
                     }
 
                     if (fallNeedsNotifications && !state.local.fallDetectionEnabled) {
@@ -310,7 +311,14 @@ fun SafetyScreen(
                     }
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = GlassTokens.MinTouchTarget)
+                            .toggleable(
+                                value = state.local.testModeEnabled,
+                                role = Role.Switch,
+                                onValueChange = onToggleTestMode,
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
@@ -322,10 +330,7 @@ fun SafetyScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
-                        Switch(
-                            checked = state.local.testModeEnabled,
-                            onCheckedChange = onToggleTestMode,
-                        )
+                        GlassSwitch(checked = state.local.testModeEnabled, onCheckedChange = null)
                     }
                 }
             }
@@ -352,23 +357,19 @@ fun SafetyScreen(
                         )
                     }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
+                    // Side by side only while both labels fit on one line; otherwise stacked at full width.
+                    AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 10.dp) {
                         PrimaryButton(
                             text = stringResource(R.string.safety_mint_qr_action),
                             onClick = onMintQrToken,
                             loading = state.mintingToken,
                             leadingIcon = Icons.Rounded.QrCode2,
-                            modifier = Modifier.weight(1f),
                         )
                         SecondaryButton(
                             text = stringResource(R.string.safety_open_card_action),
                             onClick = {
                                 context.startActivity(Intent(context, EmergencyCardActivity::class.java))
                             },
-                            modifier = Modifier.weight(1f),
                         )
                     }
                 }
@@ -423,18 +424,11 @@ fun SafetyScreen(
             }
 
             state.error?.let { err ->
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = err.asString(),
+                    tone = GlassBannerTone.Error,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = err.asString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
             }
         }
     }

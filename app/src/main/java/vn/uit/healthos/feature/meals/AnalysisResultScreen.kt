@@ -1,5 +1,12 @@
 package vn.uit.healthos.feature.meals
 
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.ErrorState
+import vn.uit.healthos.core.designsystem.component.GlassChip
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
+import vn.uit.healthos.core.designsystem.component.GlassTextField
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,12 +25,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -66,17 +69,18 @@ fun AnalysisResultScreen(
         modifier = modifier,
     ) { padding ->
         if (draft == null) {
-            Column(modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp)) {
-                Text(stringResource(R.string.meals_result_empty))
-            }
+            ErrorState(
+                message = stringResource(R.string.meals_result_empty),
+                modifier = Modifier.padding(padding),
+            )
             return@DetailScaffold
         }
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
                 .imePadding()
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -95,24 +99,25 @@ fun AnalysisResultScreen(
 
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
+                    GlassTextField(
                         value = draft.dishName,
                         onValueChange = onDishNameChange,
-                        label = { Text(stringResource(R.string.meals_dish_name_label)) },
-                        singleLine = true,
+                        label = stringResource(R.string.meals_dish_name_label),
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    OutlinedTextField(
+                    GlassTextField(
                         value = draft.caloriesText,
                         onValueChange = onCaloriesChange,
-                        label = { Text(stringResource(R.string.meals_calories_label)) },
+                        label = stringResource(R.string.meals_calories_label),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    Row(
+                    // Three macros on one line when they fit, otherwise a grid; they never run into each other.
+                    AdaptiveColumns(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        maxColumns = 3,
+                        horizontalSpacing = 12.dp,
+                        verticalSpacing = 4.dp,
                     ) {
                         Text(
                             stringResource(R.string.meals_macro_protein, draft.proteinG.roundToInt()),
@@ -140,10 +145,10 @@ fun AnalysisResultScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     draft.portionOptions.forEachIndexed { idx, opt ->
-                        FilterChip(
-                            selected = draft.selectedPortionIndex == idx,
+                        GlassChip(
+                            label = "${opt.label} (${opt.calories.roundToInt()} kcal)",
                             onClick = { onSelectPortion(idx) },
-                            label = { Text("${opt.label} (${opt.calories.roundToInt()} kcal)") },
+                            selected = draft.selectedPortionIndex == idx,
                         )
                     }
                 }
@@ -165,8 +170,8 @@ fun AnalysisResultScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-                            IconButton(onClick = { onRemoveItem(item.id) }) {
-                                Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.action_delete))
+                            GlassIconButton(onClick = { onRemoveItem(item.id) }, contentDescription = stringResource(R.string.action_delete)) {
+                                Icon(Icons.Rounded.Close, contentDescription = null)
                             }
                         }
                     }
@@ -174,11 +179,10 @@ fun AnalysisResultScreen(
             }
 
             // Add ingredient search
-            OutlinedTextField(
+            GlassTextField(
                 value = state.ingredientQuery,
                 onValueChange = onIngredientQueryChange,
-                label = { Text(stringResource(R.string.meals_add_ingredient_search)) },
-                singleLine = true,
+                label = stringResource(R.string.meals_add_ingredient_search),
                 modifier = Modifier.fillMaxWidth(),
             )
             state.ingredientResults.forEach { ing ->
@@ -201,49 +205,31 @@ fun AnalysisResultScreen(
             }
 
             if (draft.warnings.isNotEmpty()) {
-                Surface(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = draft.warnings.joinToString("\n"),
+                    tone = GlassBannerTone.Warning,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = draft.warnings.joinToString("\n"),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
             }
 
             state.draftError?.let { err ->
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = err.asString(),
+                    tone = GlassBannerTone.Error,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = err.asString(),
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
+            // Side by side only while both labels fit on one line; otherwise stacked at full width.
+            AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp) {
                 SecondaryButton(
                     text = stringResource(R.string.action_cancel),
                     onClick = onDiscard,
-                    modifier = Modifier.weight(1f),
                 )
                 PrimaryButton(
                     text = stringResource(R.string.action_save),
                     onClick = onSave,
                     loading = state.saving,
-                    modifier = Modifier.weight(1f),
                 )
             }
         }

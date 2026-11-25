@@ -3,30 +3,49 @@ package vn.uit.healthos.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import vn.uit.healthos.core.data.db.Snapshot
+import vn.uit.healthos.core.data.db.isFresh
 import vn.uit.healthos.core.data.outbox.OutboxRepository
 import vn.uit.healthos.core.data.session.AppPreferences
 import vn.uit.healthos.core.data.session.AppPreferencesRepository
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.toUiText
+import vn.uit.healthos.core.ui.CacheFirstLoader
 import vn.uit.healthos.core.ui.UiText
 import vn.uit.healthos.feature.climate.ClimateAdvice
 import vn.uit.healthos.feature.climate.ClimateCoach
 import vn.uit.healthos.feature.climate.ClimateConditions
 import vn.uit.healthos.feature.climate.ClimateRepository
+import vn.uit.healthos.feature.meds.DEFAULT_MED_TZID
+import vn.uit.healthos.feature.meds.DoseActionReceiver
+import vn.uit.healthos.feature.meds.DoseCacheEntity
+import vn.uit.healthos.feature.meds.MedsRepository
 import vn.uit.healthos.feature.hydration.HydrationRepository
 import vn.uit.healthos.core.time.localDayTicker
 import vn.uit.healthos.feature.profile.ProfileRepository
 import vn.uit.healthos.feature.steps.DailyStepEntity
 import vn.uit.healthos.feature.steps.StepCounterRepository
+import vn.uit.healthos.feature.widget.NextDoseSelector
+import vn.uit.healthos.feature.widget.TodaySnapshotRepository
+import vn.uit.healthos.feature.widget.WidgetKind
+import vn.uit.healthos.feature.widget.WidgetUpdater
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 enum class TrendMetric { STEPS, HEART_RATE }
@@ -55,8 +74,21 @@ data class HomeUiState(
     val stepTrend: List<TrendDayPoint> = emptyList(),
     val heartRateTrend: List<TrendDayPoint> = emptyList(),
     val pendingSyncCount: Int = 0,
+    val profileName: String = "",
+    val avatarUrl: String? = null,
+    val nextDose: DoseCacheEntity? = null,
+    /** [nextDose]'s due time as HH:mm in the medication time zone. */
+    val nextDoseTime: String? = null,
+    val nextDoseOverdue: Boolean = false,
+    val layout: HomeLayout = HomeLayout(),
+    val editingLayout: Boolean = false,
     val lastUpdatedMs: Long? = null,
+    /** [lastUpdatedMs] as HH:mm on this device. */
+    val lastUpdatedTime: String? = null,
+    /** A refresh is running in the background over the cached dashboard. */
     val isRefreshing: Boolean = false,
+    /** The running refresh came from pull-to-refresh, so its indicator shows. */
+    val isPullRefreshing: Boolean = false,
     val isOffline: Boolean = false,
     val errorMessage: UiText? = null,
 )
@@ -70,23 +102,111 @@ class HomeViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val preferencesRepository: AppPreferencesRepository,
     private val outboxRepository: OutboxRepository,
+    private val todaySnapshotRepository: TodaySnapshotRepository,
+    private val widgetUpdater: WidgetUpdater,
+    private val medsRepository: MedsRepository,
+    private val layoutStore: HomeLayoutStore,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeUiState(isRefreshing = true))
+    private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
     private val climateFlow = MutableStateFlow<ClimateConditions?>(null)
     private val profileWeightFlow = MutableStateFlow<Double?>(null)
 
+    private val loader = CacheFirstLoader(
+        scope = viewModelScope,
+        cache = homeRepository.observeCached().map { cached -> cached?.let { Snapshot(it, it.updatedAtMs) } },
+        fetch = ::fetchDashboard,
+    )
+
     init {
         observeSources()
-        refresh()
+        observeLoad()
+        observeProfile()
+        observeNextDose()
+        observeLayout()
+        // The climate repository keeps conditions for an hour, so this is usually served from memory.
+        viewModelScope.launch { climateFlow.value = climateRepository.getConditions(forceRefresh = false) }
+    }
+
+    /** The tab became visible: refetch only when the cached dashboard is missing or older than a minute. */
+    fun onVisible() = loader.refreshIfStale()
+
+    private suspend fun fetchDashboard(): ApiResult<Unit> {
+        val result = homeRepository.refresh()
+        // The profile has its own cache; fetch it only when that is not fresh either.
+        if (!profileRepository.cachedProfile.first().isFresh(System.currentTimeMillis())) profileRepository.getProfile()
+        climateFlow.value = climateRepository.getConditions(forceRefresh = false)
+        return result
+    }
+
+    private fun observeLoad() {
+        viewModelScope.launch {
+            loader.state.collect { load ->
+                _state.update {
+                    it.copy(
+                        isRefreshing = load.refreshing,
+                        isPullRefreshing = load.userRefreshing,
+                        isOffline = load.error?.isNetwork == true,
+                        errorMessage = load.error?.takeIf { load.data == null }?.toUiText(),
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observeProfile() {
+        viewModelScope.launch {
+            profileRepository.cachedProfile.collect { snapshot ->
+                val profile = snapshot?.value?.profile ?: return@collect
+                profile.weightKg?.let { profileWeightFlow.value = it }
+                _state.update {
+                    it.copy(profileName = profile.fullName ?: profile.displayName, avatarUrl = profile.avatarUrl)
+                }
+            }
+        }
+    }
+
+    private fun observeNextDose() {
+        val zone = ZoneId.of(DEFAULT_MED_TZID)
+        viewModelScope.launch {
+            combine(medsRepository.observeTodayDoses(), minuteTicker()) { doses, nowMs ->
+                val dose = NextDoseSelector.select(doses, nowMs, zone).next
+                val dueMs = dose?.let(NextDoseSelector::dueAtMs)
+                NextDoseUi(
+                    dose = dose,
+                    time = dueMs?.let { TIME_FORMAT.format(Instant.ofEpochMilli(it).atZone(zone)) },
+                    overdue = dueMs != null && dueMs < nowMs,
+                )
+            }.distinctUntilChanged().flowOn(Dispatchers.Default).collect { next ->
+                _state.update { it.copy(nextDose = next.dose, nextDoseTime = next.time, nextDoseOverdue = next.overdue) }
+            }
+        }
+    }
+
+    private data class NextDoseUi(val dose: DoseCacheEntity?, val time: String?, val overdue: Boolean)
+
+    private fun observeLayout() {
+        viewModelScope.launch {
+            layoutStore.layout.collect { layout ->
+                _state.update { it.copy(layout = layout) }
+            }
+        }
+    }
+
+    /** Emits the current time now and then once a minute, so an overdue dose leaves the "next dose" tile in time. */
+    private fun minuteTicker() = flow {
+        while (true) {
+            emit(System.currentTimeMillis())
+            delay(60_000)
+        }
     }
 
     private fun observeSources() {
         viewModelScope.launch {
             val baseFlow = combine(
-                homeRepository.observeCached(),
+                loader.state.map { it.data }.distinctUntilChanged(),
                 localDayTicker(),
                 stepRepository.observeRecentDays(7),
                 hydrationRepository.observeTodayMl(),
@@ -102,40 +222,33 @@ class HomeViewModel @Inject constructor(
                 outboxRepository.pendingCount,
             ) { base, climate, weightKg, pendingCount ->
                 buildUiState(base, climate, weightKg, pendingCount)
-            }.collect { computed ->
+            }
+                // Building the trends and KPIs from the cached dashboard stays off the main thread.
+                .flowOn(Dispatchers.Default)
+                .collect { computed ->
                 _state.update { current ->
                     computed.copy(
+                        profileName = current.profileName,
+                        avatarUrl = current.avatarUrl,
+                        nextDose = current.nextDose,
+                        nextDoseTime = current.nextDoseTime,
+                        nextDoseOverdue = current.nextDoseOverdue,
+                        layout = current.layout,
+                        editingLayout = current.editingLayout,
                         selectedTrend = current.selectedTrend,
                         isRefreshing = current.isRefreshing,
+                        isPullRefreshing = current.isPullRefreshing,
                         isOffline = current.isOffline,
                         errorMessage = current.errorMessage,
                     )
                 }
+                shareHydrationTarget(computed)
             }
         }
     }
 
-    fun refresh() {
-        viewModelScope.launch {
-            _state.update { it.copy(isRefreshing = true, errorMessage = null) }
-            val result = homeRepository.refresh()
-            val profile = (profileRepository.getProfile() as? ApiResult.Success)?.data
-            if (profile?.weightKg != null) {
-                profileWeightFlow.value = profile.weightKg
-            }
-            climateFlow.value = climateRepository.getConditions(forceRefresh = false)
-            _state.update { s ->
-                when (result) {
-                    is ApiResult.Success -> s.copy(isRefreshing = false, isOffline = false, errorMessage = null)
-                    is ApiResult.Failure -> s.copy(
-                        isRefreshing = false,
-                        isOffline = result.error.isNetwork,
-                        errorMessage = if (s.lastUpdatedMs == null) result.error.toUiText() else null,
-                    )
-                }
-            }
-        }
-    }
+    /** Pull-to-refresh and retry. */
+    fun refresh() = loader.refresh()
 
     fun onLocationPermissionGranted() {
         viewModelScope.launch {
@@ -149,6 +262,31 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onMarkDoseTaken(dose: DoseCacheEntity) {
+        viewModelScope.launch {
+            medsRepository.recordDoseAction(dose, DoseActionReceiver.ACTION_DONE)
+        }
+    }
+
+    fun setEditingLayout(editing: Boolean) {
+        _state.update { it.copy(editingLayout = editing) }
+    }
+
+    fun toggleTile(tile: HomeTile) = saveLayout(_state.value.layout.toggled(tile))
+
+    fun moveTile(tile: HomeTile, delta: Int) = saveLayout(_state.value.layout.moved(tile, delta))
+
+    fun resetLayout() {
+        _state.update { it.copy(layout = HomeLayout()) }
+        viewModelScope.launch { layoutStore.reset() }
+    }
+
+    private fun saveLayout(layout: HomeLayout) {
+        // Shown at once; the store write follows and echoes the same layout back.
+        _state.update { it.copy(layout = layout) }
+        viewModelScope.launch { layoutStore.save(layout) }
+    }
+
     fun onSelectTrend(metric: TrendMetric) {
         _state.update { it.copy(selectedTrend = metric) }
     }
@@ -159,6 +297,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Widgets cannot fetch the weather themselves, so the climate- and weight-adjusted water goal is remembered for
+     * them; once it is known (climate or weight loaded), a changed goal refreshes the widgets that show it.
+     */
+    private suspend fun shareHydrationTarget(state: HomeUiState) {
+        if (climateFlow.value == null && profileWeightFlow.value == null) return
+        if (todaySnapshotRepository.rememberHydrationTarget(state.climateAdvice.totalHydrationTargetMl)) {
+            widgetUpdater.update(WidgetKind.HYDRATION_DEPENDENT)
+        }
+    }
+
     private fun buildUiState(
         base: BaseSnapshot,
         climate: ClimateConditions?,
@@ -166,34 +315,15 @@ class HomeViewModel @Inject constructor(
         pendingCount: Int,
     ): HomeUiState {
         val summary = base.cached?.summary
-        val fetchedOn = base.cached?.let {
-            Instant.ofEpochMilli(it.updatedAtMs).atZone(ZoneId.systemDefault()).toLocalDate()
-        }
-        val kpis = (summary?.toKpis() ?: DashboardKpis()).let { all ->
-            if (fetchedOn == null) all else all.forDay(fetchedOn = fetchedOn, today = base.today)
-        }
         val todayIso = base.today.toString()
-        val sensorSteps = base.localStepDays.firstOrNull { it.date == todayIso }?.steps ?: 0
-        val stepsToday = maxOf(sensorSteps, kpis.steps ?: 0)
-        val stepGoal = kpis.stepTarget ?: base.prefs.stepGoal
-
-        val calories = kpis.caloriesIn
-        val calorieTarget = base.prefs.dailyCalorieTarget ?: kpis.calorieTarget
-
-        val hydrationMl = maxOf(base.localHydration, kpis.hydrationMl ?: 0)
-
-        val hr = kpis.heartRateBpm
-            ?: base.cached?.vitals?.lastOrNull { it.heartRate != null }?.heartRate
-
         val climateAdvice = ClimateCoach.evaluate(climate, weightKg)
-        val score = VitalScore.compute(
-            steps = stepsToday.takeIf { it > 0 || kpis.steps != null },
-            stepGoal = stepGoal,
-            caloriesConsumed = calories,
-            calorieTarget = calorieTarget,
-            hydrationMl = hydrationMl.takeIf { it > 0 || kpis.hydrationMl != null },
+        val metrics = TodayMetrics.compute(
+            cached = base.cached,
+            today = base.today,
+            localStepsToday = base.localStepDays.firstOrNull { it.date == todayIso }?.steps ?: 0,
+            localHydrationMl = base.localHydration,
+            prefs = base.prefs,
             hydrationTargetMl = climateAdvice.totalHydrationTargetMl,
-            restingHeartRateBpm = hr,
         )
 
         val serverVitals = base.cached?.vitals.orEmpty()
@@ -215,13 +345,13 @@ class HomeViewModel @Inject constructor(
 
         return HomeUiState(
             userName = summary?.userName.orEmpty(),
-            vitalScore = score,
-            stepsToday = stepsToday,
-            stepGoal = stepGoal,
-            caloriesToday = calories,
-            calorieTarget = calorieTarget,
-            restingHeartRate = hr,
-            hydrationMl = hydrationMl,
+            vitalScore = metrics.vitalScore,
+            stepsToday = metrics.stepsToday,
+            stepGoal = metrics.stepGoal,
+            caloriesToday = metrics.caloriesIn,
+            calorieTarget = metrics.calorieTarget,
+            restingHeartRate = metrics.restingHeartRate,
+            hydrationMl = metrics.hydrationMl,
             climateConditions = climate,
             climateAdvice = climateAdvice,
             aiAdvice = base.cached?.aiAdvice,
@@ -231,6 +361,9 @@ class HomeViewModel @Inject constructor(
             heartRateTrend = hrTrend,
             pendingSyncCount = pendingCount,
             lastUpdatedMs = base.cached?.updatedAtMs,
+            lastUpdatedTime = base.cached?.updatedAtMs?.let {
+                TIME_FORMAT.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()))
+            },
         )
     }
 
@@ -244,4 +377,8 @@ class HomeViewModel @Inject constructor(
         val localHydration: Int,
         val prefs: AppPreferences,
     )
+
+    private companion object {
+        val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    }
 }

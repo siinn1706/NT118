@@ -11,6 +11,7 @@ import dagger.multibindings.Multibinds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import vn.uit.healthos.core.data.session.TokenStore
 
 @HiltWorker
 class OutboxWorker @AssistedInject constructor(
@@ -18,13 +19,21 @@ class OutboxWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val dao: OutboxDao,
     private val handlers: Map<String, @JvmSuppressWildcards OutboxHandler>,
+    private val tokenStore: TokenStore,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val processor = OutboxProcessor(dao, handlers, log = { Log.w(TAG, it) })
+        val processor = OutboxProcessor(
+            store = dao,
+            handlers = handlers,
+            sessionUserId = { tokenStore.current()?.userId },
+            log = { Log.w(TAG, it) },
+        )
         return when (processor.run()) {
             OutboxRunResult.SUCCESS -> Result.success()
             OutboxRunResult.RETRY -> Result.retry()
+            // Held items wait for the next sign-in, which schedules a new run.
+            OutboxRunResult.HELD -> Result.success()
         }
     }
 

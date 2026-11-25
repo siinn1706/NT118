@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "chat.message.recalled",
+  "description": "Runtime WS broadcast envelope when a message is recalled (canonical format).",
+  "type": "object",
+  "required": ["event", "version", "payload", "metadata"],
+  "properties": {
+    "event": { "type": "string", "const": "chat.message.recalled" },
+    "version": { "type": "string", "const": "1.0" },
+    "payload": {
+      "type": "object",
+      "required": ["id", "conversation_id", "is_recalled"],
+      "properties": {
+        "id":              { "type": "string", "format": "uuid" },
+        "conversation_id": { "type": "string", "format": "uuid" },
+        "is_recalled":     { "type": "boolean" },
+        "edited_at":       { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["event_id", "timestamp", "user_id"],
+      "properties": {
+        "event_id": { "type": "string", "format": "uuid" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "user_id": { "type": "string", "format": "uuid" },
+        "correlation_id": { "type": "string", "format": "uuid" }
+      }
+    }
+  }
+}

@@ -14,6 +14,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -26,11 +27,17 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import vn.uit.healthos.MainActivity
 import vn.uit.healthos.R
+import vn.uit.healthos.feature.widget.WidgetKind
+import vn.uit.healthos.feature.widget.WidgetUpdater
 import javax.inject.Inject
 
 /**
  * Foreground service (`health`) listening to `Sensor.TYPE_STEP_COUNTER` so step updates stay live
  * while the phone is in the user's pocket.
+ *
+ * Without ACTIVITY_RECOGNITION (revoked in Settings) Android 14+ refuses the `health` type, and Android 12+ refuses a
+ * foreground start from the background (e.g. a sticky restart). In both cases the service stops itself quietly and
+ * asks not to be restarted, instead of crashing in a restart loop.
  */
 @AndroidEntryPoint
 class StepSensorService : Service(), SensorEventListener {
@@ -38,32 +45,33 @@ class StepSensorService : Service(), SensorEventListener {
     @Inject
     lateinit var stepCounterRepository: StepCounterRepository
 
+    @Inject
+    lateinit var widgetUpdater: WidgetUpdater
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var sensorManager: SensorManager? = null
     private var stepSensor: Sensor? = null
     private var lastSyncedAtMs: Long = 0L
+    private var lastWidgetRefreshAtMs: Long? = null
+    private var lastWidgetSteps: Int = 0
+
+    /** True once the service runs in the foreground and listens to the sensor. */
+    private var counting = false
 
     /** The counter is cumulative, so only the newest reading matters; one consumer keeps them in order. */
     private val readings = Channel<Long>(Channel.CONFLATED)
 
     override fun onCreate() {
         super.onCreate()
-        ensureChannel()
-        val notification = buildNotification(steps = 0)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceCompat.startForeground(
-                this,
-                NOTIFICATION_ID,
-                notification,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH,
-            )
-        } else {
-            startForeground(NOTIFICATION_ID, notification)
+        if (!StepServicePolicy.hasActivityRecognition(this) || !enterForeground()) {
+            stopSelf()
+            return
         }
 
         sensorManager = getSystemService(SensorManager::class.java)
         stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         if (stepSensor != null) {
+            counting = true
             scope.launch { for (raw in readings) applyReading(raw) }
             sensorManager?.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
             stepCounterRepository.schedulePeriodicSync()
@@ -72,7 +80,35 @@ class StepSensorService : Service(), SensorEventListener {
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
+    /** Returns false when the system refuses the foreground start (permission revoked, background start blocked). */
+    private fun enterForeground(): Boolean {
+        ensureChannel()
+        val notification = buildNotification(steps = 0)
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                ServiceCompat.startForeground(
+                    this,
+                    NOTIFICATION_ID,
+                    notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH,
+                )
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
+            }
+            true
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Step counting needs the activity recognition permission", e)
+            false
+        } catch (e: IllegalStateException) {
+            // ForegroundServiceStartNotAllowedException (API 31+) extends IllegalStateException.
+            Log.w(TAG, "Foreground start not allowed right now", e)
+            false
+        }
+    }
+
+    // Only a service that is really counting asks to be restarted; a refused start must not loop.
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int =
+        if (counting) START_STICKY else START_NOT_STICKY
 
     override fun onSensorChanged(event: SensorEvent?) {
         val raw = event?.values?.firstOrNull()?.toLong() ?: return
@@ -89,12 +125,18 @@ class StepSensorService : Service(), SensorEventListener {
             lastSyncedAtMs = now
             stepCounterRepository.enqueueTodaySync()
         }
+        if (StepServicePolicy.shouldRefreshWidgets(lastWidgetRefreshAtMs, lastWidgetSteps, now, updated.steps)) {
+            lastWidgetRefreshAtMs = now
+            lastWidgetSteps = updated.steps
+            widgetUpdater.update(WidgetKind.STEP_DEPENDENT)
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 
     override fun onDestroy() {
-        sensorManager?.unregisterListener(this)
+        if (counting) sensorManager?.unregisterListener(this)
+        counting = false
         scope.cancel()
         super.onDestroy()
     }
@@ -135,13 +177,30 @@ class StepSensorService : Service(), SensorEventListener {
     }
 
     companion object {
+        private const val TAG = "StepSensorService"
         private const val CHANNEL_ID = "healthos_steps"
         private const val NOTIFICATION_ID = 3001
         private const val SYNC_DEBOUNCE_MS = 5 * 60_000L
 
+        /**
+         * Starts counting when ACTIVITY_RECOGNITION is granted. Checking here matters: a service started with
+         * `startForegroundService` that never reaches `startForeground` is killed by the system with an exception.
+         */
         fun start(context: Context) {
+            if (!StepServicePolicy.hasActivityRecognition(context)) return
             val intent = Intent(context, StepSensorService::class.java)
-            runCatching { ContextCompat.startForegroundService(context, intent) }
+            try {
+                ContextCompat.startForegroundService(context, intent)
+            } catch (e: IllegalStateException) {
+                // Background start refused (ForegroundServiceStartNotAllowedException); Home starts it again.
+                Log.w(TAG, "Could not start step counting", e)
+            } catch (e: SecurityException) {
+                Log.w(TAG, "Could not start step counting", e)
+            }
+        }
+
+        fun stop(context: Context) {
+            context.stopService(Intent(context, StepSensorService::class.java))
         }
     }
 }

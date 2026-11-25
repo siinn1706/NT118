@@ -1,5 +1,14 @@
 package vn.uit.healthos.feature.safety
 
+import vn.uit.healthos.core.data.session.AppPreferencesRepository
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.GlassSpinner
+import vn.uit.healthos.core.designsystem.glass.GlassStyle
+import vn.uit.healthos.core.designsystem.glass.liquidGlass
+import com.kyant.shapes.Capsule
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.systemBarsPadding
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +17,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,12 +27,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -46,7 +50,6 @@ import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.SecondaryButton
-import vn.uit.healthos.core.designsystem.theme.HealthOsTheme
 import vn.uit.healthos.core.designsystem.theme.tabular
 import javax.inject.Inject
 
@@ -60,6 +63,9 @@ class SosCountdownActivity : ComponentActivity() {
     @Inject
     lateinit var sosController: SosController
 
+    @Inject
+    lateinit var preferencesRepository: AppPreferencesRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setShowWhenLocked(true)
@@ -69,8 +75,9 @@ class SosCountdownActivity : ComponentActivity() {
         if (savedInstanceState == null) handleIntent(intent) else sosController.restore()
 
         setContent {
-            HealthOsTheme {
-                val event by sosController.event.collectAsStateWithLifecycle()
+            val event by sosController.event.collectAsStateWithLifecycle()
+            // The aurora turns red while the SOS is live and back to the user's own once it is done.
+            SafetyGlassRoot(preferencesRepository, alert = event?.phase != SosPhase.DONE) {
                 SosCountdownContent(
                     event = event,
                     onCancel = sosController::cancel,
@@ -141,18 +148,12 @@ private fun SosCountdownContent(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = if (event.phase == SosPhase.DONE) {
-            MaterialTheme.colorScheme.background
-        } else {
-            MaterialTheme.colorScheme.errorContainer
-        },
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .systemBarsPadding()
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
@@ -166,11 +167,19 @@ private fun SosCountdownContent(
                 )
 
                 SosPhase.DISPATCHING -> {
-                    CircularProgressIndicator()
+                    val dispatching = stringResource(R.string.safety_sos_dispatching)
+                    Box(
+                        modifier = Modifier
+                            .liquidGlass(Capsule(), GlassStyle.Chrome)
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        GlassSpinner(size = 32.dp, color = MaterialTheme.colorScheme.error)
+                    }
                     Text(
-                        text = stringResource(R.string.safety_sos_dispatching),
+                        text = dispatching,
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                     )
                     DispatchDetails(event)
@@ -231,7 +240,7 @@ private fun CountdownBody(
             stringResource(R.string.safety_manual_countdown_title)
         },
         style = MaterialTheme.typography.headlineSmall,
-        color = MaterialTheme.colorScheme.onErrorContainer,
+        color = MaterialTheme.colorScheme.onSurface,
         textAlign = TextAlign.Center,
     )
     Text(
@@ -242,23 +251,18 @@ private fun CountdownBody(
     Text(
         text = stringResource(R.string.safety_countdown_subtitle),
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onErrorContainer,
+        color = MaterialTheme.colorScheme.onSurface,
         textAlign = TextAlign.Center,
     )
     Spacer(Modifier.height(16.dp))
-    Button(
+    // The cancel action is the biggest and most neutral control on the screen, so a panicked tap finds it first.
+    PrimaryButton(
+        text = stringResource(R.string.safety_im_ok_cancel),
         onClick = onCancel,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-        modifier = Modifier.fillMaxWidth().height(64.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.safety_im_ok_cancel),
-            style = MaterialTheme.typography.titleMedium,
-        )
-    }
+        tint = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp),
+    )
     SecondaryButton(
         text = stringResource(R.string.safety_sos_action_send_now),
         onClick = onSendNow,
@@ -297,10 +301,8 @@ private fun DispatchDetails(event: SosEvent) {
             Text(contact.name, style = MaterialTheme.typography.titleSmall)
             Text(contact.phone, style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(4.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
+            // Both delivery statuses on one line while they fit, otherwise one under the other.
+            AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp, verticalSpacing = 2.dp) {
                 Text(
                     text = stringResource(R.string.safety_sos_sms_label, smsStatusLabel(contact.sms.status)),
                     style = MaterialTheme.typography.labelMedium,

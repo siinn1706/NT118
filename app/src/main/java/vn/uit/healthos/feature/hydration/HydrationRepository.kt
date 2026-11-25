@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import vn.uit.healthos.core.data.outbox.OutboxRepository
 import vn.uit.healthos.feature.steps.MetricIngestPayload
 import vn.uit.healthos.feature.steps.OUTBOX_TYPE_METRIC_INGEST
+import vn.uit.healthos.feature.widget.WidgetKind
+import vn.uit.healthos.feature.widget.WidgetUpdater
 import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
@@ -40,6 +42,7 @@ interface HydrationDao {
 class HydrationRepository @Inject constructor(
     private val dao: HydrationDao,
     private val outboxRepository: OutboxRepository,
+    private val widgetUpdater: WidgetUpdater,
 ) {
     /** Today's total; switches to the new day's total at local midnight. */
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -62,5 +65,6 @@ class HydrationRepository @Inject constructor(
             ),
             serializer = MetricIngestPayload.serializer(),
         )
+        widgetUpdater.update(WidgetKind.HYDRATION_DEPENDENT)
     }
 }

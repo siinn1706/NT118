@@ -1,0 +1,47 @@
+# Runtime dependencies (pinned)
+fastapi==0.128.0
+uvicorn[standard]==0.40.0
+python-multipart==0.0.22
+
+pydantic-settings==2.13.1
+email-validator==2.3.0
+
+sqlalchemy[asyncio]==2.0.47
+asyncpg==0.31.0
+
+redis[hiredis]==7.2.1
+celery==5.6.2
+
+boto3==1.42.59
+
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+
+# MFA / TOTP
+pyotp==2.9.0
+qrcode[pil]==7.4.2
+Pillow==10.4.0
+
+httpx==0.28.1
+
+# B7 P5 — RFC 5545 RRULE subset for reminder recurrence + tz-aware computations.
+python-dateutil==2.9.0.post0
+
+# B7 review — observability for B7 destructive flows (idempotency replays,
+# reminder fires, account purges, PDF render latency, export blob bytes).
+# `prometheus_client` is the de-facto standard exporter; the metrics module
+# falls back to no-op stubs when the library isn't installed so dev imports
+# still succeed.
+prometheus_client==0.20.0
+
+# B7 P10 — PDF report export pipeline.
+# WeasyPrint requires system libs (Cairo, Pango, libffi). The Docker image
+# installs them; for local dev on a host without them the import is wrapped
+# in a try/except so the rest of the API still boots.
+weasyprint==62.3
+Jinja2==3.1.4
+
+alembic==1.18.4
+psycopg2-binary==2.9.11
+

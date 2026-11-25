@@ -1,5 +1,28 @@
 package vn.uit.healthos.feature.onboarding
 
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.core.designsystem.component.GlassProgressBar
+import vn.uit.healthos.core.designsystem.component.GlassSegmentedControl
+import vn.uit.healthos.core.designsystem.component.AccentPicker
+import vn.uit.healthos.core.designsystem.glass.ScrollEdge
+import vn.uit.healthos.core.designsystem.glass.ScrollEdgeEffect
+import vn.uit.healthos.core.designsystem.theme.AccentPreset
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.RadioButtonUnchecked
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import vn.uit.healthos.core.designsystem.component.GlassTextField
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,17 +38,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.DeleteOutline
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,10 +48,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.SecondaryButton
-import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 import vn.uit.healthos.core.designsystem.theme.tabular
 import vn.uit.healthos.core.ui.asString
 
@@ -55,70 +71,37 @@ fun OnboardingScreen(
     onContactChange: (Int, EmergencyContactForm) -> Unit,
     onAddContact: () -> Unit,
     onRemoveContact: (Int) -> Unit,
+    onAccentChange: (AccentPreset) -> Unit,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     onComplete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.background,
-        bottomBar = {
-            Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    if (state.step > 0) {
-                        SecondaryButton(
-                            text = stringResource(R.string.action_back),
-                            onClick = onPrevious,
-                            enabled = !state.loading,
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-                    if (state.step < 3) {
-                        PrimaryButton(
-                            text = stringResource(R.string.action_continue),
-                            onClick = onNext,
-                            loading = state.loading,
-                            modifier = Modifier.weight(1f),
-                        )
-                    } else {
-                        PrimaryButton(
-                            text = stringResource(R.string.onboarding_complete_action),
-                            onClick = onComplete,
-                            loading = state.loading,
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-                }
-            }
-        },
-    ) { padding ->
+    val density = LocalDensity.current
+    var barHeightPx by remember { mutableIntStateOf(0) }
+    val barHeight = with(density) { barHeightPx.toDp() }
+
+    Box(modifier = modifier.fillMaxSize().imePadding()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .imePadding()
-                .padding(horizontal = 24.dp, vertical = 20.dp),
+                .padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = barHeight + 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = stringResource(R.string.onboarding_step_progress, state.step + 1, 4),
+                text = stringResource(R.string.onboarding_step_progress, state.step + 1, OnboardingSteps.COUNT),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
-            LinearProgressIndicator(
-                progress = { (state.step + 1) / 4f },
+            GlassProgressBar(
+                progress = { (state.step + 1) / OnboardingSteps.COUNT.toFloat() },
                 modifier = Modifier.fillMaxWidth(),
+                height = 8.dp,
             )
 
             when (state.step) {
-                0 -> BodyStep(
+                OnboardingSteps.BODY -> BodyStep(
                     state = state,
                     onFullNameChange = onFullNameChange,
                     onDateOfBirthChange = onDateOfBirthChange,
@@ -127,51 +110,83 @@ fun OnboardingScreen(
                     onWeightChange = onWeightChange,
                     onBloodTypeChange = onBloodTypeChange,
                 )
-                1 -> ActivityStep(
+                OnboardingSteps.ACTIVITY -> ActivityStep(
                     selected = state.activityLevel,
                     onSelect = onActivityChange,
                 )
-                2 -> GoalTdeeStep(
+                OnboardingSteps.GOAL -> GoalTdeeStep(
                     state = state,
                     onGoalDirectionChange = onGoalDirectionChange,
                     onTargetWeightChange = onTargetWeightChange,
                 )
-                else -> EmergencyContactsStep(
+                OnboardingSteps.CONTACTS -> EmergencyContactsStep(
                     contacts = state.contacts,
                     onContactChange = onContactChange,
                     onAddContact = onAddContact,
                     onRemoveContact = onRemoveContact,
                 )
+                else -> AppearanceStep(
+                    selected = state.accentPreset,
+                    dynamicColor = state.dynamicColor,
+                    onSelect = onAccentChange,
+                )
             }
 
             state.validationError?.let { code ->
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = onboardingErrorText(code),
+                    tone = GlassBannerTone.Error,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = onboardingErrorText(code),
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
             }
 
             state.errorMessage?.let { msg ->
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = msg.asString(),
+                    tone = GlassBannerTone.Error,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = msg.asString(),
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
+            }
+        }
+
+        ScrollEdgeEffect(
+            edge = ScrollEdge.Bottom,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(barHeight + 24.dp),
+        )
+
+        // Two separate glass capsules float on the background (iOS 26 bottom toolbar), never glass inside a glass slab.
+        // They share the line only while both labels fit on one line; otherwise they stack at full width.
+        AdaptiveColumns(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .onSizeChanged { barHeightPx = it.height }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            maxColumns = 2,
+            horizontalSpacing = 12.dp,
+        ) {
+            if (state.step > OnboardingSteps.BODY) {
+                SecondaryButton(
+                    text = stringResource(R.string.action_back),
+                    onClick = onPrevious,
+                    enabled = !state.loading,
+                )
+            }
+            if (!OnboardingSteps.isLast(state.step)) {
+                PrimaryButton(
+                    text = stringResource(R.string.action_continue),
+                    onClick = onNext,
+                    loading = state.loading,
+                )
+            } else {
+                PrimaryButton(
+                    text = stringResource(R.string.onboarding_complete_action),
+                    onClick = onComplete,
+                    loading = state.loading,
+                )
             }
         }
     }
@@ -195,55 +210,46 @@ private fun BodyStep(
     )
     BentoCard(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedTextField(
+            GlassTextField(
                 value = state.fullName,
                 onValueChange = onFullNameChange,
-                label = { Text(stringResource(R.string.onboarding_full_name)) },
-                singleLine = true,
+                label = stringResource(R.string.onboarding_full_name),
                 modifier = Modifier.fillMaxWidth(),
             )
-            OutlinedTextField(
+            GlassTextField(
                 value = state.dateOfBirth,
                 onValueChange = onDateOfBirthChange,
-                label = { Text(stringResource(R.string.onboarding_dob_label)) },
-                supportingText = { Text(stringResource(R.string.onboarding_dob_hint)) },
-                singleLine = true,
+                label = stringResource(R.string.onboarding_dob_label),
+                supportingText = stringResource(R.string.onboarding_dob_hint),
                 modifier = Modifier.fillMaxWidth(),
             )
             Text(stringResource(R.string.onboarding_gender_label), style = MaterialTheme.typography.labelLarge)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                BiologicalSex.entries.forEach { option ->
-                    FilterChip(
-                        selected = state.sex == option,
-                        onClick = { onSexChange(option) },
-                        label = { Text(sexLabel(option)) },
-                    )
-                }
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
+            GlassSegmentedControl(
+                options = BiologicalSex.entries.map { sexLabel(it) },
+                selectedIndex = BiologicalSex.entries.indexOf(state.sex).coerceAtLeast(0),
+                onSelect = { onSexChange(BiologicalSex.entries[it]) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            // Side by side only while both fields fit their half; otherwise one under the other.
+            AdaptiveColumns(maxColumns = 2, horizontalSpacing = 12.dp) {
+                GlassTextField(
                     value = state.heightCm,
                     onValueChange = onHeightChange,
-                    label = { Text(stringResource(R.string.onboarding_height_cm)) },
+                    label = stringResource(R.string.onboarding_height_cm),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true,
-                    modifier = Modifier.weight(1f),
                 )
-                OutlinedTextField(
+                GlassTextField(
                     value = state.weightKg,
                     onValueChange = onWeightChange,
-                    label = { Text(stringResource(R.string.onboarding_weight_kg)) },
+                    label = stringResource(R.string.onboarding_weight_kg),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true,
-                    modifier = Modifier.weight(1f),
                 )
             }
-            OutlinedTextField(
+            GlassTextField(
                 value = state.bloodType,
                 onValueChange = onBloodTypeChange,
-                label = { Text(stringResource(R.string.onboarding_blood_type_optional)) },
-                placeholder = { Text("O+, A-, AB+...") },
-                singleLine = true,
+                label = stringResource(R.string.onboarding_blood_type_optional),
+                placeholder = "O+, A-, AB+...",
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -265,18 +271,20 @@ private fun ActivityStep(
         val isSelected = level == selected
         BentoCard(
             onClick = { onSelect(level) },
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                LocalVitalColors.current.cardSurface
-            },
-            modifier = Modifier.fillMaxWidth(),
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Unspecified,
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { this.selected = isSelected },
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                RadioButton(selected = isSelected, onClick = { onSelect(level) })
+                Icon(
+                    imageVector = if (isSelected) Icons.Rounded.CheckCircle else Icons.Rounded.RadioButtonUnchecked,
+                    contentDescription = null,
+                    tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(activityTitle(level), style = MaterialTheme.typography.titleSmall)
                     Text(
@@ -308,22 +316,18 @@ private fun GoalTdeeStep(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        GoalDirection.entries.forEach { dir ->
-            FilterChip(
-                selected = state.goalDirection == dir,
-                onClick = { onGoalDirectionChange(dir) },
-                label = { Text(goalLabel(dir)) },
-            )
-        }
-    }
+    GlassSegmentedControl(
+        options = GoalDirection.entries.map { goalLabel(it) },
+        selectedIndex = GoalDirection.entries.indexOf(state.goalDirection).coerceAtLeast(0),
+        onSelect = { onGoalDirectionChange(GoalDirection.entries[it]) },
+        modifier = Modifier.fillMaxWidth(),
+    )
 
-    OutlinedTextField(
+    GlassTextField(
         value = state.targetWeightKg,
         onValueChange = onTargetWeightChange,
-        label = { Text(stringResource(R.string.onboarding_target_weight_kg)) },
+        label = stringResource(R.string.onboarding_target_weight_kg),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        singleLine = true,
         modifier = Modifier.fillMaxWidth(),
     )
 
@@ -356,9 +360,11 @@ private fun GoalTdeeStep(
 
 @Composable
 private fun FormulaRow(label: String, value: String) {
-    Row(
+    // The value moves under its label when keeping it beside would squeeze the label.
+    AdaptiveRow(
         modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top,
+        verticalSpacing = 0.dp,
     ) {
         Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
         Text(
@@ -396,43 +402,42 @@ private fun EmergencyContactsStep(
                         style = MaterialTheme.typography.titleSmall,
                     )
                     if (contacts.size > 1) {
-                        IconButton(onClick = { onRemoveContact(index) }) {
+                        GlassIconButton(
+                            onClick = { onRemoveContact(index) },
+                            contentDescription = stringResource(R.string.action_delete),
+                        ) {
                             Icon(
                                 Icons.Rounded.DeleteOutline,
-                                contentDescription = stringResource(R.string.action_delete),
+                                contentDescription = null,
                                 tint = MaterialTheme.colorScheme.error,
                             )
                         }
                     }
                 }
-                OutlinedTextField(
+                GlassTextField(
                     value = contact.name,
                     onValueChange = { onContactChange(index, contact.copy(name = it)) },
-                    label = { Text(stringResource(R.string.onboarding_contact_name)) },
-                    singleLine = true,
+                    label = stringResource(R.string.onboarding_contact_name),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                OutlinedTextField(
+                GlassTextField(
                     value = contact.relationship,
                     onValueChange = { onContactChange(index, contact.copy(relationship = it)) },
-                    label = { Text(stringResource(R.string.onboarding_contact_relationship)) },
-                    singleLine = true,
+                    label = stringResource(R.string.onboarding_contact_relationship),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                OutlinedTextField(
+                GlassTextField(
                     value = contact.phone,
                     onValueChange = { onContactChange(index, contact.copy(phone = it)) },
-                    label = { Text(stringResource(R.string.onboarding_contact_phone)) },
+                    label = stringResource(R.string.onboarding_contact_phone),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                OutlinedTextField(
+                GlassTextField(
                     value = contact.email,
                     onValueChange = { onContactChange(index, contact.copy(email = it)) },
-                    label = { Text(stringResource(R.string.onboarding_contact_email_optional)) },
+                    label = stringResource(R.string.onboarding_contact_email_optional),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -440,9 +445,42 @@ private fun EmergencyContactsStep(
     }
 
     if (contacts.size < 5) {
-        TextButton(onClick = onAddContact) {
-            Icon(Icons.Rounded.Add, contentDescription = null)
-            Text(stringResource(R.string.onboarding_add_contact))
+        SecondaryButton(
+            text = stringResource(R.string.onboarding_add_contact),
+            onClick = onAddContact,
+            leadingIcon = Icons.Rounded.Add,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun AppearanceStep(
+    selected: AccentPreset,
+    dynamicColor: Boolean,
+    onSelect: (AccentPreset) -> Unit,
+) {
+    Text(
+        stringResource(R.string.onboarding_appearance_title),
+        style = MaterialTheme.typography.headlineSmall,
+        modifier = Modifier.semantics { heading() },
+    )
+    Text(
+        stringResource(R.string.onboarding_appearance_subtitle),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    BentoCard(modifier = Modifier.fillMaxWidth()) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.settings_accent_label), style = MaterialTheme.typography.titleSmall)
+            AccentPicker(selected = selected, onSelect = onSelect, enabled = !dynamicColor)
+            if (dynamicColor) {
+                Text(
+                    text = stringResource(R.string.settings_accent_dynamic_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

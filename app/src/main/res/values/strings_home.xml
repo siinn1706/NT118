@@ -54,4 +54,36 @@
 
     <string name="home_ex_balanced_rest_title">Ngày Phục hồi Chủ động</string>
     <string name="home_ex_balanced_rest_message">Cuối tuần là lúc cơ thể tái tạo. 20 phút đi bộ thư giãn hoặc giãn cơ nhẹ — không cần tập nặng — giúp cơ bắp phục hồi tối ưu cho tuần mới.</string>
+
+    <!-- Home layout -->
+    <string name="home_open_me_cd">Mở trang cá nhân</string>
+    <string name="home_sos_pill">SOS</string>
+    <string name="home_sos_pill_cd">SOS khẩn cấp</string>
+    <string name="home_sos_click_label">mở trang An toàn</string>
+    <string name="home_sos_long_click_label">gửi SOS, có đếm ngược để hủy</string>
+    <string name="home_quick_snap">Chụp bữa ăn</string>
+    <string name="home_quick_water">+1 cốc nước</string>
+    <string name="home_quick_ppg">Đo nhịp tim</string>
+    <string name="home_quick_ask_ai">Hỏi Bác sĩ AI</string>
+    <string name="home_quick_card">Thẻ khẩn cấp</string>
+    <string name="home_setup_title">Thiết lập còn thiếu (%1$d)</string>
+    <string name="home_vital_short_empty">Chưa đủ dữ liệu</string>
+    <string name="home_vital_short_good">Rất tốt</string>
+    <string name="home_vital_short_watch">Ổn</string>
+    <string name="home_vital_short_alert">Cần chú ý</string>
+    <string name="home_hr_measure_caption">Chạm để đo</string>
+    <string name="home_next_dose_title">Liều tiếp theo</string>
+    <string name="home_next_dose_none">Không còn liều thuốc nào hôm nay</string>
+    <string name="home_next_dose_overdue">Quá giờ %1$s</string>
+    <string name="home_ai_tip_ask">Hỏi thêm Bác sĩ AI</string>
+    <string name="home_ai_tip_prompt">Giải thích thêm giúp tôi lời khuyên sau và gợi ý cách áp dụng cụ thể: %1$s</string>
+    <string name="home_exercise_prompt">Hướng dẫn tôi tập bài này an toàn: %1$s. %2$s</string>
+    <string name="home_edit_layout">Sửa bố cục</string>
+    <string name="home_edit_layout_hint">Chạm một ô để ẩn hoặc hiện, dùng mũi tên để đổi thứ tự. Thay đổi được lưu ngay.</string>
+    <string name="home_edit_layout_done">Xong</string>
+    <string name="home_edit_layout_reset">Khôi phục mặc định</string>
+    <string name="home_tile_shown">Đang hiện</string>
+    <string name="home_tile_hidden">Đang ẩn</string>
+    <string name="home_tile_move_up">Đưa %1$s lên</string>
+    <string name="home_tile_move_down">Đưa %1$s xuống</string>
 </resources>

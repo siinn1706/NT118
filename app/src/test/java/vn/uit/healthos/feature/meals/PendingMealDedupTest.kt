@@ -2,6 +2,8 @@ package vn.uit.healthos.feature.meals
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class PendingMealDedupTest {
 
@@ -62,12 +64,42 @@ class PendingMealDedupTest {
 
     @Test
     fun dayTotalCountsASyncedQueuedMealOnce() {
-        val state = MealsUiState(
-            todayMeals = listOf(server("m1", "Phở bò", "2026-11-23T01:00:00Z")),
-            pendingMeals = listOf(pending("p1", "Phở bò", "2026-11-23T01:00:00Z")),
+        val day = mealsDayOf(
+            week = listOf(server("m1", "Phở bò", "2026-11-23T01:00:00Z")),
+            pending = listOf(pending("p1", "Phở bò", "2026-11-23T01:00:00Z")),
+            today = LocalDate.of(2026, 11, 23),
+            zone = ZoneOffset.UTC,
         )
 
-        assertEquals(500.0, state.todayTotalCalories, 0.0)
-        assertEquals(emptyList<PendingMealEntity>(), state.visiblePendingMeals)
+        assertEquals(500.0, day.todayTotalCalories, 0.0)
+        assertEquals(emptyList<PendingMealEntity>(), day.visiblePendingMeals)
+    }
+}
+
+class MealsDayTest {
+
+    private fun meal(id: String, loggedAt: String, kcal: Double) = MealResponseDto(
+        id = id,
+        name = id,
+        loggedAt = loggedAt,
+        nutritionResult = NutritionResultDto(calories = kcal),
+    )
+
+    @Test
+    fun splitsTheCachedWeekIntoTodayAndDailyTotalsByLocalDate() {
+        // 23:30 UTC on the 22nd is already the 23rd in Ho Chi Minh City (UTC+7).
+        val week = listOf(
+            meal("late", "2026-11-22T23:30:00Z", 300.0),
+            meal("yesterday", "2026-11-22T05:00:00Z", 700.0),
+            meal("old", "2026-11-10T05:00:00Z", 900.0),
+        )
+        val day = mealsDayOf(week, emptyList(), LocalDate.of(2026, 11, 23), java.time.ZoneId.of("Asia/Ho_Chi_Minh"))
+
+        assertEquals(listOf("late"), day.todayMeals.map { it.id })
+        assertEquals(300.0, day.todayTotalCalories, 0.0)
+        assertEquals(
+            listOf("2026-11-22" to 700.0, "2026-11-23" to 300.0),
+            day.weeklyCalories.map { it.date to it.totalCalories },
+        )
     }
 }

@@ -1,8 +1,10 @@
 package vn.uit.healthos.feature.home
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -47,7 +49,7 @@ class HomeRepository @Inject constructor(
                 updatedAtMs = it.updatedAtMs,
             )
         }
-    }
+    }.flowOn(Dispatchers.Default)
 
     suspend fun refresh(): ApiResult<Unit> = coroutineScope {
         val summaryDef = async { apiCall(json) { api.getSummary().data } }

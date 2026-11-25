@@ -2,7 +2,6 @@ package vn.uit.healthos.core.designsystem.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +22,10 @@ import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
 import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 
+/**
+ * Section title with an optional text action. The action sits at the end of the title line when both fit, and wraps
+ * under the title (aligned with it) when the title would otherwise have to break.
+ */
 @Composable
 fun SectionHeader(
     title: String,
@@ -31,14 +33,11 @@ fun SectionHeader(
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
+    // The action stays beside the title only while the title fits on one line; otherwise it moves under it.
+    AdaptiveRow(modifier = modifier.fillMaxWidth(), minFlexibleFraction = 1f, verticalSpacing = 0.dp) {
         Text(title, style = MaterialTheme.typography.titleMedium)
         if (actionLabel != null && onAction != null) {
-            TextButton(onClick = onAction) { Text(actionLabel) }
+            PlainButton(text = actionLabel, onClick = onAction, contentPadding = 0.dp)
         }
     }
 }

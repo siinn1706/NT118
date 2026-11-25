@@ -100,18 +100,29 @@ data class HealthGoalDto(
     val deadline: String? = null,
 )
 
+/** `appearance` block of the preferences API; the server merges it into what it already stores. */
+@Serializable
+data class AppearanceDto(
+    val background: String? = null,
+)
+
 @Serializable
 data class UserPreferenceDto(
     @SerialName("theme_mode") val themeMode: String = "system",
     @SerialName("accent_color") val accentColor: String? = null,
-    val locale: String = "vi",
+    val locale: String? = null,
+    val appearance: AppearanceDto? = null,
+    @SerialName("leaderboard_visibility") val leaderboardVisibility: String? = null,
 )
 
+/** Null fields are left out of the request (explicitNulls = false), so the server keeps their stored values. */
 @Serializable
 data class UserPreferenceUpdateBody(
     @SerialName("theme_mode") val themeMode: String? = null,
     @SerialName("accent_color") val accentColor: String? = null,
     val locale: String? = null,
+    val appearance: AppearanceDto? = null,
+    @SerialName("leaderboard_visibility") val leaderboardVisibility: String? = null,
 )
 
 interface ProfileApi {

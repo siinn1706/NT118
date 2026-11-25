@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 val localProps = Properties().apply {
@@ -38,11 +39,24 @@ android {
             manifestPlaceholders["usesCleartextTraffic"] = "true"
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        // Release-like build for measuring real performance on a device: not debuggable (Compose runs without debug
+        // checks and ART optimises the code), signed with the debug key so it installs over a debug build, and
+        // cleartext allowed so it can reach a local backend.
+        create("benchmark") {
+            initWith(getByName("release"))
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
         }
     }
     compileOptions {
@@ -58,6 +72,26 @@ android {
     }
 }
 
+baselineProfile {
+    // Generated rules land in src/main/generated/baselineProfiles and ship with every release-like variant.
+    mergeIntoMain = true
+    // Generation needs a device, so it only runs when asked for (generateBaselineProfile), never on a normal build.
+    automaticGenerationDuringBuild = false
+}
+
+// The baseline profile plugin derives nonMinifiedRelease (profile generation) and benchmarkRelease (Macrobenchmark)
+// from release, which has no signing config. They have to install on a device and reach the local backend like the
+// "benchmark" build type, so they get the debug key and cleartext traffic.
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        val buildType = variant.buildType.orEmpty()
+        if (buildType.startsWith("nonMinified") || buildType.startsWith("benchmark")) {
+            variant.signingConfig.setConfig(android.signingConfigs.getByName("debug"))
+            variant.manifestPlaceholders.put("usesCleartextTraffic", "true")
+        }
+    }
+}
+
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
@@ -65,6 +99,8 @@ ksp {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":baselineprofile"))
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -101,6 +137,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.vico.compose.m3)
+    implementation(libs.kyant.backdrop)
+    implementation(libs.kyant.shapes)
     implementation(libs.play.services.location)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)

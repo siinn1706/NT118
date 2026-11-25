@@ -14,4 +14,6 @@
     <string name="meds_adherence_missed">Lỡ: %1$d</string>
     <string name="meds_form_dosage_placeholder">500mg, 1 viên…</string>
     <string name="meds_form_note_placeholder">Uống sau ăn…</string>
+    <string name="meds_action_snooze_short">10 phút</string>
+    <string name="meds_remove_time_cd">Xoá giờ uống %1$s</string>
 </resources>

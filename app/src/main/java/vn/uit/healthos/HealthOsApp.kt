@@ -6,7 +6,10 @@ import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
 import vn.uit.healthos.core.data.outbox.OutboxRepository
 import vn.uit.healthos.core.data.session.AppLockManager
+import vn.uit.healthos.feature.widget.WidgetAppStateWatcher
+import vn.uit.healthos.feature.widget.WidgetUpdater
 import javax.inject.Inject
+import vn.uit.healthos.core.network.RealtimeSocket
 
 @HiltAndroidApp
 class HealthOsApp : Application(), Configuration.Provider {
@@ -20,13 +23,27 @@ class HealthOsApp : Application(), Configuration.Provider {
     @Inject
     lateinit var appLockManager: AppLockManager
 
+    @Inject
+    lateinit var widgetUpdater: WidgetUpdater
+
+    @Inject
+    lateinit var widgetAppStateWatcher: WidgetAppStateWatcher
+
+    /** Friend requests and direct messages arrive in real time anywhere in the app, not only on the friends screens. */
+    @Inject
+    lateinit var realtimeSocket: RealtimeSocket
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 
     override fun onCreate() {
         super.onCreate()
+        realtimeSocket.start()
         appLockManager.register()
         // Drain anything left in the outbox from a previous session once the network is available.
         outboxRepository.scheduleSync()
+        // Widgets use updatePeriodMillis=0; this keeps them current across midnight and server refreshes.
+        widgetUpdater.schedulePeriodicRefresh()
+        widgetAppStateWatcher.start()
     }
 }

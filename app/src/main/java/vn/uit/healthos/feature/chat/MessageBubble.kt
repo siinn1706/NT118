@@ -1,5 +1,13 @@
 package vn.uit.healthos.feature.chat
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.isSpecified
+import vn.uit.healthos.core.designsystem.glass.GlassStyle
+import vn.uit.healthos.core.designsystem.glass.liquidGlass
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,11 +23,8 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.AlarmAdd
 import androidx.compose.material.icons.rounded.StopCircle
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,7 +40,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import vn.uit.healthos.R
-import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.core.designsystem.component.PlainButton
+import vn.uit.healthos.core.designsystem.glass.LocalInsideGlass
+import androidx.compose.foundation.background
 
 data class ChatMessageUi(
     val id: String,
@@ -59,7 +67,7 @@ fun MessageBubble(
     val containerColor = when {
         message.isEmergency -> MaterialTheme.colorScheme.errorContainer
         message.isUser -> MaterialTheme.colorScheme.primary
-        else -> LocalVitalColors.current.cardSurface
+        else -> Color.Unspecified
     }
     val contentColor = when {
         message.isEmergency -> MaterialTheme.colorScheme.onErrorContainer
@@ -76,8 +84,8 @@ fun MessageBubble(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = alignment,
     ) {
-        Surface(
-            color = containerColor,
+        BubbleSurface(
+            tint = containerColor,
             contentColor = contentColor,
             shape = bubbleShape,
             modifier = Modifier.widthIn(max = 312.dp),
@@ -122,28 +130,21 @@ fun MessageBubble(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier.padding(top = 4.dp),
                     ) {
-                        IconButton(
+                        GlassIconButton(
                             onClick = onToggleSpeak,
-                            modifier = Modifier.size(48.dp),
+                            contentDescription = stringResource(R.string.chat_speak_action),
                         ) {
                             Icon(
                                 imageVector = if (isSpeaking) Icons.Rounded.StopCircle else Icons.AutoMirrored.Rounded.VolumeUp,
-                                contentDescription = stringResource(R.string.chat_speak_action),
+                                contentDescription = null,
                                 modifier = Modifier.size(18.dp),
                             )
                         }
-                        TextButton(onClick = onCreateReminder) {
-                            Icon(
-                                Icons.Rounded.AlarmAdd,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                            )
-                            Text(
-                                text = stringResource(R.string.chat_create_reminder_action),
-                                style = MaterialTheme.typography.labelMedium,
-                                modifier = Modifier.padding(start = 4.dp),
-                            )
-                        }
+                        PlainButton(
+                            text = stringResource(R.string.chat_create_reminder_action),
+                            onClick = onCreateReminder,
+                            leadingIcon = Icons.Rounded.AlarmAdd,
+                        )
                     }
                 }
             }
@@ -195,5 +196,31 @@ private fun AnnotatedString.Builder.appendInlineMarkdown(line: String) {
         }
         append(line[i])
         i++
+    }
+}
+
+/**
+ * Chat bubble: the assistant's bubbles are frosted Liquid Glass (controls inside become insets); the user's and
+ * emergency bubbles are an opaque tint, where glass would be invisible work.
+ */
+@Composable
+private fun BubbleSurface(
+    tint: Color,
+    contentColor: Color,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val surface = if (tint.isSpecified) {
+        Modifier.clip(shape).background(tint)
+    } else {
+        Modifier.liquidGlass(shape = shape, style = GlassStyle.Material)
+    }
+    Box(modifier = modifier.then(surface)) {
+        CompositionLocalProvider(
+            LocalContentColor provides contentColor,
+            LocalInsideGlass provides true,
+            content = content,
+        )
     }
 }

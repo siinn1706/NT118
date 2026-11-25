@@ -9,12 +9,13 @@
 
     <string name="feature_auth">Đăng nhập</string>
     <string name="feature_onboarding">Thiết lập hồ sơ</string>
-    <string name="feature_safety">Safety Net</string>
+    <string name="feature_safety">An toàn</string>
     <string name="feature_ppg">Đo nhịp tim</string>
-    <string name="feature_design_gallery">Design gallery</string>
+    <string name="feature_design_gallery">Thư viện giao diện</string>
 
     <string name="state_loading">Đang tải…</string>
     <string name="action_retry">Thử lại</string>
+    <string name="action_refresh">Làm mới</string>
     <string name="action_back">Quay lại</string>
     <string name="action_continue">Tiếp tục</string>
     <string name="action_cancel">Hủy</string>
@@ -75,6 +76,8 @@
     <string name="auth_error_invalid_mfa">Mã xác thực tối thiểu 6 ký tự</string>
 
     <!-- Onboarding -->
+    <string name="onboarding_appearance_title">Chọn màu cho ứng dụng</string>
+    <string name="onboarding_appearance_subtitle">Không bắt buộc. Bạn có thể đổi lại bất cứ lúc nào trong Cài đặt.</string>
     <string name="onboarding_step_progress">Bước %1$d / %2$d</string>
     <string name="onboarding_body_title">Chỉ số cơ thể</string>
     <string name="onboarding_body_subtitle">Giúp HealthOS tính toán BMR, BMI và nhu cầu năng lượng chính xác.</string>
@@ -107,14 +110,14 @@
     <string name="goal_gain">Tăng cân (+300)</string>
     <string name="onboarding_target_weight_kg">Cân nặng mục tiêu (kg)</string>
     <string name="onboarding_tdee_card_title">Mục tiêu năng lượng hằng ngày</string>
-    <string name="onboarding_tdee_target_value">%1$d kcal/ngày</string>
+    <string name="onboarding_tdee_target_value">%1$d\u00A0kcal/ngày</string>
     <string name="onboarding_tdee_bmr">Tỷ lệ trao đổi chất (BMR)</string>
     <string name="onboarding_tdee_activity_mult">Hệ số vận động</string>
     <string name="onboarding_tdee_maintenance">TDEE duy trì</string>
     <string name="onboarding_tdee_adjustment">Điều chỉnh mục tiêu</string>
     <string name="onboarding_tdee_bmi">Chỉ số BMI hiện tại</string>
     <string name="onboarding_emergency_title">Liên hệ khẩn cấp</string>
-    <string name="onboarding_emergency_subtitle">Thông tin người thân sẽ xuất hiện trên thẻ khẩn cấp và cảnh báo Safety Net.</string>
+    <string name="onboarding_emergency_subtitle">Thông tin người thân sẽ xuất hiện trên thẻ khẩn cấp và cảnh báo khẩn cấp.</string>
     <string name="onboarding_contact_number">Người liên hệ #%1$d</string>
     <string name="onboarding_contact_name">Họ tên người thân</string>
     <string name="onboarding_contact_relationship">Mối quan hệ (Bố, Mẹ, Bạn…)</string>
@@ -134,13 +137,13 @@
     <string name="profile_blood_type_badge">Nhóm máu %1$s</string>
     <string name="profile_metric_bmi">BMI</string>
     <string name="profile_metric_calorie_goal">Mục tiêu calo</string>
-    <string name="profile_target_weight_caption">Mục tiêu %1$s kg</string>
+    <string name="profile_target_weight_caption">Mục tiêu %1$s\u00A0kg</string>
     <string name="unit_kcal">kcal</string>
     <string name="profile_tools_section">Tiện ích sức khỏe</string>
     <string name="profile_safety_subtitle">Phát hiện té ngã, SOS và mã QR khẩn cấp</string>
     <string name="profile_ppg_subtitle">Đo nhịp tim bằng camera sau và đèn flash</string>
     <string name="profile_settings_title">Cài đặt</string>
-    <string name="profile_settings_subtitle">Giao diện, màu động và khóa sinh trắc học</string>
+    <string name="profile_settings_subtitle">Giao diện, màu nhấn, quyền riêng tư và widget</string>
     <string name="profile_gallery_subtitle">Kiểm tra bảng màu và thành phần UI</string>
     <string name="profile_emergency_contacts_section">Liên hệ khẩn cấp</string>
     <string name="profile_logout_action">Đăng xuất</string>
@@ -188,13 +191,13 @@
     <string name="home_metric_hr">Nhịp tim</string>
     <string name="unit_steps">bước</string>
     <string name="unit_bpm">bpm</string>
-    <string name="unit_minutes_short">%1$d phút</string>
-    <string name="home_steps_goal_caption">Mục tiêu %1$d bước</string>
-    <string name="home_calories_goal_caption">TDEE %1$d kcal</string>
+    <string name="unit_minutes_short">%1$d\u00A0phút</string>
+    <string name="home_steps_goal_caption">Mục tiêu %1$d\u00A0bước</string>
+    <string name="home_calories_goal_caption">TDEE %1$d\u00A0kcal</string>
     <string name="home_hydration_title">Nước uống hôm nay</string>
-    <string name="home_hydration_heat_bonus">Đã cộng +%1$d ml do trời nóng</string>
+    <string name="home_hydration_heat_bonus">Đã cộng +%1$d\u00A0ml do trời nóng</string>
     <string name="home_hydration_add_250">+250 ml</string>
-    <string name="home_hydration_value">%1$d / %2$d ml</string>
+    <string name="home_hydration_value">%1$d / %2$d\u00A0ml</string>
     <string name="home_ai_advice_section">Lời khuyên AI</string>
     <string name="home_ai_advice_default_title">Gợi ý sức khỏe hôm nay</string>
     <string name="home_exercises_section">Gợi ý vận động</string>
@@ -218,9 +221,9 @@
 
     <!-- Meals Snap -->
     <string name="meals_today_ring_title">Năng lượng hôm nay</string>
-    <string name="meals_target_kcal">Mục tiêu: %1$d kcal</string>
-    <string name="meals_remaining_kcal">Còn lại %1$d kcal</string>
-    <string name="meals_over_kcal">Vượt %1$d kcal</string>
+    <string name="meals_target_kcal">Mục tiêu: %1$d\u00A0kcal</string>
+    <string name="meals_remaining_kcal">Còn lại %1$d\u00A0kcal</string>
+    <string name="meals_over_kcal">Vượt %1$d\u00A0kcal</string>
     <string name="meals_snap_action">Chụp món ăn</string>
     <string name="meals_manual_action">Nhập thủ công</string>
     <string name="meals_pending_section">Đang chờ đồng bộ</string>
@@ -321,12 +324,10 @@
     <!-- Safety Net -->
     <string name="action_close">Đóng</string>
     <string name="safety_tile_label">Thẻ y tế khẩn</string>
-    <string name="safety_widget_desc">Truy cập nhanh Thẻ khẩn cấp và nút SOS</string>
     <string name="safety_widget_card_btn">Thẻ khẩn cấp</string>
-    <string name="safety_widget_sos_btn">SOS ngay</string>
     <string name="safety_channel_monitor_name">Phát hiện té ngã</string>
     <string name="safety_channel_sos_name">Cảnh báo SOS khẩn cấp</string>
-    <string name="safety_monitor_notif_title">Safety Net đang bảo vệ bạn</string>
+    <string name="safety_monitor_notif_title">Chế độ An toàn đang bảo vệ bạn</string>
     <string name="safety_monitor_notif_active">Đang theo dõi cảm biến té ngã</string>
     <string name="safety_monitor_notif_test">Chế độ thử nghiệm (ngưỡng nhạy hơn)</string>
     <string name="safety_fall_alert_title">Phát hiện nghi ngờ té ngã!</string>
@@ -370,7 +371,7 @@
     <string name="ppg_status_collecting">Đang thu tín hiệu mạch đập…</string>
     <string name="ppg_status_reposition">Đặt lại ngón tay nhẹ hơn và giữ yên</string>
     <string name="ppg_status_good">Tín hiệu ổn định — giữ nguyên ngón tay</string>
-    <string name="ppg_progress_seconds">%1$d / %2$d giây</string>
+    <string name="ppg_progress_seconds">%1$d / %2$d\u00A0giây</string>
     <string name="ppg_waveform_label">Sóng PPG thời gian thực</string>
     <string name="ppg_result_title">Kết quả đo nhịp tim</string>
     <string name="ppg_confidence_label">Độ tin cậy tín hiệu: %1$d%%</string>
@@ -378,4 +379,18 @@
     <string name="ppg_saved_confirmation">Đã lưu nhịp tim (sẽ tự đồng bộ lên HealthOS).</string>
     <string name="ppg_measure_again">Đo lại</string>
     <string name="ppg_medical_disclaimer">Chỉ mang tính tham khảo sức khỏe cá nhân — không thay thế thiết bị y tế chuyên dụng.</string>
+
+    <!-- Appearance and design system -->
+    <string name="accent_teal">Xanh ngọc</string>
+    <string name="accent_ocean">Đại dương</string>
+    <string name="accent_violet">Tím</string>
+    <string name="accent_rose">Hồng</string>
+    <string name="accent_amber">Hổ phách</string>
+    <string name="accent_forest">Xanh lá</string>
+    <string name="accent_graphite">Than chì</string>
+    <string name="background_aurora">Aurora</string>
+    <string name="background_soft">Dịu</string>
+    <string name="background_solid">Trơn</string>
+    <string name="glass_show_password">Hiện mật khẩu</string>
+    <string name="glass_hide_password">Ẩn mật khẩu</string>
 </resources>

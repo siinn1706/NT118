@@ -1,0 +1,53 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/navigation";
+import { Download, Share2, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+interface ReportQuickActionsProps {
+  locale: string;
+  onExportPdf?: () => void;
+  onShare?: () => void;
+}
+
+export function ReportQuickActions({
+  locale,
+  onExportPdf,
+  onShare,
+}: ReportQuickActionsProps) {
+  const t = useTranslations("reports");
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        className="gap-2 text-xs"
+        onClick={onExportPdf}
+        aria-label={t("exportPdf")}
+      >
+        <Download className="size-3.5" aria-hidden />
+        {t("exportPdf")}
+      </Button>
+
+      <Button
+        variant="outline"
+        size="sm"
+        className="gap-2 text-xs"
+        onClick={onShare}
+        aria-label={t("shareReport")}
+      >
+        <Share2 className="size-3.5" aria-hidden />
+        {t("shareReport")}
+      </Button>
+
+      <Button asChild variant="default" size="sm" className="gap-2 text-xs">
+        <Link href={`/dashboard/reports/trends`}>
+          <TrendingUp className="size-3.5" aria-hidden />
+          {t("analyzeTrends")}
+        </Link>
+      </Button>
+    </div>
+  );
+}

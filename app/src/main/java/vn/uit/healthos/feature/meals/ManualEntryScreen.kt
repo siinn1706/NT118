@@ -1,5 +1,10 @@
 package vn.uit.healthos.feature.meals
 
+import vn.uit.healthos.core.designsystem.component.GlassSegmentedControl
+import vn.uit.healthos.core.designsystem.component.GlassIconButton
+import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
+import vn.uit.healthos.core.designsystem.component.GlassTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,12 +18,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,53 +64,48 @@ fun ManualEntryScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
                 .imePadding()
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             BentoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.manualName,
                         onValueChange = onNameChange,
-                        label = { Text(stringResource(R.string.meals_dish_name_label)) },
-                        singleLine = true,
+                        label = stringResource(R.string.meals_dish_name_label),
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        MEAL_TYPES.forEach { (key, resId) ->
-                            FilterChip(
-                                selected = state.manualMealType == key,
-                                onClick = { onMealTypeChange(key) },
-                                label = { Text(stringResource(resId)) },
-                            )
-                        }
-                    }
-                    OutlinedTextField(
+                    GlassSegmentedControl(
+                        options = MEAL_TYPES.map { stringResource(it.second) },
+                        selectedIndex = MEAL_TYPES.indexOfFirst { it.first == state.manualMealType }.coerceAtLeast(0),
+                        onSelect = { onMealTypeChange(MEAL_TYPES[it].first) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    GlassTextField(
                         value = state.manualCaloriesText,
                         onValueChange = onCaloriesChange,
-                        label = { Text(stringResource(R.string.meals_calories_label)) },
+                        label = stringResource(R.string.meals_calories_label),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    OutlinedTextField(
+                    GlassTextField(
                         value = state.manualNotes,
                         onValueChange = onNotesChange,
-                        label = { Text(stringResource(R.string.meals_notes_optional)) },
+                        label = stringResource(R.string.meals_notes_optional),
+                        singleLine = false,
                         maxLines = 3,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
 
-            OutlinedTextField(
+            GlassTextField(
                 value = state.ingredientQuery,
                 onValueChange = onIngredientQueryChange,
-                label = { Text(stringResource(R.string.meals_add_ingredient_search)) },
-                singleLine = true,
+                label = stringResource(R.string.meals_add_ingredient_search),
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -146,26 +142,19 @@ fun ManualEntryScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
-                        IconButton(onClick = { onRemoveItem(item.id) }) {
-                            Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.action_delete))
+                        GlassIconButton(onClick = { onRemoveItem(item.id) }, contentDescription = stringResource(R.string.action_delete)) {
+                            Icon(Icons.Rounded.Close, contentDescription = null)
                         }
                     }
                 }
             }
 
             state.errorMessage?.let { err ->
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
+                GlassBanner(
+                    message = err.asString(),
+                    tone = GlassBannerTone.Error,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = err.asString(),
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(12.dp),
-                    )
-                }
+                )
             }
 
             PrimaryButton(

@@ -1,5 +1,7 @@
 package vn.uit.healthos.feature.meds
 
+import vn.uit.healthos.core.designsystem.component.GlassDialog
+import vn.uit.healthos.core.designsystem.component.GlassTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,11 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveColumns
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.component.DetailScaffold
 import vn.uit.healthos.core.designsystem.component.LoadingState
@@ -54,37 +54,28 @@ fun MedDetailScreen(
     var refillUnitsText by rememberSaveable { mutableStateOf("30") }
 
     if (showRefillDialog) {
-        AlertDialog(
+        val refillQty = refillUnitsText.toIntOrNull()
+        GlassDialog(
             onDismissRequest = { showRefillDialog = false },
-            title = { Text(stringResource(R.string.meds_refill_dialog_title)) },
-            text = {
-                OutlinedTextField(
-                    value = refillUnitsText,
-                    onValueChange = { refillUnitsText = it.filter(Char::isDigit) },
-                    label = { Text(stringResource(R.string.meds_refill_supply_label)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val qty = refillUnitsText.toIntOrNull()
-                        if (qty != null && qty > 0) {
-                            showRefillDialog = false
-                            onRefill(qty)
-                        }
-                    },
-                ) {
-                    Text(stringResource(R.string.action_save))
+            title = stringResource(R.string.meds_refill_dialog_title),
+            confirmLabel = stringResource(R.string.action_save),
+            onConfirm = {
+                if (refillQty != null && refillQty > 0) {
+                    showRefillDialog = false
+                    onRefill(refillQty)
                 }
             },
-            dismissButton = {
-                TextButton(onClick = { showRefillDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            },
-        )
+            dismissLabel = stringResource(R.string.action_cancel),
+            confirmEnabled = refillQty != null && refillQty > 0,
+        ) {
+            GlassTextField(
+                value = refillUnitsText,
+                onValueChange = { refillUnitsText = it.filter(Char::isDigit) },
+                label = stringResource(R.string.meds_refill_supply_label),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 
     DetailScaffold(
@@ -100,8 +91,8 @@ fun MedDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -148,7 +139,8 @@ fun MedDetailScreen(
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+            // Side by side only while both labels fit on one line; otherwise stacked at full width.
+            AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 2, horizontalSpacing = 12.dp) {
                 PrimaryButton(
                     text = if (plan.status == "paused") {
                         stringResource(R.string.meds_resume_action)
@@ -157,18 +149,19 @@ fun MedDetailScreen(
                     },
                     onClick = onTogglePause,
                     loading = state.saving,
-                    modifier = Modifier.weight(1f),
                 )
                 SecondaryButton(
                     text = stringResource(R.string.meds_refill_action),
                     onClick = { showRefillDialog = true },
-                    modifier = Modifier.weight(1f),
                 )
             }
 
-            TextButton(onClick = onDelete, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.meds_delete_plan_action), color = MaterialTheme.colorScheme.error)
-            }
+            SecondaryButton(
+                text = stringResource(R.string.meds_delete_plan_action),
+                onClick = onDelete,
+                destructive = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -190,10 +183,11 @@ private fun AdherenceBreakdownBar(
         Segment(weight = taken.toFloat() / total, color = LocalVitalColors.current.good)
         Segment(weight = skipped.toFloat() / total, color = LocalVitalColors.current.watch)
         Segment(weight = missed.toFloat() / total, color = LocalVitalColors.current.alert)
-        Segment(weight = pending.toFloat() / total, color = MaterialTheme.colorScheme.surfaceVariant)
+        Segment(weight = pending.toFloat() / total, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f))
     }
     Spacer(Modifier.height(8.dp))
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    // One line of three counts when they fit, otherwise a grid; the counts never run into each other.
+    AdaptiveColumns(modifier = Modifier.fillMaxWidth(), maxColumns = 3, horizontalSpacing = 12.dp, verticalSpacing = 4.dp) {
         Text(stringResource(R.string.meds_adherence_taken, taken), style = MaterialTheme.typography.labelSmall.tabular())
         Text(stringResource(R.string.meds_adherence_skipped, skipped), style = MaterialTheme.typography.labelSmall.tabular())
         Text(stringResource(R.string.meds_adherence_missed, missed), style = MaterialTheme.typography.labelSmall.tabular())

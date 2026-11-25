@@ -1,5 +1,7 @@
 package vn.uit.healthos.feature.hydration
 
+import vn.uit.healthos.core.designsystem.component.SecondaryButton
+import vn.uit.healthos.core.designsystem.component.GlassProgressBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,9 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.WaterDrop
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.R
+import vn.uit.healthos.core.designsystem.component.AdaptiveRow
 import vn.uit.healthos.core.designsystem.component.BentoCard
 import vn.uit.healthos.core.designsystem.theme.tabular
 
@@ -36,11 +37,9 @@ fun HydrationCard(
     val progress = (currentMl.toFloat() / safeTarget.toFloat()).coerceIn(0f, 1f)
 
     BentoCard(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
+        // The add button stays beside the title while the title block keeps most of the width; with a large font
+        // it moves under the title instead of squeezing it.
+        AdaptiveRow(modifier = Modifier.fillMaxWidth()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -65,10 +64,11 @@ fun HydrationCard(
                     }
                 }
             }
-            FilledTonalButton(onClick = onAddCup) {
-                Icon(Icons.Rounded.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                Text(stringResource(R.string.home_hydration_add_250))
-            }
+            SecondaryButton(
+                text = stringResource(R.string.home_hydration_add_250),
+                onClick = onAddCup,
+                leadingIcon = Icons.Rounded.Add,
+            )
         }
         Spacer(Modifier.height(12.dp))
         Row(
@@ -87,9 +87,10 @@ fun HydrationCard(
             )
         }
         Spacer(Modifier.height(8.dp))
-        LinearProgressIndicator(
+        GlassProgressBar(
             progress = { progress },
             modifier = Modifier.fillMaxWidth(),
+            height = 8.dp,
         )
     }
 }

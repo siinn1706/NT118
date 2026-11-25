@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -37,6 +38,8 @@ fun NavBackStackEntry.OnEmergencyContactsSaved(onSaved: () -> Unit) {
 fun NavGraphBuilder.profileGraph(
     navController: NavController,
     appLockManager: AppLockManager,
+    onOpenFriends: () -> Unit,
+    onOpenLeaderboard: () -> Unit,
     onOpenSafety: () -> Unit,
     onOpenPpg: () -> Unit,
     onOpenDesignGallery: () -> Unit,
@@ -51,11 +54,17 @@ fun NavGraphBuilder.profileGraph(
                 if (event is ProfileEvent.SignedOut) onSignedOut()
             }
         }
+        LifecycleResumeEffect(viewModel) {
+            viewModel.onVisible()
+            onPauseOrDispose { }
+        }
         entry.OnEmergencyContactsSaved(viewModel::refresh)
 
         MeScreen(
             state = state,
             onRefresh = viewModel::refresh,
+            onOpenFriends = onOpenFriends,
+            onOpenLeaderboard = onOpenLeaderboard,
             onOpenSafety = onOpenSafety,
             onOpenPpg = onOpenPpg,
             onOpenSettings = { navController.navigate(SettingsRoute) },
@@ -69,6 +78,10 @@ fun NavGraphBuilder.profileGraph(
         val viewModel: ProfileViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val context = LocalContext.current
+        LifecycleResumeEffect(viewModel) {
+            viewModel.onVisible()
+            onPauseOrDispose { }
+        }
         val canUseBiometrics = remember(context) { appLockManager.canAuthenticate(context) }
 
         SettingsScreen(
@@ -76,6 +89,10 @@ fun NavGraphBuilder.profileGraph(
             canUseBiometrics = canUseBiometrics,
             onThemeModeChange = viewModel::setThemeMode,
             onDynamicColorChange = viewModel::setDynamicColor,
+            onAccentChange = viewModel::setAccentPreset,
+            onBackgroundStyleChange = viewModel::setBackgroundStyle,
+            onReducedTransparencyChange = viewModel::setReducedTransparency,
+            onLeaderboardVisibilityChange = viewModel::setLeaderboardVisibility,
             onAppLockChange = viewModel::setAppLockEnabled,
             onBack = { navController.popBackStack() },
         )
