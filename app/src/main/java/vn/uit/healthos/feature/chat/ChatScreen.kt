@@ -48,6 +48,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -595,22 +596,34 @@ private fun QuickReminderDialog(
     onDismiss: () -> Unit,
     onSave: () -> Unit,
 ) {
+    // The dialog body is composed by the GlassRoot overlay, which receives a new body one frame after this function
+    // recomposes. Text read from `draft` would reach the field a frame late and reset its cursor, so the fields keep
+    // their text in state read inside the body and report every edit to the ViewModel.
+    var title by remember { mutableStateOf(draft.title) }
+    var time by remember { mutableStateOf(draft.time) }
+    val latestDraft by rememberUpdatedState(draft)
     GlassDialog(
         onDismissRequest = onDismiss,
         title = stringResource(R.string.chat_quick_reminder_title),
         confirmLabel = stringResource(R.string.action_save),
         onConfirm = onSave,
         dismissLabel = stringResource(R.string.action_cancel),
-        confirmEnabled = !saving && draft.title.isNotBlank(),
+        confirmEnabled = !saving && title.isNotBlank(),
     ) {
         GlassTextField(
-            value = draft.title,
-            onValueChange = { onUpdate(draft.copy(title = it)) },
+            value = title,
+            onValueChange = {
+                title = it
+                onUpdate(latestDraft.copy(title = it, time = time))
+            },
             label = stringResource(R.string.chat_reminder_name_label),
         )
         GlassTextField(
-            value = draft.time,
-            onValueChange = { onUpdate(draft.copy(time = it.take(5))) },
+            value = time,
+            onValueChange = {
+                time = it.take(5)
+                onUpdate(latestDraft.copy(title = title, time = time))
+            },
             label = stringResource(R.string.chat_reminder_time_label),
         )
         Text(
@@ -621,7 +634,7 @@ private fun QuickReminderDialog(
         GlassSegmentedControl(
             options = ReminderTypes.map { stringResource(it.second) },
             selectedIndex = ReminderTypes.indexOfFirst { it.first == draft.type }.coerceAtLeast(0),
-            onSelect = { onUpdate(draft.copy(type = ReminderTypes[it].first)) },
+            onSelect = { onUpdate(latestDraft.copy(title = title, time = time, type = ReminderTypes[it].first)) },
             modifier = Modifier.fillMaxWidth(),
         )
     }

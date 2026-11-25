@@ -87,6 +87,11 @@ private val DialogGlass = GlassStyle.Material.copy(
  * everything behind it is hidden from accessibility services; the panel announces [title] as its pane title and
  * takes keyboard focus; it avoids the keyboard and system bars. Outside a GlassRoot it falls back to a regular dialog
  * window with an opaque panel.
+ *
+ * [content] is composed by the GlassRoot, which picks up a new lambda one frame after the caller recomposes. A text
+ * field inside it must therefore read its text from a State object read inside [content] (for example a
+ * `remember { mutableStateOf(...) }` of the caller), not from a plain value captured from a ViewModel state, or the
+ * field sees its previous text for a frame and its cursor jumps.
  */
 @Composable
 fun GlassDialog(
