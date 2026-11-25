@@ -12,10 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import vn.uit.healthos.R
+import vn.uit.healthos.core.data.db.FRESHNESS_WINDOW_MS
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.SseException
 import vn.uit.healthos.core.network.toUiText
@@ -50,7 +52,19 @@ data class ChatUiState(
     val retryAvailable: Boolean = false,
     val reminderDraft: ReminderDraftUi? = null,
     val savingReminder: Boolean = false,
+    /** When the messages were last loaded from the server; null before the first load. */
+    val syncedAtMs: Long? = null,
 )
+
+/**
+ * Puts the newest page of the conversation in place of the messages shown. When the page overlaps what is shown, the
+ * older history the reader already loaded above it is kept.
+ */
+internal fun mergeLatestPage(shown: List<ChatMessageUi>, latest: List<ChatMessageUi>): List<ChatMessageUi> {
+    val first = latest.firstOrNull() ?: return latest
+    val index = shown.indexOfFirst { it.id == first.id }
+    return if (index > 0) shown.subList(0, index) + latest else latest
+}
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
@@ -59,44 +73,88 @@ class ChatViewModel @Inject constructor(
     @param:ApplicationContext private val appContext: Context,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ChatUiState(loading = true))
+    private val _state = MutableStateFlow(restoredState(repository.session.value))
     val state: StateFlow<ChatUiState> = _state.asStateFlow()
 
     private var streamJob: Job? = null
     private var failedSend: PendingSend? = null
 
     init {
+        // Every change to the conversation is kept in memory, so the next Chat screen opens on it at once.
+        viewModelScope.launch {
+            _state
+                .distinctUntilChanged { old, new ->
+                    old.messages === new.messages &&
+                        old.conversationId == new.conversationId &&
+                        old.nextCursor == new.nextCursor &&
+                        old.hasMoreHistory == new.hasMoreHistory &&
+                        old.syncedAtMs == new.syncedAtMs
+                }
+                .collect { s ->
+                    val id = s.conversationId ?: return@collect
+                    repository.rememberSession(ChatSession(id, s.messages, s.hasMoreHistory, s.nextCursor, s.syncedAtMs ?: 0L))
+                }
+        }
+        if (repository.session.value == null) loadConversation()
+    }
+
+    /**
+     * The tab became visible: reloads the newest messages in the background only when the conversation was last
+     * loaded over a minute ago and nothing is in flight (loading, a reply streaming, a failed send waiting for retry).
+     */
+    fun onVisible() {
+        val s = _state.value
+        if (s.loading || s.loadingMore || s.isStreaming || s.retryAvailable) return
+        val synced = s.syncedAtMs
+        if (synced != null && System.currentTimeMillis() - synced in 0 until FRESHNESS_WINDOW_MS) return
         loadConversation()
     }
 
+    /**
+     * Loads the conversation's newest page. Messages already shown stay on screen while it loads; a failure is only
+     * reported while there is nothing to show.
+     */
     fun loadConversation() {
         viewModelScope.launch {
+            val shownBefore = _state.value.messages
             _state.update { it.copy(loading = true, errorMessage = null) }
             val conv = when (val res = repository.getOrCreateAiConversation()) {
                 is ApiResult.Success -> res.data
                 is ApiResult.Failure -> {
-                    _state.update { it.copy(loading = false, errorMessage = res.error.toUiText()) }
+                    _state.update {
+                        it.copy(loading = false, errorMessage = res.error.toUiText().takeIf { _ -> it.messages.isEmpty() })
+                    }
                     return@launch
                 }
             }
             when (val msgsRes = repository.getMessages(conv.id, limit = 30)) {
                 is ApiResult.Success -> {
-                    val chronological = msgsRes.data.data.reversed().map { it.toUi() }
-                    val hasEmergency = chronological.lastOrNull()?.isEmergency == true
-                    _state.update {
-                        it.copy(
+                    val latest = msgsRes.data.data.reversed().map { it.toUi() }
+                    _state.update { cur ->
+                        // A message sent while this was loading is newer than the page: keep the live list.
+                        if (cur.messages !== shownBefore || cur.isStreaming) {
+                            return@update cur.copy(conversationId = conv.id, loading = false)
+                        }
+                        val merged = mergeLatestPage(cur.messages, latest)
+                        val keptOlder = merged.size > latest.size
+                        cur.copy(
                             conversationId = conv.id,
-                            messages = chronological,
-                            hasMoreHistory = msgsRes.data.hasMore,
-                            nextCursor = msgsRes.data.nextCursor,
-                            emergencyBannerVisible = hasEmergency,
+                            messages = merged,
+                            hasMoreHistory = if (keptOlder) cur.hasMoreHistory else msgsRes.data.hasMore,
+                            nextCursor = if (keptOlder) cur.nextCursor else msgsRes.data.nextCursor,
+                            emergencyBannerVisible = merged.lastOrNull()?.isEmergency == true,
                             loading = false,
+                            syncedAtMs = System.currentTimeMillis(),
                         )
                     }
                 }
                 is ApiResult.Failure -> {
                     _state.update {
-                        it.copy(conversationId = conv.id, loading = false, errorMessage = msgsRes.error.toUiText())
+                        it.copy(
+                            conversationId = conv.id,
+                            loading = false,
+                            errorMessage = msgsRes.error.toUiText().takeIf { _ -> it.messages.isEmpty() },
+                        )
                     }
                 }
             }
@@ -399,6 +457,21 @@ class ChatViewModel @Inject constructor(
     }
 
     private data class PendingSend(val body: SendMessageBody, val assistantTempId: String)
+
+    /** Opens on the conversation kept in memory, or on a first load when there is none yet. */
+    private fun restoredState(session: ChatSession?): ChatUiState {
+        session ?: return ChatUiState(loading = true)
+        // A reply cut off when the previous screen went away is no longer streaming.
+        val messages = session.messages.map { if (it.isStreaming) it.copy(isStreaming = false) else it }
+        return ChatUiState(
+            conversationId = session.conversationId,
+            messages = messages,
+            hasMoreHistory = session.hasMoreHistory,
+            nextCursor = session.nextCursor,
+            emergencyBannerVisible = messages.lastOrNull()?.isEmergency == true,
+            syncedAtMs = session.syncedAtMs,
+        )
+    }
 
     private fun ChatMessageDto.toUi(): ChatMessageUi = ChatMessageUi(
         id = id,

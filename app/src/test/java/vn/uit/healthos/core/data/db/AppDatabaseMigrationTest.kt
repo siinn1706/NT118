@@ -128,4 +128,19 @@ class AppDatabaseMigrationTest {
             untouched.forEach { table -> assertTrue("$table must not be rewritten: $sql", !sql.contains("`$table`")) }
         }
     }
+
+    @Test
+    fun `6 to 7 only creates the snapshot cache table as exported`() {
+        val v6 = schema(6).entities()
+        val v7 = schema(7).entities()
+        val executed = recordMigration(6, 7)
+
+        assertEquals(setOf("snapshot_cache"), v7.keys - v6.keys)
+        val entity = v7.getValue("snapshot_cache")
+        assertTrue("missing CREATE for snapshot_cache in $executed", entity.createSql() in executed)
+
+        executed.forEach { sql ->
+            v6.keys.forEach { table -> assertTrue("$table must not be touched: $sql", !sql.contains("`$table`")) }
+        }
+    }
 }

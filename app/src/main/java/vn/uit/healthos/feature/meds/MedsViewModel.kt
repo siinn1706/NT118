@@ -3,20 +3,27 @@ package vn.uit.healthos.feature.meds
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vn.uit.healthos.R
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.toUiText
+import vn.uit.healthos.core.ui.CacheFirstLoader
+import vn.uit.healthos.core.ui.CacheFirstState
 import vn.uit.healthos.core.ui.UiText
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 data class MedPlanFormState(
@@ -32,14 +39,22 @@ data class MedPlanFormState(
     val notes: String = "",
 )
 
+/** A dose of today's timeline with its time already formatted. */
+data class DoseRowUi(val dose: DoseCacheEntity, val timeLabel: String)
+
+/** A plan card: the plan, its adherence percent when known and the days of supply left when a refill is due. */
+data class PlanRowUi(val plan: MedicationPlanDto, val adherencePercent: Int?, val refillWarningDays: Int?)
+
 data class MedsUiState(
-    val todayDoses: List<DoseCacheEntity> = emptyList(),
-    val plans: List<MedicationPlanDto> = emptyList(),
-    val planAdherence: Map<String, Int> = emptyMap(),
+    val todayDoses: List<DoseRowUi> = emptyList(),
+    val plans: List<PlanRowUi> = emptyList(),
     val selectedPlan: MedicationPlanDetailDto? = null,
     val selectedAdherence: AdherenceDto? = null,
     val form: MedPlanFormState = MedPlanFormState(),
-    val loading: Boolean = false,
+    /** First ever load with no plans cached: placeholders instead of "no plans". */
+    val showSkeleton: Boolean = false,
+    /** A background refresh over the cached plans is running. */
+    val refreshing: Boolean = false,
     val saving: Boolean = false,
     /** Why the list could not load; shown only while there is nothing cached to display. */
     val loadError: UiText? = null,
@@ -56,49 +71,72 @@ class MedsViewModel @Inject constructor(
     private val repository: MedsRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(MedsUiState(loading = true))
+    private val _state = MutableStateFlow(MedsUiState())
     val state: StateFlow<MedsUiState> = _state.asStateFlow()
 
     private val _events = Channel<MedsNavEvent>(Channel.BUFFERED)
     val events: Flow<MedsNavEvent> = _events.receiveAsFlow()
 
+    private val loader = CacheFirstLoader(viewModelScope, repository.cachedPlans, fetch = repository::refreshPlans)
+
     init {
         viewModelScope.launch {
-            repository.observeTodayDoses().collectLatest { doses ->
-                _state.update { it.copy(todayDoses = doses) }
-            }
-        }
-        refresh()
-    }
-
-    fun refresh() {
-        viewModelScope.launch {
-            _state.update { it.copy(loading = true, loadError = null, errorMessage = null) }
-            repository.refreshAndReschedule()
-            when (val plansRes = repository.listPlans()) {
-                is ApiResult.Success -> {
-                    val plans = plansRes.data.filter { it.status != "cancelled" }
-                    _state.update { it.copy(plans = plans, loading = false) }
-                    plans.take(10).forEach { plan ->
-                        launch {
-                            val adh = (repository.getAdherence(plan.id) as? ApiResult.Success)?.data
-                            if (adh != null) {
-                                _state.update { s ->
-                                    s.copy(planAdherence = s.planAdherence + (plan.id to adh.percent))
-                                }
-                            }
-                        }
+            combine(repository.observeTodayDoses(), loader.state) { doses, load -> buildList(doses, load) }
+                // Formatting times and projecting refills for every row stays off the main thread.
+                .flowOn(Dispatchers.Default)
+                .collect { lists ->
+                    _state.update {
+                        it.copy(
+                            todayDoses = lists.doses,
+                            plans = lists.plans,
+                            showSkeleton = lists.showSkeleton,
+                            refreshing = lists.refreshing,
+                            loadError = lists.loadError,
+                        )
                     }
                 }
-                is ApiResult.Failure -> _state.update { s ->
-                    s.copy(
-                        loading = false,
-                        loadError = if (s.todayDoses.isEmpty() && s.plans.isEmpty()) plansRes.error.toUiText() else null,
-                    )
-                }
-            }
         }
     }
+
+    /** The tab became visible: refetch only when the cached plans are missing, changed locally or older than a minute. */
+    fun onVisible() = loader.refreshIfStale()
+
+    /** The refresh button. */
+    fun refresh() = loader.refresh()
+
+    private fun buildList(doses: List<DoseCacheEntity>, load: CacheFirstState<MedsPlansCache>): MedsLists {
+        val nowMs = System.currentTimeMillis()
+        val cache = load.data
+        val doseRows = doses.map { dose ->
+            DoseRowUi(dose, TIME_FORMAT.format(Instant.ofEpochMilli(dose.snoozedUntilMs ?: dose.scheduledAtMs).atZone(ZONE)))
+        }
+        val planRows = cache?.plans.orEmpty().map { plan ->
+            PlanRowUi(
+                plan = plan,
+                adherencePercent = cache?.adherence?.get(plan.id),
+                refillWarningDays = if (plan.status == "active") {
+                    refillWarningDays(plan.refillSupplyUnits, plan.nextRefillEstimatedAt, nowMs)
+                } else {
+                    null
+                },
+            )
+        }
+        return MedsLists(
+            doses = doseRows,
+            plans = planRows,
+            showSkeleton = load.showSkeleton,
+            refreshing = load.refreshing,
+            loadError = load.error?.takeIf { cache == null && doses.isEmpty() }?.toUiText(),
+        )
+    }
+
+    private data class MedsLists(
+        val doses: List<DoseRowUi>,
+        val plans: List<PlanRowUi>,
+        val showSkeleton: Boolean,
+        val refreshing: Boolean,
+        val loadError: UiText?,
+    )
 
     fun markDoseDone(dose: DoseCacheEntity) {
         viewModelScope.launch { repository.recordDoseAction(dose, DoseActionReceiver.ACTION_DONE) }
@@ -114,10 +152,10 @@ class MedsViewModel @Inject constructor(
 
     fun loadPlanDetail(planId: String) {
         viewModelScope.launch {
-            _state.update { it.copy(loading = true, errorMessage = null) }
+            _state.update { it.copy(errorMessage = null) }
             val detail = (repository.getPlanDetail(planId) as? ApiResult.Success)?.data
             val adh = (repository.getAdherence(planId) as? ApiResult.Success)?.data
-            _state.update { it.copy(selectedPlan = detail, selectedAdherence = adh, loading = false) }
+            _state.update { it.copy(selectedPlan = detail, selectedAdherence = adh) }
         }
     }
 
@@ -132,7 +170,7 @@ class MedsViewModel @Inject constructor(
             }
             if (res is ApiResult.Success) {
                 loadPlanDetail(plan.id)
-                refresh()
+                loader.refresh(userRequested = false)
             }
             _state.update { it.copy(saving = false) }
         }
@@ -144,7 +182,7 @@ class MedsViewModel @Inject constructor(
             _state.update { it.copy(saving = true) }
             if (repository.refillPlan(plan.id, units) is ApiResult.Success) {
                 loadPlanDetail(plan.id)
-                refresh()
+                loader.refresh(userRequested = false)
             }
             _state.update { it.copy(saving = false) }
         }
@@ -156,7 +194,7 @@ class MedsViewModel @Inject constructor(
             _state.update { it.copy(saving = true) }
             if (repository.deletePlan(plan.id, plan.doses.map { it.reminderId }) is ApiResult.Success) {
                 _state.update { it.copy(saving = false, selectedPlan = null) }
-                refresh()
+                loader.refresh(userRequested = false)
                 _events.send(MedsNavEvent.BackToList)
             } else {
                 _state.update { it.copy(saving = false) }
@@ -221,7 +259,7 @@ class MedsViewModel @Inject constructor(
             when (val res = repository.createPlan(body)) {
                 is ApiResult.Success -> {
                     _state.update { it.copy(saving = false, form = MedPlanFormState()) }
-                    refresh()
+                    loader.refresh(userRequested = false)
                     _events.send(MedsNavEvent.BackToList)
                 }
                 is ApiResult.Failure -> {
@@ -233,5 +271,7 @@ class MedsViewModel @Inject constructor(
 
     private companion object {
         val TIME_REGEX = Regex("^([01]\\d|2[0-3]):[0-5]\\d$")
+        val ZONE: ZoneId = ZoneId.of(DEFAULT_MED_TZID)
+        val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     }
 }

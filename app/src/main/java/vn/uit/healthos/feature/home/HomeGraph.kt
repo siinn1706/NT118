@@ -3,6 +3,7 @@ package vn.uit.healthos.feature.home
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -12,6 +13,10 @@ fun NavGraphBuilder.homeGraph(navigation: HomeNavigation) {
     composable<HomeRoute> {
         val viewModel: HomeViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
+        LifecycleResumeEffect(viewModel) {
+            viewModel.onVisible()
+            onPauseOrDispose { }
+        }
         val actions = remember(viewModel) {
             HomeActions(
                 onRefresh = viewModel::refresh,

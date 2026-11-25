@@ -33,6 +33,9 @@ abstract class UserDataDao {
     @Query("DELETE FROM leaderboard_cache")
     protected abstract suspend fun clearLeaderboardCache()
 
+    @Query("DELETE FROM snapshot_cache")
+    protected abstract suspend fun clearSnapshotCache()
+
     @Transaction
     open suspend fun clearAll() {
         clearOutboxExcept(OutboxRetention.SESSION_INDEPENDENT_TYPES)
@@ -42,5 +45,6 @@ abstract class UserDataDao {
         clearDoseCache()
         clearDirectMessages()
         clearLeaderboardCache()
+        clearSnapshotCache()
     }
 }

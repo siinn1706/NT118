@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -22,6 +23,10 @@ fun NavGraphBuilder.medsGraph(navController: NavController) {
         val viewModel: MedsViewModel = hiltViewModel(entry)
         val state by viewModel.state.collectAsStateWithLifecycle()
         MedsEventEffect(viewModel, navController)
+        LifecycleResumeEffect(viewModel) {
+            viewModel.onVisible()
+            onPauseOrDispose { }
+        }
         MedsScreen(
             state = state,
             onRefresh = viewModel::refresh,

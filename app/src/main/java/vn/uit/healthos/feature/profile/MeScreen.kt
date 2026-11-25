@@ -54,6 +54,8 @@ import vn.uit.healthos.core.designsystem.component.SectionHeader
 import vn.uit.healthos.core.designsystem.glass.LocalBottomChromeInset
 import vn.uit.healthos.core.designsystem.glass.glassInset
 import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
+import vn.uit.healthos.core.ui.BackgroundRefreshBar
+import vn.uit.healthos.core.ui.SkeletonList
 import vn.uit.healthos.core.ui.asString
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -104,9 +106,13 @@ fun MeScreen(
                     icon = Icons.Rounded.Refresh,
                     contentDescription = stringResource(R.string.action_refresh),
                     onClick = onRefresh,
-                    enabled = !state.loading,
+                    enabled = !state.refreshing,
                 )
             },
+        )
+        BackgroundRefreshBar(
+            visible = state.refreshing && !state.showSkeleton,
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
         Column(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
@@ -142,7 +148,11 @@ private fun MeContent(
     onAskSignOut: () -> Unit,
 ) {
     val profile = state.profile
-    ProfileHeaderCard(profile = profile)
+    if (state.showSkeleton) {
+        SkeletonList(count = 1, itemHeight = 104.dp)
+    } else {
+        ProfileHeaderCard(profile = profile)
+    }
 
     val heightCm = profile?.heightCm
     val weightKg = profile?.weightKg

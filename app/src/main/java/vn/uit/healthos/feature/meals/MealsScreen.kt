@@ -4,6 +4,7 @@ import vn.uit.healthos.core.designsystem.component.LargeTitleHeader
 import vn.uit.healthos.core.designsystem.component.GlassToolbarItem
 import vn.uit.healthos.core.designsystem.component.GlassIconButton
 import vn.uit.healthos.core.designsystem.component.GlassBanner
+import vn.uit.healthos.core.designsystem.component.GlassBannerTone
 import vn.uit.healthos.core.designsystem.glass.glassInset
 import com.kyant.shapes.RoundedRectangle
 import androidx.compose.foundation.Canvas
@@ -49,6 +50,8 @@ import vn.uit.healthos.core.designsystem.component.SecondaryButton
 import vn.uit.healthos.core.designsystem.component.SectionHeader
 import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 import vn.uit.healthos.core.designsystem.theme.tabular
+import vn.uit.healthos.core.ui.BackgroundRefreshBar
+import vn.uit.healthos.core.ui.SkeletonList
 import vn.uit.healthos.core.ui.asString
 import kotlin.math.roundToInt
 
@@ -84,12 +87,25 @@ fun MealsScreen(
                 )
             },
         )
+        BackgroundRefreshBar(
+            visible = state.refreshing && !state.showSkeleton,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             state.infoMessage?.let { msg ->
                 GlassBanner(message = msg.asString(), modifier = Modifier.fillMaxWidth())
+            }
+            state.loadError?.let { error ->
+                GlassBanner(
+                    message = error.asString(),
+                    tone = GlassBannerTone.Error,
+                    actionLabel = stringResource(R.string.action_retry),
+                    onAction = onRefresh,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             // Calorie Ring Card
@@ -202,7 +218,9 @@ fun MealsScreen(
 
             // Today's synced meals
             SectionHeader(title = stringResource(R.string.meals_today_section))
-            if (state.todayMeals.isEmpty() && pendingMeals.isEmpty()) {
+            if (state.showSkeleton) {
+                SkeletonList()
+            } else if (state.todayMeals.isEmpty() && pendingMeals.isEmpty()) {
                 BentoCard(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         stringResource(R.string.meals_empty_today),

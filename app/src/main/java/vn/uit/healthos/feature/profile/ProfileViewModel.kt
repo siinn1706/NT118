@@ -17,8 +17,8 @@ import vn.uit.healthos.core.data.session.AppPreferencesRepository
 import vn.uit.healthos.core.designsystem.theme.AccentPreset
 import vn.uit.healthos.core.designsystem.theme.BackgroundStyle
 import vn.uit.healthos.core.designsystem.theme.ThemeMode
-import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.toUiText
+import vn.uit.healthos.core.ui.CacheFirstLoader
 import vn.uit.healthos.core.ui.UiText
 import vn.uit.healthos.feature.auth.AuthRepository
 import javax.inject.Inject
@@ -28,7 +28,10 @@ data class ProfileUiState(
     val healthGoal: HealthGoalDto? = null,
     val preferences: AppPreferences = AppPreferences(),
     val leaderboardVisibility: LeaderboardVisibility = LeaderboardVisibility.Default,
-    val loading: Boolean = false,
+    /** First ever load with no profile cached: a placeholder instead of the default name. */
+    val showSkeleton: Boolean = false,
+    /** A background refresh over the cached profile is running. */
+    val refreshing: Boolean = false,
     val loggingOut: Boolean = false,
     val error: UiText? = null,
 )
@@ -44,8 +47,10 @@ class ProfileViewModel @Inject constructor(
     private val preferencesRepository: AppPreferencesRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ProfileUiState(loading = true))
+    private val _state = MutableStateFlow(ProfileUiState())
     val state: StateFlow<ProfileUiState> = _state.asStateFlow()
+
+    private val loader = CacheFirstLoader(viewModelScope, profileRepository.cachedProfile, profileRepository::refreshProfile)
 
     private val _events = Channel<ProfileEvent>(Channel.BUFFERED)
     val events: Flow<ProfileEvent> = _events.receiveAsFlow()
@@ -61,21 +66,27 @@ class ProfileViewModel @Inject constructor(
                 _state.update { it.copy(leaderboardVisibility = visibility) }
             }
         }
-        refresh()
-    }
-
-    fun refresh() {
         viewModelScope.launch {
-            _state.update { it.copy(loading = true, error = null) }
-            when (val res = profileRepository.getProfile()) {
-                is ApiResult.Success -> _state.update { it.copy(profile = res.data) }
-                is ApiResult.Failure -> _state.update { it.copy(error = res.error.toUiText()) }
+            loader.state.collect { load ->
+                _state.update {
+                    it.copy(
+                        profile = load.data?.profile,
+                        healthGoal = load.data?.healthGoal,
+                        showSkeleton = load.showSkeleton,
+                        refreshing = load.refreshing,
+                        // With a cached profile on screen a failed refresh stays quiet; the data is still valid.
+                        error = load.error?.takeIf { load.data == null }?.toUiText(),
+                    )
+                }
             }
-            val goal = (profileRepository.getHealthGoal() as? ApiResult.Success)?.data
-            profileRepository.syncPreferencesFromServer()
-            _state.update { it.copy(healthGoal = goal, loading = false) }
         }
     }
+
+    /** The screen became visible: refetch only when the cached profile is missing or older than a minute. */
+    fun onVisible() = loader.refreshIfStale()
+
+    /** The refresh button, retry, and after the emergency contacts were edited. */
+    fun refresh() = loader.refresh()
 
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
