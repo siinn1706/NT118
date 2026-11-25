@@ -410,7 +410,7 @@ async def update_conversation_settings(
 @router.get(
     "/users/search",
     response_model=UserLookupResponse,
-    summary="Search users by display name or email",
+    summary="Search users by display name or exact email",
 )
 async def search_users(
     current_user: Annotated[User, Depends(get_current_user)],

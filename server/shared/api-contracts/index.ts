@@ -510,7 +510,8 @@ export interface MessageListResponse {
 export interface ChatUserLookupResult {
   id: string;
   display_name: string;
-  email: string;
+  /** Null unless the search query was exactly this user's email. */
+  email: string | null;
   avatar_url: string | null;
 }
 

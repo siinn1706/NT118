@@ -210,7 +210,8 @@ class TransferOwnershipBody(BaseModel):
 class UserLookupResult(BaseModel):
     id: uuid.UUID
     display_name: str
-    email: str
+    # Always present; null unless the search query was exactly this address.
+    email: str | None
     avatar_url: str | None = None
 
 

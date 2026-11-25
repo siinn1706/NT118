@@ -341,4 +341,5 @@ async def test_lookup_users_is_hardened_but_keeps_shape(pg_db):
 
     results = await chat_svc.lookup_users(db, f"{prefix}_", me.id, limit=20)
     assert [r.id for r in results] == [visible.id]
-    assert results[0].email == visible.email  # public contract keeps email
+    # The email field stays in the contract but is null for a name match.
+    assert results[0].email is None

@@ -19,7 +19,8 @@ interface UserSearchResult {
   user_id?: string;
   display_name: string;
   avatar_url: string | null;
-  email: string;
+  /** Null unless the query was exactly this user's email. */
+  email: string | null;
   is_online?: boolean;
   last_seen?: string | null;
 }
@@ -38,7 +39,7 @@ function normalizeSearchResults(users: UserSearchResult[]): ChatParticipant[] {
       user_id: userId,
       display_name: user.display_name,
       avatar_url: user.avatar_url,
-      email: user.email,
+      email: user.email ?? "",
       is_online: user.is_online ?? false,
       last_seen: user.last_seen ?? null,
     });

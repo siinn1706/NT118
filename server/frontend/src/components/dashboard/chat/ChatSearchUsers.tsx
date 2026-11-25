@@ -51,7 +51,7 @@ export function ChatSearchUsers({
 
     let cancelled = false;
     const timer = setTimeout(() => {
-      bffFetch<{ data: Array<{ id: string; display_name: string; email: string; avatar_url: string | null }> }>(
+      bffFetch<{ data: Array<{ id: string; display_name: string; email: string | null; avatar_url: string | null }> }>(
         `/api/v1/users/search?q=${encodeURIComponent(query.trim())}`
       )
         .then(({ data }) => {
@@ -61,7 +61,7 @@ export function ChatSearchUsers({
               user_id: String(user.id),
               display_name: user.display_name,
               avatar_url: user.avatar_url,
-              email: user.email,
+              email: user.email ?? "",
               is_online: false,
               last_seen: null,
             }))

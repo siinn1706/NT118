@@ -1,6 +1,6 @@
 /**
  * BFF Users/search — /api/v1/users/search
- * GET ?q=<query> → search users by display name or email (proxied to Core BE)
+ * GET ?q=<query> → search users by display name or exact email (proxied to Core BE)
  */
 import { NextRequest } from "next/server";
 import { coreProxy } from "@/lib/core-api-proxy";

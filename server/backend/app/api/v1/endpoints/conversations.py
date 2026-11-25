@@ -992,7 +992,7 @@ async def transfer_ownership(
     "/users/lookup",
     response_model=UserLookupResponse,
     responses={401: {"model": ErrorResponse}},
-    summary="Search users by display name or email to start a conversation",
+    summary="Search users by display name or exact email to start a conversation",
 )
 async def lookup_users(
     q: Annotated[str, Query(min_length=1, max_length=100, description="Search query")],

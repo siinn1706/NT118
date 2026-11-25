@@ -1439,12 +1439,18 @@ async def lookup_users(
     exclude_user_id: uuid.UUID,
     limit: int = 10,
 ) -> list[UserLookupResult]:
-    """Search users by display_name or email (case-insensitive, partial match).
+    """Search users by display name (partial) or exact email (case-insensitive).
 
-    Wildcards in ``query`` match literally. The AI bot, deleted accounts and
-    actively banned accounts are never returned.
+    Wildcards in ``query`` match literally. Email never matches on a substring,
+    and a result carries its email only when ``query`` was exactly that address,
+    so the caller learns nothing it did not already know. The AI bot, deleted
+    accounts and actively banned accounts are never returned.
     """
-    pattern = f"%{escape_like(query)}%"
+    needle = query.strip()
+    if not needle:
+        return []
+    pattern = f"%{escape_like(needle)}%"
+    exact_email = needle.lower()
     result = await db.execute(
         select(User)
         .options(selectinload(User.profile))
@@ -1454,7 +1460,7 @@ async def lookup_users(
                 discoverable_user_clause(),
                 or_(
                     User.display_name.ilike(pattern, escape=LIKE_ESCAPE_CHAR),
-                    User.email.ilike(pattern, escape=LIKE_ESCAPE_CHAR),
+                    func.lower(User.email) == exact_email,
                 ),
             )
         )
@@ -1465,7 +1471,7 @@ async def lookup_users(
         UserLookupResult(
             id=u.id,
             display_name=u.display_name,
-            email=u.email,
+            email=u.email if (u.email or "").lower() == exact_email else None,
             avatar_url=u.profile.avatar_url if u.profile else None,
         )
         for u in users

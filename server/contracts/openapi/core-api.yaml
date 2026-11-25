@@ -7526,8 +7526,10 @@ components:
           title: Display Name
           type: string
         email:
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Email
-          type: string
         id:
           format: uuid
           title: Id
@@ -12479,7 +12481,7 @@ paths:
           description: Internal server error
       security:
       - bearerAuth: []
-      summary: Search users by display name or email
+      summary: Search users by display name or exact email
       tags:
       - Chat REST
   /v1/conversations:
@@ -20867,7 +20869,7 @@ paths:
           description: Internal server error
       security:
       - bearerAuth: []
-      summary: Search users by display name or email to start a conversation
+      summary: Search users by display name or exact email to start a conversation
       tags:
       - Chat
   /v1/users/me:

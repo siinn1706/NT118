@@ -1,6 +1,6 @@
 /**
  * BFF /api/v1/chat/users/search
- * GET ?q=<query> → search users by display name or email
+ * GET ?q=<query> → search users by display name or exact email
  */
 import { NextRequest } from "next/server";
 import { coreProxy } from "@/lib/core-api-proxy";
