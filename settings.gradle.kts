@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "HealthOSMobile"
 include(":app")
+include(":baselineprofile")
  
