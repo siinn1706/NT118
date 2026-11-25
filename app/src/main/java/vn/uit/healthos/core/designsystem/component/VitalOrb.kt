@@ -1,12 +1,12 @@
 package vn.uit.healthos.core.designsystem.component
 
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -34,6 +34,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 private const val ORB_POINTS = 8
+private const val BreathCycles = 2
 private const val TWO_PI = (2 * PI).toFloat()
 
 /**
@@ -57,19 +58,27 @@ fun VitalOrb(
     )
     val motion = if (rememberReducedMotion()) 0f else 1f
     val breathMs = (60_000f / breathsPerMinute.coerceIn(2f, 30f) / 2f).toInt()
-    val transition = rememberInfiniteTransition(label = "orb")
-    val breath by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(breathMs, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "breath",
-    )
-    val phase by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = TWO_PI,
-        animationSpec = infiniteRepeatable(tween(9_000, easing = LinearEasing)),
-        label = "phase",
-    )
+    // The orb breathes a couple of times when it appears and when the health band changes, then rests: an endless
+    // idle animation made every frame redraw the whole screen and the glass sampling it.
+    val breathAnim = remember { Animatable(1f) }
+    val phaseAnim = remember { Animatable(0f) }
+    val band = vitalBand(score)
+    LaunchedEffect(band, breathMs, motion) {
+        if (motion == 0f) {
+            breathAnim.snapTo(1f)
+            return@LaunchedEffect
+        }
+        launch {
+            phaseAnim.snapTo(0f)
+            phaseAnim.animateTo(TWO_PI, tween(breathMs * 2 * BreathCycles, easing = LinearEasing))
+        }
+        repeat(BreathCycles) {
+            breathAnim.animateTo(0f, tween(breathMs, easing = FastOutSlowInEasing))
+            breathAnim.animateTo(1f, tween(breathMs, easing = FastOutSlowInEasing))
+        }
+    }
+    val breath by breathAnim.asState()
+    val phase by phaseAnim.asState()
 
     Box(
         modifier = modifier
@@ -143,4 +152,12 @@ private fun smoothClosedPath(points: List<Offset>): Path {
         }
         close()
     }
+}
+
+/** Coarse health band; the orb breathes again only when the score crosses into another band. */
+private fun vitalBand(score: Float): Int = when {
+    score.isNaN() -> 0
+    score >= 0.7f -> 2
+    score >= 0.5f -> 1
+    else -> 0
 }

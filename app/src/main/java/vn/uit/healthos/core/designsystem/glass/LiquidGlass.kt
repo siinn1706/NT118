@@ -1,5 +1,7 @@
 package vn.uit.healthos.core.designsystem.glass
 
+import com.kyant.shapes.Capsule
+import androidx.compose.foundation.shape.RoundedCornerShape
 import android.os.Build
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -18,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.Shape
@@ -231,6 +235,8 @@ internal fun Modifier.glassSurface(
     ) {
         if (rendering == GlassRendering.Solid || backdrop == null) {
             solidGlass(shape, colors, tint, tintMode, layerBlock, materialize)
+        } else if (style.kind == GlassStyle.Kind.Material && materialize == null && exportedBackdrop == null) {
+            contentMaterial(shape, colors, tint, tintMode, layerBlock)
         } else {
             backdropGlass(
                 rendering, shape, style, colors, tint, tintMode, backdrop, layerBlock, exportedBackdrop, light, materialize,
@@ -261,6 +267,56 @@ private fun solidGlass(
         .border(GlassTokens.Hairline, colors.rim, shape)
         .clip(shape)
 }
+
+/**
+ * Content-layer material (cards, banners, bubbles): a translucent fill with a soft top sheen, a hairline rim and a
+ * hardware shadow, without sampling the backdrop. HIG reserves Liquid Glass proper for the navigation layer, and the
+ * ambient backdrop behind content is already a soft gradient, so a live blur there looked the same but re-rendered
+ * every card on every scroll frame (about 13 ms of render-thread work per frame on a Galaxy S21).
+ */
+private fun contentMaterial(
+    shape: Shape,
+    colors: GlassColors,
+    tint: Color,
+    tintMode: GlassTintMode,
+    layerBlock: (GraphicsLayerScope.() -> Unit)?,
+): Modifier {
+    // Continuous (squircle) corners are a generic Path outline: shadow, background and clip along an arbitrary path are
+    // re-rasterised on the render thread every frame. A plain rounded rect is hardware fast and visually identical at
+    // card radii.
+    @Suppress("NAME_SHADOWING")
+    val shape = fastOutlineShape(shape)
+    val fill = colors.materialFill.copy(alpha = (colors.materialFill.alpha + ContentMaterialFillBoost).coerceAtMost(1f))
+    val prominent = tint.isSpecified && tintMode == GlassTintMode.Prominent
+    val sheen = Brush.verticalGradient(
+        0f to Color.White.copy(alpha = ContentMaterialSheen),
+        0.35f to Color.White.copy(alpha = 0f),
+    )
+    return Modifier
+        .then(if (layerBlock != null) Modifier.graphicsLayer(layerBlock) else Modifier)
+        .shadow(
+            elevation = ContentMaterialElevation,
+            shape = shape,
+            clip = false,
+            ambientColor = colors.shadow,
+            spotColor = colors.shadow,
+        )
+        .background(if (prominent) tint else fill, shape)
+        .then(if (tint.isSpecified && !prominent) Modifier.background(tint, shape) else Modifier)
+        .background(sheen, shape)
+        .border(GlassTokens.Hairline, colors.rim, shape)
+        .clip(shape)
+}
+
+private fun fastOutlineShape(shape: Shape): Shape = when (shape) {
+    is RoundedRectangle -> RoundedCornerShape(shape.cornerRadius)
+    is Capsule -> RoundedCornerShape(percent = 50)
+    else -> shape
+}
+
+private val ContentMaterialElevation = 6.dp
+private const val ContentMaterialFillBoost = 0.08f
+private const val ContentMaterialSheen = 0.10f
 
 private fun backdropGlass(
     rendering: GlassRendering,
