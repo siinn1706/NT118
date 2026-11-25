@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -53,6 +54,10 @@ fun NavGraphBuilder.profileGraph(
                 if (event is ProfileEvent.SignedOut) onSignedOut()
             }
         }
+        LifecycleResumeEffect(viewModel) {
+            viewModel.onVisible()
+            onPauseOrDispose { }
+        }
         entry.OnEmergencyContactsSaved(viewModel::refresh)
 
         MeScreen(
@@ -73,6 +78,10 @@ fun NavGraphBuilder.profileGraph(
         val viewModel: ProfileViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val context = LocalContext.current
+        LifecycleResumeEffect(viewModel) {
+            viewModel.onVisible()
+            onPauseOrDispose { }
+        }
         val canUseBiometrics = remember(context) { appLockManager.canAuthenticate(context) }
 
         SettingsScreen(

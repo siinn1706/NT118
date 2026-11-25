@@ -3,20 +3,27 @@ package vn.uit.healthos.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import vn.uit.healthos.core.data.db.Snapshot
+import vn.uit.healthos.core.data.db.isFresh
 import vn.uit.healthos.core.data.outbox.OutboxRepository
 import vn.uit.healthos.core.data.session.AppPreferences
 import vn.uit.healthos.core.data.session.AppPreferencesRepository
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.toUiText
+import vn.uit.healthos.core.ui.CacheFirstLoader
 import vn.uit.healthos.core.ui.UiText
 import vn.uit.healthos.feature.climate.ClimateAdvice
 import vn.uit.healthos.feature.climate.ClimateCoach
@@ -35,8 +42,10 @@ import vn.uit.healthos.feature.widget.NextDoseSelector
 import vn.uit.healthos.feature.widget.TodaySnapshotRepository
 import vn.uit.healthos.feature.widget.WidgetKind
 import vn.uit.healthos.feature.widget.WidgetUpdater
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 enum class TrendMetric { STEPS, HEART_RATE }
@@ -68,10 +77,18 @@ data class HomeUiState(
     val profileName: String = "",
     val avatarUrl: String? = null,
     val nextDose: DoseCacheEntity? = null,
+    /** [nextDose]'s due time as HH:mm in the medication time zone. */
+    val nextDoseTime: String? = null,
+    val nextDoseOverdue: Boolean = false,
     val layout: HomeLayout = HomeLayout(),
     val editingLayout: Boolean = false,
     val lastUpdatedMs: Long? = null,
+    /** [lastUpdatedMs] as HH:mm on this device. */
+    val lastUpdatedTime: String? = null,
+    /** A refresh is running in the background over the cached dashboard. */
     val isRefreshing: Boolean = false,
+    /** The running refresh came from pull-to-refresh, so its indicator shows. */
+    val isPullRefreshing: Boolean = false,
     val isOffline: Boolean = false,
     val errorMessage: UiText? = null,
 )
@@ -91,29 +108,84 @@ class HomeViewModel @Inject constructor(
     private val layoutStore: HomeLayoutStore,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeUiState(isRefreshing = true))
+    private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
     private val climateFlow = MutableStateFlow<ClimateConditions?>(null)
     private val profileWeightFlow = MutableStateFlow<Double?>(null)
 
+    private val loader = CacheFirstLoader(
+        scope = viewModelScope,
+        cache = homeRepository.observeCached().map { cached -> cached?.let { Snapshot(it, it.updatedAtMs) } },
+        fetch = ::fetchDashboard,
+    )
+
     init {
         observeSources()
+        observeLoad()
+        observeProfile()
         observeNextDose()
         observeLayout()
-        refresh()
+        // The climate repository keeps conditions for an hour, so this is usually served from memory.
+        viewModelScope.launch { climateFlow.value = climateRepository.getConditions(forceRefresh = false) }
+    }
+
+    /** The tab became visible: refetch only when the cached dashboard is missing or older than a minute. */
+    fun onVisible() = loader.refreshIfStale()
+
+    private suspend fun fetchDashboard(): ApiResult<Unit> {
+        val result = homeRepository.refresh()
+        // The profile has its own cache; fetch it only when that is not fresh either.
+        if (!profileRepository.cachedProfile.first().isFresh(System.currentTimeMillis())) profileRepository.getProfile()
+        climateFlow.value = climateRepository.getConditions(forceRefresh = false)
+        return result
+    }
+
+    private fun observeLoad() {
+        viewModelScope.launch {
+            loader.state.collect { load ->
+                _state.update {
+                    it.copy(
+                        isRefreshing = load.refreshing,
+                        isPullRefreshing = load.userRefreshing,
+                        isOffline = load.error?.isNetwork == true,
+                        errorMessage = load.error?.takeIf { load.data == null }?.toUiText(),
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observeProfile() {
+        viewModelScope.launch {
+            profileRepository.cachedProfile.collect { snapshot ->
+                val profile = snapshot?.value?.profile ?: return@collect
+                profile.weightKg?.let { profileWeightFlow.value = it }
+                _state.update {
+                    it.copy(profileName = profile.fullName ?: profile.displayName, avatarUrl = profile.avatarUrl)
+                }
+            }
+        }
     }
 
     private fun observeNextDose() {
         val zone = ZoneId.of(DEFAULT_MED_TZID)
         viewModelScope.launch {
             combine(medsRepository.observeTodayDoses(), minuteTicker()) { doses, nowMs ->
-                NextDoseSelector.select(doses, nowMs, zone).next
-            }.distinctUntilChanged().collect { dose ->
-                _state.update { it.copy(nextDose = dose) }
+                val dose = NextDoseSelector.select(doses, nowMs, zone).next
+                val dueMs = dose?.let(NextDoseSelector::dueAtMs)
+                NextDoseUi(
+                    dose = dose,
+                    time = dueMs?.let { TIME_FORMAT.format(Instant.ofEpochMilli(it).atZone(zone)) },
+                    overdue = dueMs != null && dueMs < nowMs,
+                )
+            }.distinctUntilChanged().flowOn(Dispatchers.Default).collect { next ->
+                _state.update { it.copy(nextDose = next.dose, nextDoseTime = next.time, nextDoseOverdue = next.overdue) }
             }
         }
     }
+
+    private data class NextDoseUi(val dose: DoseCacheEntity?, val time: String?, val overdue: Boolean)
 
     private fun observeLayout() {
         viewModelScope.launch {
@@ -134,7 +206,7 @@ class HomeViewModel @Inject constructor(
     private fun observeSources() {
         viewModelScope.launch {
             val baseFlow = combine(
-                homeRepository.observeCached(),
+                loader.state.map { it.data }.distinctUntilChanged(),
                 localDayTicker(),
                 stepRepository.observeRecentDays(7),
                 hydrationRepository.observeTodayMl(),
@@ -150,16 +222,22 @@ class HomeViewModel @Inject constructor(
                 outboxRepository.pendingCount,
             ) { base, climate, weightKg, pendingCount ->
                 buildUiState(base, climate, weightKg, pendingCount)
-            }.collect { computed ->
+            }
+                // Building the trends and KPIs from the cached dashboard stays off the main thread.
+                .flowOn(Dispatchers.Default)
+                .collect { computed ->
                 _state.update { current ->
                     computed.copy(
                         profileName = current.profileName,
                         avatarUrl = current.avatarUrl,
                         nextDose = current.nextDose,
+                        nextDoseTime = current.nextDoseTime,
+                        nextDoseOverdue = current.nextDoseOverdue,
                         layout = current.layout,
                         editingLayout = current.editingLayout,
                         selectedTrend = current.selectedTrend,
                         isRefreshing = current.isRefreshing,
+                        isPullRefreshing = current.isPullRefreshing,
                         isOffline = current.isOffline,
                         errorMessage = current.errorMessage,
                     )
@@ -169,32 +247,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun refresh() {
-        viewModelScope.launch {
-            _state.update { it.copy(isRefreshing = true, errorMessage = null) }
-            val result = homeRepository.refresh()
-            val profile = (profileRepository.getProfile() as? ApiResult.Success)?.data
-            if (profile?.weightKg != null) {
-                profileWeightFlow.value = profile.weightKg
-            }
-            if (profile != null) {
-                _state.update {
-                    it.copy(profileName = profile.fullName ?: profile.displayName, avatarUrl = profile.avatarUrl)
-                }
-            }
-            climateFlow.value = climateRepository.getConditions(forceRefresh = false)
-            _state.update { s ->
-                when (result) {
-                    is ApiResult.Success -> s.copy(isRefreshing = false, isOffline = false, errorMessage = null)
-                    is ApiResult.Failure -> s.copy(
-                        isRefreshing = false,
-                        isOffline = result.error.isNetwork,
-                        errorMessage = if (s.lastUpdatedMs == null) result.error.toUiText() else null,
-                    )
-                }
-            }
-        }
-    }
+    /** Pull-to-refresh and retry. */
+    fun refresh() = loader.refresh()
 
     fun onLocationPermissionGranted() {
         viewModelScope.launch {
@@ -307,6 +361,9 @@ class HomeViewModel @Inject constructor(
             heartRateTrend = hrTrend,
             pendingSyncCount = pendingCount,
             lastUpdatedMs = base.cached?.updatedAtMs,
+            lastUpdatedTime = base.cached?.updatedAtMs?.let {
+                TIME_FORMAT.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()))
+            },
         )
     }
 
@@ -320,4 +377,8 @@ class HomeViewModel @Inject constructor(
         val localHydration: Int,
         val prefs: AppPreferences,
     )
+
+    private companion object {
+        val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    }
 }

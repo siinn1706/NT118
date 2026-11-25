@@ -15,6 +15,9 @@ import java.time.format.DateTimeParseException
  */
 internal object MealLocalDays {
 
+    /** The Meals tab covers today and the six local days before it. */
+    const val WEEK_DAYS = 7
+
     /** UTC `date_from`/`date_to` whose server window contains every instant of local days [from]..[to]. */
     fun utcQueryDates(from: LocalDate, to: LocalDate, zone: ZoneId): Pair<LocalDate, LocalDate> {
         val start = from.atStartOfDay(zone).toInstant()
@@ -92,4 +95,36 @@ internal fun unsyncedPendingMeals(
             true
         }
     }
+}
+
+/** What the Meals tab shows, derived from the cached week of meals and the meals still queued offline. */
+data class MealsDay(
+    val todayMeals: List<MealResponseDto> = emptyList(),
+    val weeklyCalories: List<CalorieSummaryPointDto> = emptyList(),
+    /** Queued rows whose meal is not on the server yet; a row already synced is left out so it never counts twice. */
+    val visiblePendingMeals: List<PendingMealEntity> = emptyList(),
+    val todayTotalCalories: Double = 0.0,
+)
+
+/** Groups [week] by the local date in [zone]; parses every timestamp, so callers run it off the main thread. */
+internal fun mealsDayOf(
+    week: List<MealResponseDto>,
+    pending: List<PendingMealEntity>,
+    today: LocalDate,
+    zone: ZoneId,
+): MealsDay {
+    val todayMeals = MealLocalDays.withinLocalDays(week, today, today, zone)
+    val visiblePending = unsyncedPendingMeals(pending, todayMeals)
+    return MealsDay(
+        todayMeals = todayMeals,
+        weeklyCalories = MealLocalDays.dailyCalories(
+            week,
+            today.minusDays(MealLocalDays.WEEK_DAYS - 1L),
+            today,
+            zone,
+        ),
+        visiblePendingMeals = visiblePending,
+        todayTotalCalories = todayMeals.sumOf { it.nutritionResult?.calories ?: 0.0 } +
+            visiblePending.sumOf { it.calories },
+    )
 }

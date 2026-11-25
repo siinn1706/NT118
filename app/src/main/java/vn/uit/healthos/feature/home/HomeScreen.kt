@@ -94,20 +94,16 @@ import vn.uit.healthos.core.designsystem.glass.glassInset
 import vn.uit.healthos.core.designsystem.glass.liquidGlass
 import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 import vn.uit.healthos.core.designsystem.theme.tabular
+import vn.uit.healthos.core.ui.BackgroundRefreshBar
 import vn.uit.healthos.core.ui.asString
 import vn.uit.healthos.feature.climate.ClimateCard
 import vn.uit.healthos.feature.home.charts.WeeklyTrendChart
 import vn.uit.healthos.feature.hydration.HydrationCard
-import vn.uit.healthos.feature.meds.DEFAULT_MED_TZID
 import vn.uit.healthos.feature.meds.DoseCacheEntity
 import vn.uit.healthos.feature.profile.ProfileAvatar
 import vn.uit.healthos.feature.safety.SosCountdownActivity
 import vn.uit.healthos.feature.safety.card.EmergencyCardActivity
 import vn.uit.healthos.feature.steps.StepSensorService
-import vn.uit.healthos.feature.widget.NextDoseSelector
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 /** Navigation out of Home; every tile and quick action leads somewhere. */
@@ -197,7 +193,8 @@ fun HomeScreen(
     }
 
     PullToRefreshBox(
-        isRefreshing = state.isRefreshing,
+        // Only a pull shows the pull indicator; a background refresh over cached data shows a thin bar instead.
+        isRefreshing = state.isPullRefreshing,
         onRefresh = actions.onRefresh,
         modifier = modifier.fillMaxSize(),
     ) {
@@ -261,6 +258,10 @@ fun HomeScreen(
                 }
             }
         }
+        BackgroundRefreshBar(
+            visible = state.isRefreshing && !state.isPullRefreshing,
+            modifier = Modifier.align(Alignment.TopCenter).padding(horizontal = 20.dp),
+        )
     }
 }
 
@@ -302,8 +303,7 @@ private fun HomeHeader(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.semantics { heading() },
             )
-            state.lastUpdatedMs?.let { ts ->
-                val time = Instant.ofEpochMilli(ts).atZone(ZoneId.systemDefault()).format(TimeFormat)
+            state.lastUpdatedTime?.let { time ->
                 Text(
                     text = if (state.isOffline) {
                         stringResource(R.string.home_offline_cached, time)
@@ -480,6 +480,8 @@ private fun HomeTileContent(tile: HomeTile, state: HomeUiState, actions: HomeAct
         )
         HomeTile.NEXT_DOSE -> NextDoseTile(
             dose = state.nextDose,
+            time = state.nextDoseTime.orEmpty(),
+            overdue = state.nextDoseOverdue,
             onTaken = actions.onMarkDoseTaken,
             onOpenMeds = navigation.onOpenMeds,
         )
@@ -547,7 +549,13 @@ private fun VitalTile(score: Float?) {
 }
 
 @Composable
-private fun NextDoseTile(dose: DoseCacheEntity?, onTaken: (DoseCacheEntity) -> Unit, onOpenMeds: () -> Unit) {
+private fun NextDoseTile(
+    dose: DoseCacheEntity?,
+    time: String,
+    overdue: Boolean,
+    onTaken: (DoseCacheEntity) -> Unit,
+    onOpenMeds: () -> Unit,
+) {
     BentoCard(onClick = onOpenMeds, modifier = Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -574,8 +582,6 @@ private fun NextDoseTile(dose: DoseCacheEntity?, onTaken: (DoseCacheEntity) -> U
             )
             return@BentoCard
         }
-        val dueMs = NextDoseSelector.dueAtMs(dose)
-        val time = Instant.ofEpochMilli(dueMs).atZone(ZoneId.of(DEFAULT_MED_TZID)).format(TimeFormat)
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -583,7 +589,7 @@ private fun NextDoseTile(dose: DoseCacheEntity?, onTaken: (DoseCacheEntity) -> U
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (dueMs < System.currentTimeMillis()) {
+                    text = if (overdue) {
                         stringResource(R.string.home_next_dose_overdue, time)
                     } else {
                         time
@@ -722,7 +728,6 @@ private fun LayoutEditor(
 private fun android.content.Context.isGranted(permission: String): Boolean =
     ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
-private val TimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 /** Same cap the Ask AI widget applies to a prefilled prompt. */
 private const val MAX_PROMPT_CHARS = 500

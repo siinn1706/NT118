@@ -55,10 +55,9 @@ import vn.uit.healthos.core.designsystem.component.PrimaryButton
 import vn.uit.healthos.core.designsystem.component.SectionHeader
 import vn.uit.healthos.core.designsystem.theme.LocalVitalColors
 import vn.uit.healthos.core.designsystem.theme.tabular
+import vn.uit.healthos.core.ui.BackgroundRefreshBar
+import vn.uit.healthos.core.ui.SkeletonList
 import vn.uit.healthos.core.ui.asString
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun MedsScreen(
@@ -71,8 +70,6 @@ fun MedsScreen(
     onSnoozeDose: (DoseCacheEntity) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val zone = ZoneId.of(DEFAULT_MED_TZID)
-    val timeFmt = DateTimeFormatter.ofPattern("HH:mm")
     val notificationPermission = rememberNotificationPermission()
 
     Column(
@@ -97,6 +94,10 @@ fun MedsScreen(
                 )
             },
         )
+        BackgroundRefreshBar(
+            visible = state.refreshing && !state.showSkeleton,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -106,6 +107,8 @@ fun MedsScreen(
                 GlassBanner(
                     message = error.asString(),
                     tone = GlassBannerTone.Error,
+                    actionLabel = stringResource(R.string.action_retry),
+                    onAction = onRefresh,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -123,7 +126,9 @@ fun MedsScreen(
 
             // Today timeline
             SectionHeader(title = stringResource(R.string.meds_today_section))
-            if (state.todayDoses.isEmpty()) {
+            if (state.todayDoses.isEmpty() && state.showSkeleton) {
+                SkeletonList(count = 2)
+            } else if (state.todayDoses.isEmpty()) {
                 BentoCard(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(R.string.meds_today_empty),
@@ -132,10 +137,8 @@ fun MedsScreen(
                     )
                 }
             } else {
-                state.todayDoses.forEach { dose ->
-                    val timeStr = Instant.ofEpochMilli(dose.snoozedUntilMs ?: dose.scheduledAtMs)
-                        .atZone(zone)
-                        .format(timeFmt)
+                state.todayDoses.forEach { row ->
+                    val dose = row.dose
                     BentoCard(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -144,7 +147,7 @@ fun MedsScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = timeStr,
+                                    text = row.timeLabel,
                                     style = MaterialTheme.typography.titleMedium.tabular(),
                                     color = MaterialTheme.colorScheme.primary,
                                 )
@@ -190,7 +193,9 @@ fun MedsScreen(
 
             // Medication plans
             SectionHeader(title = stringResource(R.string.meds_plans_section))
-            if (state.plans.isEmpty()) {
+            if (state.plans.isEmpty() && state.showSkeleton) {
+                SkeletonList(count = 2)
+            } else if (state.plans.isEmpty()) {
                 BentoCard(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(R.string.meds_plans_empty),
@@ -199,14 +204,10 @@ fun MedsScreen(
                     )
                 }
             } else {
-                val nowMs = System.currentTimeMillis()
-                state.plans.forEach { plan ->
-                    val adherencePct = state.planAdherence[plan.id]
-                    val refillDays = if (plan.status == "active") {
-                        refillWarningDays(plan.refillSupplyUnits, plan.nextRefillEstimatedAt, nowMs)
-                    } else {
-                        null
-                    }
+                state.plans.forEach { row ->
+                    val plan = row.plan
+                    val adherencePct = row.adherencePercent
+                    val refillDays = row.refillWarningDays
                     BentoCard(
                         onClick = { onOpenPlan(plan.id) },
                         modifier = Modifier.fillMaxWidth(),

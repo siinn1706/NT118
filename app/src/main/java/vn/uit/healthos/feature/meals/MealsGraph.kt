@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -24,6 +25,10 @@ fun NavGraphBuilder.mealsGraph(navController: NavController) {
         val viewModel: MealsViewModel = hiltViewModel(entry)
         val state by viewModel.state.collectAsStateWithLifecycle()
         MealsEventEffect(viewModel, navController)
+        LifecycleResumeEffect(viewModel) {
+            viewModel.onVisible()
+            onPauseOrDispose { }
+        }
         MealsScreen(
             state = state,
             onRefresh = viewModel::refresh,

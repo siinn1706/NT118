@@ -33,14 +33,17 @@ import vn.uit.healthos.feature.steps.DailyStepEntity
         DoseCacheEntity::class,
         DmMessageEntity::class,
         LeaderboardCacheEntity::class,
+        SnapshotCacheEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 4, to = 5),
         // Adds outbox.owner_user_id and the dm_messages and leaderboard_cache tables in place; existing rows are kept.
         // AppDatabaseMigrationTest checks the generated statements against the exported 5.json and 6.json.
         AutoMigration(from = 5, to = 6),
+        // Adds the snapshot_cache table behind the cache-first tabs; no existing table changes.
+        AutoMigration(from = 6, to = 7),
     ],
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -52,5 +55,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun doseCacheDao(): DoseCacheDao
     abstract fun dmMessageDao(): DmMessageDao
     abstract fun leaderboardCacheDao(): LeaderboardCacheDao
+    abstract fun snapshotCacheDao(): SnapshotCacheDao
     abstract fun userDataDao(): UserDataDao
 }

@@ -79,7 +79,6 @@ import vn.uit.healthos.core.designsystem.component.GlassSegmentedControl
 import vn.uit.healthos.core.designsystem.component.GlassSpinner
 import vn.uit.healthos.core.designsystem.component.GlassTextField
 import vn.uit.healthos.core.designsystem.component.LargeTitleHeader
-import vn.uit.healthos.core.designsystem.component.LoadingState
 import vn.uit.healthos.core.designsystem.component.SecondaryButton
 import vn.uit.healthos.core.designsystem.glass.GlassStyle
 import vn.uit.healthos.core.designsystem.glass.GlassTokens
@@ -90,6 +89,8 @@ import vn.uit.healthos.core.designsystem.glass.ScrollEdge
 import vn.uit.healthos.core.designsystem.glass.ScrollEdgeEffect
 import vn.uit.healthos.core.designsystem.glass.glassInset
 import vn.uit.healthos.core.designsystem.glass.liquidGlass
+import vn.uit.healthos.core.ui.BackgroundRefreshBar
+import vn.uit.healthos.core.ui.SkeletonList
 import vn.uit.healthos.core.ui.asString
 
 /**
@@ -175,10 +176,6 @@ fun ChatScreen(
         )
     }
 
-    if (state.loading && state.messages.isEmpty()) {
-        LoadingState(modifier = modifier)
-        return
-    }
     if (state.conversationId == null && state.errorMessage != null) {
         ErrorState(message = state.errorMessage.asString(), onRetry = onReload, modifier = modifier)
         return
@@ -206,6 +203,10 @@ fun ChatScreen(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
+        )
+        BackgroundRefreshBar(
+            visible = state.loading && state.messages.isNotEmpty(),
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
 
         if (state.emergencyBannerVisible) {
@@ -249,7 +250,10 @@ fun ChatScreen(
                     }
                 }
 
-                if (state.messages.isEmpty()) {
+                if (state.loading && state.messages.isEmpty()) {
+                    // First ever load: placeholder bubbles instead of a spinner.
+                    item(key = "skeleton") { SkeletonList(count = 4, itemHeight = 56.dp) }
+                } else if (state.messages.isEmpty()) {
                     item(key = "welcome_empty") {
                         Text(
                             text = stringResource(R.string.chat_empty_prompt),

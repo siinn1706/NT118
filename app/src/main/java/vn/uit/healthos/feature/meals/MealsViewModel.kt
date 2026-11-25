@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
@@ -30,7 +33,10 @@ import vn.uit.healthos.R
 import vn.uit.healthos.core.data.session.AppPreferencesRepository
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.toUiText
+import vn.uit.healthos.core.time.localDayTicker
+import vn.uit.healthos.core.ui.CacheFirstLoader
 import vn.uit.healthos.core.ui.UiText
+import java.time.ZoneId
 import javax.inject.Inject
 
 data class PortionOptionUi(
@@ -68,10 +74,19 @@ data class AnalysisDraftUi(
 
 data class MealsUiState(
     val todayMeals: List<MealResponseDto> = emptyList(),
-    val pendingMeals: List<PendingMealEntity> = emptyList(),
+    /** Queued offline meals not yet on the server; rows whose meal already synced are left out. */
+    val visiblePendingMeals: List<PendingMealEntity> = emptyList(),
     val weeklyCalories: List<CalorieSummaryPointDto> = emptyList(),
+    /** Today's synced and pending calories, each meal counted once. */
+    val todayTotalCalories: Double = 0.0,
     val calorieTarget: Int = 2_000,
-    val loading: Boolean = false,
+    /** First ever load with nothing cached: placeholders instead of an empty day. */
+    val showSkeleton: Boolean = false,
+    /** A background refresh over the cached day is running. */
+    val refreshing: Boolean = false,
+    /** Why the day could not load; set only while there is nothing cached to show. */
+    val loadError: UiText? = null,
+    /** Manual-entry validation or save failure. */
     val errorMessage: UiText? = null,
     // Snap & Poll
     val capturedPhotoUri: Uri? = null,
@@ -90,15 +105,7 @@ data class MealsUiState(
     val ingredientResults: List<IngredientDto> = emptyList(),
     val saving: Boolean = false,
     val infoMessage: UiText? = null,
-) {
-    /** Pending rows to show and count: rows whose meal already reached the server are left out. */
-    val visiblePendingMeals: List<PendingMealEntity>
-        get() = unsyncedPendingMeals(pendingMeals, todayMeals)
-
-    val todayTotalCalories: Double
-        get() = todayMeals.sumOf { it.nutritionResult?.calories ?: 0.0 } +
-            visiblePendingMeals.sumOf { it.calories }
-}
+)
 
 sealed interface MealsNavEvent {
     data object ToAnalysisResult : MealsNavEvent
@@ -111,8 +118,11 @@ class MealsViewModel @Inject constructor(
     private val preferencesRepository: AppPreferencesRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(MealsUiState(loading = true))
+    private val _state = MutableStateFlow(MealsUiState())
     val state: StateFlow<MealsUiState> = _state.asStateFlow()
+
+    private val loader = CacheFirstLoader(viewModelScope, repository.cachedWeek, fetch = repository::refreshWeek)
+    private val pendingMeals = MutableStateFlow<List<PendingMealEntity>>(emptyList())
 
     private val _events = Channel<MealsNavEvent>(Channel.BUFFERED)
     val events: Flow<MealsNavEvent> = _events.receiveAsFlow()
@@ -128,41 +138,43 @@ class MealsViewModel @Inject constructor(
         }
         viewModelScope.launch {
             repository.observeTodayPendingMeals().collectLatest { pending ->
-                val previousIds = _state.value.pendingMeals.map { it.localId }
-                _state.update { it.copy(pendingMeals = pending) }
+                val previousIds = pendingMeals.value.map { it.localId }
+                pendingMeals.value = pending
                 // A row that left the queue was either synced or rejected; reload so the day shows the server's view.
-                if (!pending.map { it.localId }.containsAll(previousIds)) refresh()
+                if (!pending.map { it.localId }.containsAll(previousIds)) loader.refresh(userRequested = false)
             }
         }
-        refresh()
-    }
-
-    fun refresh() {
         viewModelScope.launch {
-            _state.update { it.copy(loading = true, errorMessage = null) }
-            val res = repository.getMealsOverview()
-            _state.update { s ->
-                when (res) {
-                    is ApiResult.Success -> s.copy(
-                        todayMeals = res.data.todayMeals,
-                        weeklyCalories = res.data.weeklyCalories,
-                        loading = false,
-                    )
-                    is ApiResult.Failure -> s.copy(
-                        loading = false,
-                        errorMessage = res.error.toUiText().takeIf { s.todayMeals.isEmpty() && s.pendingMeals.isEmpty() },
-                    )
+            combine(loader.state, pendingMeals, localDayTicker()) { load, pending, today ->
+                load to mealsDayOf(load.data.orEmpty(), pending, today, ZoneId.systemDefault())
+            }
+                // Grouping by local day parses every timestamp: keep it off the main thread.
+                .flowOn(Dispatchers.Default)
+                .collect { (load, day) ->
+                    _state.update {
+                        it.copy(
+                            todayMeals = day.todayMeals,
+                            visiblePendingMeals = day.visiblePendingMeals,
+                            weeklyCalories = day.weeklyCalories,
+                            todayTotalCalories = day.todayTotalCalories,
+                            showSkeleton = load.showSkeleton && day.visiblePendingMeals.isEmpty(),
+                            refreshing = load.refreshing,
+                            loadError = load.error?.takeIf { load.data == null }?.toUiText(),
+                        )
+                    }
                 }
-            }
         }
     }
 
+    /** The tab became visible: refetch only when the cached day is missing, changed locally or older than a minute. */
+    fun onVisible() = loader.refreshIfStale()
+
+    /** The refresh button. */
+    fun refresh() = loader.refresh()
+
+    /** Deleted meals leave the cached day through the repository, so the list updates without a refetch. */
     fun deleteMeal(mealId: String) {
-        viewModelScope.launch {
-            if (repository.deleteMeal(mealId) is ApiResult.Success) {
-                _state.update { s -> s.copy(todayMeals = s.todayMeals.filterNot { it.id == mealId }) }
-            }
-        }
+        viewModelScope.launch { repository.deleteMeal(mealId) }
     }
 
     fun analyzePhoto(context: Context, uri: Uri) {
@@ -364,7 +376,7 @@ class MealsViewModel @Inject constructor(
                     infoMessage = if (queuedOffline) UiText.Res(R.string.meals_info_saved_offline) else null,
                 )
             }
-            refresh()
+            loader.refresh(userRequested = false)
             _events.send(MealsNavEvent.BackToList)
         }
     }
@@ -486,7 +498,7 @@ class MealsViewModel @Inject constructor(
                             manualItems = emptyList(),
                         )
                     }
-                    refresh()
+                    loader.refresh(userRequested = false)
                     _events.send(MealsNavEvent.BackToList)
                 }
                 ManualMealSaveResult.QueuedOffline -> {
