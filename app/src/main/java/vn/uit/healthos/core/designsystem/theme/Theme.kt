@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -70,8 +71,11 @@ fun HealthOsTheme(
             colorScheme = colorScheme,
             typography = HealthOsTypography,
             shapes = HealthOsShapes,
-            content = content,
-        )
+        ) {
+            // Screens draw straight on the glass backdrop rather than inside a Surface, so text without an explicit
+            // colour must default to the theme's foreground instead of Compose's black.
+            CompositionLocalProvider(LocalContentColor provides colorScheme.onBackground, content = content)
+        }
     }
 }
 
