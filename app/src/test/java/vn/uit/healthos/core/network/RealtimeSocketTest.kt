@@ -86,6 +86,9 @@ class RealtimeSocketTest {
         server.shutdown()
     }
 
+    /** Reconnect delays the socket logged, in order. */
+    private val waits = LinkedBlockingQueue<Long>()
+
     private fun socket(active: MutableStateFlow<Boolean>, tickets: AtomicInteger = AtomicInteger()) = RealtimeSocket(
         client = OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build(),
         url = server.url("/ws"),
@@ -93,9 +96,24 @@ class RealtimeSocketTest {
         ticketProvider = { ApiResult.Success("ticket-${tickets.incrementAndGet()}") },
         active = active,
         scope = scope,
-        backoff = ReconnectBackoff(baseMs = 50, maxMs = 200, random = { 0.0 }),
-        log = {},
+        backoff = ReconnectBackoff(baseMs = 50, maxMs = 400, random = { 0.0 }),
+        log = { line -> WAIT.find(line)?.let { waits.put(it.groupValues[1].toLong()) } },
     )
+
+    /** Server side that reads the auth frame, optionally answers with [reply], then closes with [code]. */
+    private fun rejecting(code: Int, reply: String? = null) = object : WebSocketListener() {
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            received.put(text)
+            reply?.let(webSocket::send)
+            webSocket.close(code, "rejected")
+        }
+
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            webSocket.close(1000, null)
+        }
+    }
+
+    private fun nextWait(): Long = requireNotNull(waits.poll(5, TimeUnit.SECONDS)) { "no reconnect scheduled" }
 
     private fun nextFrame(): String = requireNotNull(received.poll(5, TimeUnit.SECONDS)) { "no frame received" }
 
@@ -137,6 +155,45 @@ class RealtimeSocketTest {
     }
 
     @Test
+    fun `an open the server then rejects does not reset the backoff`() = runBlocking {
+        repeat(3) { server.enqueue(MockResponse().withWebSocketUpgrade(rejecting(4401))) }
+        server.enqueue(MockResponse().withWebSocketUpgrade(rejecting(4401, reply = PING)))
+        server.enqueue(MockResponse().withWebSocketUpgrade(serverListener))
+        socket(MutableStateFlow(true)).start()
+
+        assertEquals(listOf(50L, 100L, 200L), List(3) { nextWait() })
+        // A connection that delivered a real frame counts as accepted, so the next wait starts over.
+        assertEquals(50L, nextWait())
+    }
+
+    @Test
+    fun `a server at its connection limit is retried after the longest delay`() = runBlocking {
+        server.enqueue(MockResponse().withWebSocketUpgrade(rejecting(1013)))
+        server.enqueue(MockResponse().withWebSocketUpgrade(rejecting(4008)))
+        server.enqueue(MockResponse().withWebSocketUpgrade(serverListener))
+        socket(MutableStateFlow(true)).start()
+
+        assertEquals(listOf(400L, 400L), List(2) { nextWait() })
+    }
+
+    @Test
+    fun `a handshake that completes after leaving the foreground stays disconnected`() = runBlocking {
+        server.enqueue(MockResponse().withWebSocketUpgrade(serverListener).setHeadersDelay(500, TimeUnit.MILLISECONDS))
+        val active = MutableStateFlow(true)
+        val socket = socket(active)
+        socket.start()
+        withTimeout(5_000) { socket.state.first { it == RealtimeState.CONNECTING } }
+
+        active.value = false
+        withTimeout(5_000) { socket.state.first { it == RealtimeState.DISCONNECTED } }
+        Thread.sleep(1_000)
+
+        assertEquals(RealtimeState.DISCONNECTED, socket.state.value)
+        assertFalse(socket.send("typing", JsonObject(emptyMap())))
+        assertEquals(null, received.poll(200, TimeUnit.MILLISECONDS))
+    }
+
+    @Test
     fun `disconnects when inactive and refuses to send`() = runBlocking {
         server.enqueue(MockResponse().withWebSocketUpgrade(serverListener))
         val active = MutableStateFlow(true)
@@ -147,5 +204,10 @@ class RealtimeSocketTest {
         active.value = false
         withTimeout(5_000) { socket.state.first { it == RealtimeState.DISCONNECTED } }
         assertFalse(socket.send("typing", JsonObject(emptyMap())))
+    }
+
+    private companion object {
+        val WAIT = Regex("""reconnecting in (\d+) ms""")
+        const val PING = """{"event":"ping","payload":{},"timestamp":"t"}"""
     }
 }
