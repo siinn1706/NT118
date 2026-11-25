@@ -697,7 +697,7 @@ private fun LayoutEditor(
                     }
                 },
                 onClick = { onToggle(tile) },
-                showChevron = false,
+                toggled = shown,
                 divider = index < layout.order.lastIndex,
             )
         }

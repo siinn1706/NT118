@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -45,7 +46,8 @@ private val IconBadgeShape = RoundedRectangle(8.dp)
  * Clickable rows ([onClick]) glow softly under the finger, announce themselves as buttons and are at least 56dp tall;
  * [showChevron] defaults to true for them. [divider] draws an inset hairline under the row for grouped lists.
  * A row whose [trailing] is a toggle should pass `onClick = null` and let the toggle own the action, or pass the toggle
- * action as [onClick] and a read-only trailing control.
+ * action as [onClick], its state as [toggled] and a read-only trailing control: the row is then announced as a switch
+ * with its on/off state, in one focus stop.
  */
 @Composable
 fun GlassListRow(
@@ -58,7 +60,8 @@ fun GlassListRow(
     value: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
-    showChevron: Boolean = onClick != null,
+    toggled: Boolean? = null,
+    showChevron: Boolean = onClick != null && toggled == null,
     enabled: Boolean = true,
     destructive: Boolean = false,
     divider: Boolean = false,
@@ -80,12 +83,25 @@ fun GlassListRow(
                 if (onClick != null) {
                     Modifier
                         .then(highlight.modifier)
-                        .clickable(
-                            interactionSource = null,
-                            indication = null,
-                            enabled = enabled,
-                            role = Role.Button,
-                            onClick = onClick,
+                        .then(
+                            if (toggled != null) {
+                                Modifier.toggleable(
+                                    value = toggled,
+                                    interactionSource = null,
+                                    indication = null,
+                                    enabled = enabled,
+                                    role = Role.Switch,
+                                    onValueChange = { onClick() },
+                                )
+                            } else {
+                                Modifier.clickable(
+                                    interactionSource = null,
+                                    indication = null,
+                                    enabled = enabled,
+                                    role = Role.Button,
+                                    onClick = onClick,
+                                )
+                            },
                         )
                         .then(if (enabled) highlight.gestureModifier else Modifier)
                 } else {

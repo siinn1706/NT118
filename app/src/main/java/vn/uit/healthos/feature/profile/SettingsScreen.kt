@@ -246,7 +246,7 @@ private fun SwitchRow(
         iconBackground = MaterialTheme.colorScheme.primary,
         trailing = { GlassSwitch(checked = checked, onCheckedChange = null, enabled = enabled) },
         onClick = { onCheckedChange(!checked) },
-        showChevron = false,
+        toggled = checked,
         enabled = enabled,
         divider = divider,
     )

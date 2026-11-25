@@ -30,6 +30,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
@@ -62,7 +63,8 @@ private val ThumbPadding = 2.dp
  * chromatic fringes) while pressed or dragged, with velocity squash and stretch. Tap anywhere to toggle, or drag the
  * thumb across. Exposes switch semantics (role, on/off state, click action), works with a keyboard (Space/Enter),
  * has a 48dp touch target and snaps instead of springing with reduced motion. [onCheckedChange] null makes it
- * read-only (it still announces its state; use it inside a clickable row that owns the toggle).
+ * read-only and invisible to accessibility services: it is then only a picture of the state, for a row that owns the
+ * toggle and announces it (GlassListRow with `toggled`, or a `Modifier.toggleable` row).
  */
 @Composable
 fun GlassSwitch(
@@ -136,15 +138,22 @@ fun GlassSwitch(
             .minimumInteractiveComponentSize()
             .size(TrackWidth, TrackHeight)
             .graphicsLayer { alpha = if (enabled) 1f else 0.38f }
-            .semantics(mergeDescendants = true) {
-                role = Role.Switch
-                toggleableState = ToggleableState(checked)
-                if (interactive) {
-                    onClick { onCheckedChange?.invoke(!checked); true }
-                } else if (!enabled) {
-                    disabled()
-                }
-            }
+            .then(
+                if (onCheckedChange == null) {
+                    // A separate focus stop here would split the row in two for TalkBack, without the state on the row.
+                    Modifier.clearAndSetSemantics {}
+                } else {
+                    Modifier.semantics(mergeDescendants = true) {
+                        role = Role.Switch
+                        toggleableState = ToggleableState(checked)
+                        if (enabled) {
+                            onClick { onCheckedChange(!checked); true }
+                        } else {
+                            disabled()
+                        }
+                    }
+                },
+            )
             .then(
                 if (interactive) {
                     Modifier

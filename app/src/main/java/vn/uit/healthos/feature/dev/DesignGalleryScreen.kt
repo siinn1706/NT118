@@ -229,7 +229,7 @@ private fun AppearanceSection(
             title = "Giảm trong suốt",
             subtitle = "Bề mặt đặc thay cho kính",
             onClick = { onReducedTransparency(!reducedTransparency) },
-            showChevron = false,
+            toggled = reducedTransparency,
             trailing = { GlassSwitch(checked = reducedTransparency, onCheckedChange = null) },
         )
     }
@@ -384,7 +384,7 @@ private fun ListSection() {
             leadingIcon = Icons.Rounded.Notifications,
             iconBackground = Color(0xFFFF3B30),
             onClick = { notifications = !notifications },
-            showChevron = false,
+            toggled = notifications,
             trailing = { GlassSwitch(checked = notifications, onCheckedChange = null) },
             divider = true,
         )
