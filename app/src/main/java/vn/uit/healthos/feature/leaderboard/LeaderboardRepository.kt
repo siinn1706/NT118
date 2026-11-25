@@ -6,6 +6,8 @@ import kotlinx.serialization.json.Json
 import vn.uit.healthos.core.data.outbox.OutboxFlusher
 import vn.uit.healthos.core.network.ApiResult
 import vn.uit.healthos.core.network.apiCall
+import vn.uit.healthos.feature.profile.OUTBOX_TYPE_PREFERENCES_PATCH
+import vn.uit.healthos.feature.profile.PreferenceSyncStore
 import vn.uit.healthos.feature.steps.OUTBOX_TYPE_METRIC_INGEST
 import vn.uit.healthos.feature.steps.StepCounterRepository
 import javax.inject.Inject
@@ -26,7 +28,7 @@ interface LeaderboardRepository {
 
     suspend fun fetch(period: LeaderboardPeriod, scope: LeaderboardScope): ApiResult<LeaderboardSnapshot>
 
-    /** `off`, `friends` or `global`. */
+    /** `off`, `friends` or `global`; a change made in Settings that the server has not received yet wins. */
     suspend fun visibility(): ApiResult<String>
 }
 
@@ -36,6 +38,7 @@ class NetworkLeaderboardRepository @Inject constructor(
     private val cacheDao: LeaderboardCacheDao,
     private val stepCounterRepository: StepCounterRepository,
     private val outboxFlusher: OutboxFlusher,
+    private val preferenceSyncStore: PreferenceSyncStore,
     private val json: Json,
 ) : LeaderboardRepository {
 
@@ -73,8 +76,11 @@ class NetworkLeaderboardRepository @Inject constructor(
             is ApiResult.Failure -> result
         }
 
-    override suspend fun visibility(): ApiResult<String> =
-        apiCall(json) { api.preferences().data.leaderboardVisibility }
+    override suspend fun visibility(): ApiResult<String> = resolveVisibility(
+        pending = { preferenceSyncStore.pending().leaderboardVisibility },
+        flushPending = { withTimeoutOrNull(SYNC_TIMEOUT_MS) { outboxFlusher.flush(OUTBOX_TYPE_PREFERENCES_PATCH) } },
+        fetch = { apiCall(json) { api.preferences().data.leaderboardVisibility } },
+    )
 
     private fun key(period: LeaderboardPeriod, scope: LeaderboardScope) = "${period.apiValue}:${scope.apiValue}"
 
@@ -82,4 +88,18 @@ class NetworkLeaderboardRepository @Inject constructor(
         const val LIMIT = 50
         const val SYNC_TIMEOUT_MS = 5_000L
     }
+}
+
+/**
+ * Settings saves the visibility locally and sends it later through the outbox, so a server read right after the
+ * change still returns the old value. A pending local choice is sent first and, while still unsent, is the answer.
+ */
+internal suspend fun resolveVisibility(
+    pending: suspend () -> String?,
+    flushPending: suspend () -> Unit,
+    fetch: suspend () -> ApiResult<String>,
+): ApiResult<String> {
+    if (pending() != null) flushPending()
+    pending()?.let { return ApiResult.Success(it) }
+    return fetch()
 }
