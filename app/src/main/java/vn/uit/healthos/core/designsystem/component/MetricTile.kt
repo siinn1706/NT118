@@ -21,7 +21,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import vn.uit.healthos.core.designsystem.theme.tabular
 
-/** Bento tile showing one metric: icon + label on top, large tabular value + unit, optional caption. */
+/**
+ * Bento tile showing one metric: icon + label, large tabular value + unit, optional caption. The value sits under
+ * the label in a narrow tile and at the end of the label line in a wide one.
+ */
 @Composable
 fun MetricTile(
     label: String,
@@ -38,27 +41,28 @@ fun MetricTile(
         modifier = modifier.clearAndSetSemantics { contentDescription = spoken },
         onClick = onClick,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (icon != null) Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(20.dp))
-            Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        Spacer(Modifier.height(12.dp))
-        // One text so that, with large font sizes, the unit wraps to the next line as a whole word instead of being
-        // squeezed into a narrow column next to the value.
+        // Label and value share a line when the tile is wide enough for both unbroken (a full-width tile); in a
+        // narrow tile the value goes under the label. As one text, the unit wraps as a whole word with the value.
         val unitStyle = MaterialTheme.typography.bodyMedium
         val unitColor = MaterialTheme.colorScheme.onSurfaceVariant
-        Text(
-            text = buildAnnotatedString {
-                append(value)
-                if (unit != null) {
-                    append(" ")
-                    withStyle(SpanStyle(fontSize = unitStyle.fontSize, fontWeight = unitStyle.fontWeight, color = unitColor)) {
-                        append(unit)
+        AdaptiveRow(minFlexibleFraction = 1f, verticalSpacing = 12.dp) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (icon != null) Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(20.dp))
+                Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Text(
+                text = buildAnnotatedString {
+                    append(value)
+                    if (unit != null) {
+                        append(" ")
+                        withStyle(SpanStyle(fontSize = unitStyle.fontSize, fontWeight = unitStyle.fontWeight, color = unitColor)) {
+                            append(unit)
+                        }
                     }
-                }
-            },
-            style = MaterialTheme.typography.headlineMedium.tabular(),
-        )
+                },
+                style = MaterialTheme.typography.headlineMedium.tabular(),
+            )
+        }
         if (caption != null) {
             Spacer(Modifier.height(4.dp))
             Text(caption, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

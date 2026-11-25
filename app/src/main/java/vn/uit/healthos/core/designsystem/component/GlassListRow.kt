@@ -43,6 +43,9 @@ private val IconBadgeShape = RoundedRectangle(8.dp)
  * when [iconBackground] is given, otherwise a tinted glyph), [title], optional [subtitle], then either a [value] text,
  * a custom [trailing] slot (a GlassSwitch, for example) or nothing, and a chevron when the row navigates.
  *
+ * When the [value] and [trailing] content would leave the text too little width (large font sizes), they move
+ * under the text instead of squeezing it.
+ *
  * Clickable rows ([onClick]) glow softly under the finger, announce themselves as buttons and are at least 56dp tall;
  * [showChevron] defaults to true for them. [divider] draws an inset hairline under the row for grouped lists.
  * A row whose [trailing] is a toggle should pass `onClick = null` and let the toggle own the action, or pass the toggle
@@ -149,34 +152,42 @@ fun GlassListRow(
                 }
             }
         }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = titleColor,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (subtitle != null) {
+        // The value and trailing control sit at the end of the line while the text keeps most of the width, and move
+        // under the text when keeping them beside it would break the title into single words.
+        AdaptiveRow(modifier = Modifier.weight(1f), spacing = 14.dp, verticalSpacing = 6.dp) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = scheme.onSurfaceVariant,
-                    maxLines = 3,
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = titleColor,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = scheme.onSurfaceVariant,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+            if (value != null || trailing != null) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    if (value != null) {
+                        Text(
+                            text = value,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = scheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    trailing?.invoke()
+                }
             }
         }
-        if (value != null) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = scheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-        trailing?.invoke()
         if (showChevron) {
             Icon(
                 Icons.AutoMirrored.Rounded.KeyboardArrowRight,

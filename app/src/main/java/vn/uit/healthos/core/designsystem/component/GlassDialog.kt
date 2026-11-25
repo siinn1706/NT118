@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -234,21 +233,22 @@ private fun DialogPanel(
             if (content != null) {
                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
             }
-            Row(
+            // Side by side only while both labels fit on one line; otherwise stacked at full width.
+            AdaptiveColumns(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                maxColumns = 2,
+                horizontalSpacing = 12.dp,
             ) {
                 if (dismissLabel != null) {
-                    SecondaryButton(text = dismissLabel, onClick = onDismiss, modifier = Modifier.weight(1f))
+                    SecondaryButton(text = dismissLabel, onClick = onDismiss)
                 }
                 PrimaryButton(
                     text = confirmLabel,
                     onClick = onConfirm,
                     enabled = confirmEnabled,
                     destructive = destructive,
-                    modifier = Modifier.weight(1f),
                 )
             }
         }
