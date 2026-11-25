@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -110,7 +111,9 @@ fun FriendsScreen(state: FriendsUiState, actions: FriendsActions, modifier: Modi
             },
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                // Edge-to-edge windows do not resize for the keyboard: shrink the list so search results and their
+                // add buttons can still scroll above it.
+                modifier = Modifier.fillMaxSize().imePadding(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
