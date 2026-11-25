@@ -97,9 +97,10 @@ fun DetailScaffold(
             ) {
                 content(padding)
             }
+            // The title is plain text, not glass: it needs the full-strength wash, or scrolled content collides with it.
             ScrollEdgeEffect(
                 edge = ScrollEdge.Top,
-                backdrop = chrome,
+                backdrop = null,
                 visibility = { edgeAlpha.value },
                 modifier = Modifier
                     .fillMaxWidth()

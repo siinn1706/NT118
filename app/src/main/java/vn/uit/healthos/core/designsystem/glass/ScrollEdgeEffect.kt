@@ -49,9 +49,11 @@ fun ScrollEdgeEffect(
                 1f to colors.base.copy(alpha = 0f),
             )
         } else {
+            // Plain-text titles sit around the middle of the band: keep the wash nearly opaque there so scrolled content
+            // never reads through the title, then fade quickly.
             towardsContent(
-                0f to colors.base.copy(alpha = 0.94f),
-                0.55f to colors.base.copy(alpha = 0.6f),
+                0f to colors.base.copy(alpha = 0.97f),
+                0.65f to colors.base.copy(alpha = 0.9f),
                 1f to colors.base.copy(alpha = 0f),
             )
         }

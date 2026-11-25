@@ -21,7 +21,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.Shape
@@ -276,8 +275,9 @@ private fun solidGlass(
 }
 
 /**
- * Content-layer material (cards, banners, bubbles): a translucent fill with a soft top sheen, a hairline rim and a
- * hardware shadow, without sampling the backdrop. HIG reserves Liquid Glass proper for the navigation layer, and the
+ * Content-layer material (cards, banners, bubbles): a translucent fill with a soft top sheen and a hairline rim,
+ * without sampling the backdrop. No elevation shadow: Android draws elevated nodes after their siblings, which put
+ * cards above the scroll edge fade under the title bars. HIG reserves Liquid Glass proper for the navigation layer, and the
  * ambient backdrop behind content is already a soft gradient, so a live blur there looked the same but re-rendered
  * every card on every scroll frame (about 13 ms of render-thread work per frame on a Galaxy S21).
  */
@@ -302,13 +302,6 @@ private fun contentMaterial(
     )
     return Modifier
         .then(if (layerBlock != null) Modifier.graphicsLayer(layerBlock) else Modifier)
-        .shadow(
-            elevation = ContentMaterialElevation,
-            shape = shape,
-            clip = false,
-            ambientColor = colors.shadow,
-            spotColor = colors.shadow,
-        )
         .background(if (prominent) tint else fill, shape)
         .then(if (tint.isSpecified && !prominent) Modifier.background(tint, shape) else Modifier)
         .background(sheen, shape)
@@ -322,7 +315,6 @@ private fun fastOutlineShape(shape: Shape): Shape = when (shape) {
     else -> shape
 }
 
-private val ContentMaterialElevation = 6.dp
 private const val ContentMaterialFillBoost = 0.08f
 private const val ContentMaterialSheen = 0.10f
 

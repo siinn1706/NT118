@@ -1,5 +1,8 @@
 package vn.uit.healthos.core.designsystem.component
 
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -222,15 +225,18 @@ private fun RowScope.Segment(
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
+        // Shrinks to fit instead of truncating ("Hệ th...", "Mọi n...") at large font sizes.
+        val base = MaterialTheme.typography.labelLarge
+        BasicText(
             text = label,
-            style = MaterialTheme.typography.labelLarge.copy(
+            style = base.copy(
                 fontWeight = if (bold) FontWeight.SemiBold else FontWeight.Medium,
+                color = color,
+                textAlign = TextAlign.Center,
             ),
-            color = color,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
+            autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = base.fontSize, stepSize = 0.5.sp),
         )
     }
 }
