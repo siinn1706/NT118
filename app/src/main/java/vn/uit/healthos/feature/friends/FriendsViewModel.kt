@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import vn.uit.healthos.R
 import vn.uit.healthos.core.network.ApiError
 import vn.uit.healthos.core.network.ApiResult
+import vn.uit.healthos.core.network.RealtimeMessage
 import vn.uit.healthos.core.network.toUiText
 import vn.uit.healthos.core.ui.UiText
 import javax.inject.Inject
@@ -74,6 +75,12 @@ class FriendsViewModel @Inject constructor(
     val events: Flow<FriendsEvent> = _events.receiveAsFlow()
 
     private var searchJob: Job? = null
+
+    /**
+     * Ids of realtime messages already applied to the rows. The server delivers one message as several frames
+     * (`msg:new` plus `chat.message.sent` to the room and again to the user), so each id must count only once.
+     */
+    private val seenMessageIds = LinkedHashSet<String>()
 
     init {
         viewModelScope.launch { repository.updates.collect(::onUpdate) }
@@ -290,22 +297,34 @@ class FriendsViewModel @Inject constructor(
             is FriendsUpdate.Presence -> _state.update {
                 it.copy(friends = it.friends.map { row -> if (row.userId == update.userId) row.copy(isOnline = update.isOnline) else row })
             }
-            is FriendsUpdate.Message -> _state.update {
+            is FriendsUpdate.Message -> {
                 val message = update.message
-                it.copy(
-                    friends = it.friends.map { row ->
-                        if (row.conversationId != message.conversationId) return@map row
-                        val fromFriend = message.senderId == row.userId
-                        row.copy(
-                            lastMessage = message.content,
-                            lastMessageMine = !fromFriend,
-                            unread = if (fromFriend) row.unread + 1 else row.unread,
-                        )
-                    },
-                )
+                if (!markMessageSeen(message.id)) return
+                applyMessage(message)
             }
             FriendsUpdate.Reconnected -> load(pullToRefresh = false)
         }
+    }
+
+    private fun applyMessage(message: RealtimeMessage) = _state.update {
+        it.copy(
+            friends = it.friends.map { row ->
+                if (row.conversationId != message.conversationId) return@map row
+                val fromFriend = message.senderId == row.userId
+                row.copy(
+                    lastMessage = message.content,
+                    lastMessageMine = !fromFriend,
+                    unread = if (fromFriend) row.unread + 1 else row.unread,
+                )
+            },
+        )
+    }
+
+    /** Records [id]; false when it was already seen. Keeps only the newest [MAX_SEEN_MESSAGE_IDS] ids. */
+    private fun markMessageSeen(id: String): Boolean {
+        if (!seenMessageIds.add(id)) return false
+        if (seenMessageIds.size > MAX_SEEN_MESSAGE_IDS) seenMessageIds.remove(seenMessageIds.first())
+        return true
     }
 
     private fun addFriend(friend: FriendDto) {
@@ -353,6 +372,7 @@ class FriendsViewModel @Inject constructor(
         const val SEARCH_DEBOUNCE_MS = 350L
         private const val MAX_QUERY = 50
         private const val HTTP_NOT_FOUND = 404
+        private const val MAX_SEEN_MESSAGE_IDS = 256
         private const val STATUS_ACCEPTED = "accepted"
         const val FRIENDS = "friends"
         const val OUTGOING = "outgoing"

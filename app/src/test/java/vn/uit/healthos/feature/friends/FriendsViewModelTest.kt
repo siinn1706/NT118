@@ -325,6 +325,22 @@ class FriendsViewModelTest {
     }
 
     @Test
+    fun `the same message delivered as several frames counts as one unread`() = runTest {
+        val repository = FakeRepository().apply { friends = ApiResult.Success(listOf(friend("an"))) }
+        val vm = FriendsViewModel(repository)
+        advanceUntilIdle()
+
+        val message = RealtimeMessage(id = "m7", conversationId = "conv-an", senderId = "an", content = "Chào")
+        repeat(3) { repository.updates.emit(FriendsUpdate.Message(message)) }
+        repository.updates.emit(FriendsUpdate.Message(message.copy(id = "m8", content = "Đi bộ nhé")))
+        advanceUntilIdle()
+
+        val an = vm.state.value.friends.first { it.userId == "an" }
+        assertEquals(2, an.unread)
+        assertEquals("Đi bộ nhé", an.lastMessage)
+    }
+
+    @Test
     fun `reconnecting reloads everything`() = runTest {
         val repository = FakeRepository()
         FriendsViewModel(repository)
