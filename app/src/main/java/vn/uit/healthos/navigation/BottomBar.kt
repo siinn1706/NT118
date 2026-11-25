@@ -355,6 +355,9 @@ private fun tabCopySurface(
         },
         highlight = null,
         shadow = null,
+        // Only the lens reads this copy, and only while pressed: at rest, sampling and blurring the whole screen into
+        // an invisible layer cost a full extra screen draw on every frame.
+        onDrawBackdrop = { drawBackdrop -> if (animation.pressProgress > 0f) drawBackdrop() },
         onDrawSurface = { drawRect(colors.chromeFill) },
     )
 }
@@ -406,6 +409,8 @@ private fun selectionLens(
                 scaleX = animation.scaleX / (1f - (velocity * 0.75f).fastCoerceIn(-0.2f, 0.2f))
                 scaleY = animation.scaleY * (1f - (velocity * 0.25f).fastCoerceIn(-0.2f, 0.2f))
             },
+            // At rest the lens is a flat tinted pill: skip drawing (and re-rendering) the sampled backdrop until pressed.
+            onDrawBackdrop = { drawBackdrop -> if (animation.pressProgress > 0f) drawBackdrop() },
             onDrawSurface = {
                 val progress = animation.pressProgress
                 drawRect(restFill, alpha = 1f - progress)

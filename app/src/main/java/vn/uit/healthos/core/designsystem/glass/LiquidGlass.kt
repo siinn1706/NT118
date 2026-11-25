@@ -230,13 +230,20 @@ internal fun Modifier.glassSurface(
     val colors = LocalGlassColors.current
     val rendering = glassRendering(backdrop)
     val light = LocalGlassLight.current ?: FixedGlassLight
+    // Glass that can only see the static ambient backdrop (controls placed straight on the background) refracts a soft
+    // gradient, which is invisible, yet re-sampled and re-rendered it on every scroll frame. Only glass over real
+    // content (chrome sampling the screens, morphing surfaces) samples live.
+    val seesOnlyAmbient = backdrop != null && backdrop === LocalGlassBackdrops.current?.background
     val glass = remember(
         rendering, shape, style, tint, tintMode, colors, backdrop, layerBlock, exportedBackdrop, light, materialize,
+        seesOnlyAmbient,
     ) {
         if (rendering == GlassRendering.Solid || backdrop == null) {
             solidGlass(shape, colors, tint, tintMode, layerBlock, materialize)
-        } else if (style.kind == GlassStyle.Kind.Material && materialize == null && exportedBackdrop == null) {
-            contentMaterial(shape, colors, tint, tintMode, layerBlock)
+        } else if (
+            (style.kind == GlassStyle.Kind.Material || seesOnlyAmbient) && materialize == null && exportedBackdrop == null
+        ) {
+            contentMaterial(shape, colors, colors.fillFor(style.kind), tint, tintMode, layerBlock)
         } else {
             backdropGlass(
                 rendering, shape, style, colors, tint, tintMode, backdrop, layerBlock, exportedBackdrop, light, materialize,
@@ -277,6 +284,7 @@ private fun solidGlass(
 private fun contentMaterial(
     shape: Shape,
     colors: GlassColors,
+    baseFill: Color,
     tint: Color,
     tintMode: GlassTintMode,
     layerBlock: (GraphicsLayerScope.() -> Unit)?,
@@ -286,7 +294,7 @@ private fun contentMaterial(
     // card radii.
     @Suppress("NAME_SHADOWING")
     val shape = fastOutlineShape(shape)
-    val fill = colors.materialFill.copy(alpha = (colors.materialFill.alpha + ContentMaterialFillBoost).coerceAtMost(1f))
+    val fill = baseFill.copy(alpha = (baseFill.alpha + ContentMaterialFillBoost).coerceAtMost(1f))
     val prominent = tint.isSpecified && tintMode == GlassTintMode.Prominent
     val sheen = Brush.verticalGradient(
         0f to Color.White.copy(alpha = ContentMaterialSheen),
