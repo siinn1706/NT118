@@ -41,7 +41,7 @@ import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.MedicalServices
 import androidx.compose.material.icons.rounded.Medication
-import androidx.compose.material.icons.rounded.Sos
+import androidx.compose.material.icons.rounded.Emergency
 import androidx.compose.material.icons.rounded.Sync
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material.icons.rounded.WaterDrop
@@ -350,7 +350,7 @@ private fun SosPill(onClick: () -> Unit, onLongClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Icon(Icons.Rounded.Sos, contentDescription = null, tint = scheme.onError, modifier = Modifier.size(20.dp))
+        Icon(Icons.Rounded.Emergency, contentDescription = null, tint = scheme.onError, modifier = Modifier.size(20.dp))
         Text(stringResource(R.string.home_sos_pill), style = MaterialTheme.typography.labelLarge, color = scheme.onError)
     }
 }

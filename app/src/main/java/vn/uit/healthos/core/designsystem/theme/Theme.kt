@@ -1,5 +1,11 @@
 package vn.uit.healthos.core.designsystem.theme
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +57,7 @@ fun HealthOsTheme(
         }
     }
     val systemReducedMotion = observeSystemReducedMotion()
+    SystemBarsAppearance(dark = dark)
     val systemHighContrast = observeSystemHighTextContrast()
 
     CompositionLocalProvider(
@@ -66,4 +73,27 @@ fun HealthOsTheme(
             content = content,
         )
     }
+}
+
+/**
+ * Keeps the status and navigation bar icons legible on the app's own theme: the window follows the system appearance by
+ * default, so with the app set to dark on a light system the dark icons would vanish on the dark backdrop.
+ */
+@Composable
+private fun SystemBarsAppearance(dark: Boolean) {
+    val view = LocalView.current
+    if (view.isInEditMode) return
+    SideEffect {
+        val window = view.context.findActivity()?.window ?: return@SideEffect
+        WindowCompat.getInsetsController(window, view).apply {
+            isAppearanceLightStatusBars = !dark
+            isAppearanceLightNavigationBars = !dark
+        }
+    }
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
