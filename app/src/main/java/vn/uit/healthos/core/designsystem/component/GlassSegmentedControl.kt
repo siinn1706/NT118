@@ -186,7 +186,8 @@ fun GlassSegmentedControl(
                     translationX = if (isLtr) travel else -travel
                 }
                 .then(if (enabled) animation.modifier else Modifier)
-                .liquidThumb(animation, thumbBackdrop, restColor = thumbColor, restBehind = true)
+                // No rest blur: at rest the thumb draws only the selected label, which must stay sharp.
+                .liquidThumb(animation, thumbBackdrop, restColor = thumbColor, restBehind = true, restBlur = 0.dp)
                 .fillMaxHeight()
                 .fillMaxWidth(1f / count),
         )

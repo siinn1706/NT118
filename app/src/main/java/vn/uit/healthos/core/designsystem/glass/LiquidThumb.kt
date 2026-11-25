@@ -44,10 +44,11 @@ internal fun Modifier.liquidThumb(
     lensAmount: Dp = 14.dp,
     velocityDivisor: Float = 10f,
     restBehind: Boolean = false,
+    restBlur: Dp = 8.dp,
 ): Modifier {
     val rendering = glassRendering(backdrop)
     val colors = LocalGlassColors.current
-    val thumb = remember(animation, backdrop, restColor, rendering, colors, lensHeight, lensAmount, velocityDivisor, restBehind) {
+    val thumb = remember(animation, backdrop, restColor, rendering, colors, lensHeight, lensAmount, velocityDivisor, restBehind, restBlur) {
         val shape = Capsule()
         val solid = rendering == GlassRendering.Solid
         if (solid && !restBehind) {
@@ -66,7 +67,7 @@ internal fun Modifier.liquidThumb(
                 effects = {
                     if (!solid) {
                         val progress = animation.pressProgress
-                        blur(8.dp.toPx() * (1f - progress))
+                        blur(restBlur.toPx() * (1f - progress))
                         lens(lensHeight.toPx() * progress, lensAmount.toPx() * progress, chromaticAberration = true)
                     }
                 },
