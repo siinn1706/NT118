@@ -43,6 +43,9 @@ class OutboxRepository @Inject constructor(
         scheduleSync()
     }
 
+    /** Whether an item queued with [dedupeKey] is still waiting to be sent. */
+    suspend fun isQueued(dedupeKey: String): Boolean = dao.hasDedupeKey(dedupeKey)
+
     fun cancelSync() {
         workManager.cancelUniqueWork(OutboxWorker.UNIQUE_NAME)
     }

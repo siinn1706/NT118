@@ -95,6 +95,15 @@ class RoomDirectChatRepository @Inject constructor(
 
     init {
         realtime.start()
+        // One instance per process, so no ack wait from queueIfUnacknowledged is running yet: a pending send without
+        // an outbox item was stranded when an earlier process died.
+        scope.launch {
+            requeueStrandedSends(
+                pending = dao.pendingSends(),
+                isQueued = { outboxRepository.isQueued(dmSendDedupeKey(it)) },
+                enqueue = { enqueue(it.conversationId, it.content, it.clientMessageId) },
+            )
+        }
     }
 
     override val events: Flow<RealtimeEvent> = realtime.events
@@ -154,7 +163,7 @@ class RoomDirectChatRepository @Inject constructor(
             type = OUTBOX_TYPE_DM_SEND,
             payload = DmSendPayload(conversationId, content, clientMessageId),
             serializer = DmSendPayload.serializer(),
-            dedupeKey = "$OUTBOX_TYPE_DM_SEND:$clientMessageId",
+            dedupeKey = dmSendDedupeKey(clientMessageId),
         )
     }
 
@@ -200,6 +209,25 @@ class RoomDirectChatRepository @Inject constructor(
         const val PAGE_SIZE = 30
         const val CACHE_KEEP = 200
         const val ACK_TIMEOUT_MS = 8_000L
+    }
+}
+
+private fun dmSendDedupeKey(clientMessageId: String) = "$OUTBOX_TYPE_DM_SEND:$clientMessageId"
+
+/**
+ * Queues every pending own message that has no outbox item. A socket send only reaches the outbox after the in-memory
+ * ack wait, so a process killed during that wait leaves the message pending with nothing to deliver it. The server
+ * deduplicates on `client_message_id`, so re-sending one that did arrive is harmless.
+ */
+internal suspend fun requeueStrandedSends(
+    pending: List<DmMessageEntity>,
+    isQueued: suspend (clientMessageId: String) -> Boolean,
+    enqueue: suspend (DmSendPayload) -> Unit,
+) {
+    for (row in pending) {
+        val clientMessageId = row.clientMessageId ?: continue
+        if (row.status != DmStatus.PENDING || isQueued(clientMessageId)) continue
+        enqueue(DmSendPayload(row.conversationId, row.content, clientMessageId))
     }
 }
 

@@ -50,6 +50,10 @@ abstract class DmMessageDao {
     @Query("SELECT * FROM dm_messages WHERE client_message_id = :clientMessageId LIMIT 1")
     abstract suspend fun byClientId(clientMessageId: String): DmMessageEntity?
 
+    /** Own messages still waiting for the server, in every conversation. */
+    @Query("SELECT * FROM dm_messages WHERE status = 'pending' AND client_message_id IS NOT NULL ORDER BY created_at_ms")
+    abstract suspend fun pendingSends(): List<DmMessageEntity>
+
     @Upsert
     abstract suspend fun upsert(rows: List<DmMessageEntity>)
 

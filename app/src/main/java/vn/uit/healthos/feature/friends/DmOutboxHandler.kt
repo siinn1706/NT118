@@ -50,11 +50,7 @@ class DmOutboxHandler @Inject constructor(
 ) : OutboxHandler {
 
     override suspend fun send(payloadJson: String): ApiResult<Unit> {
-        val payload = try {
-            json.decodeFromString(DmSendPayload.serializer(), payloadJson)
-        } catch (e: SerializationException) {
-            return ApiResult.Failure(ApiError(ApiError.PARSE, e.message ?: "Invalid DM payload"))
-        } catch (e: IllegalArgumentException) {
+        val payload = decode(payloadJson).getOrElse { e ->
             return ApiResult.Failure(ApiError(ApiError.PARSE, e.message ?: "Invalid DM payload"))
         }
         return when (val result = sender.send(payload)) {
@@ -70,6 +66,19 @@ class DmOutboxHandler @Inject constructor(
                 ApiResult.Failure(error)
             }
         }
+    }
+
+    /** The outbox gave up after repeated transient failures: show the message as failed so the user can retry. */
+    override suspend fun onDropped(payloadJson: String) {
+        decode(payloadJson).getOrNull()?.let { results.failed(it.clientMessageId) }
+    }
+
+    private fun decode(payloadJson: String): Result<DmSendPayload> = try {
+        Result.success(json.decodeFromString(DmSendPayload.serializer(), payloadJson))
+    } catch (e: SerializationException) {
+        Result.failure(e)
+    } catch (e: IllegalArgumentException) {
+        Result.failure(e)
     }
 }
 

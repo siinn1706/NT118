@@ -10,6 +10,12 @@ import vn.uit.healthos.core.network.ApiResult
  */
 fun interface OutboxHandler {
     suspend fun send(payloadJson: String): ApiResult<Unit>
+
+    /**
+     * Called once when the outbox gives up on an item it could not deliver (a permanent error, or too many retryable
+     * failures), so the feature can show the failure instead of waiting forever.
+     */
+    suspend fun onDropped(payloadJson: String) = Unit
 }
 
 enum class OutboxRunResult {
@@ -30,7 +36,8 @@ enum class OutboxRunResult {
  *   run (every later request would fail the same way), and a 403 holds that item until the next run. Held items wait
  *   for the next sign-in ([OutboxRepository.scheduleSync]) instead of spinning the worker.
  * - Items queued by another account are skipped until that account signs in again.
- * - Permanent failures (other 4xx, unknown type, too many attempts) are dropped so one bad item cannot block the queue.
+ * - Permanent failures (other 4xx, unknown type, too many attempts) are dropped so one bad item cannot block the queue;
+ *   the handler hears about it through [OutboxHandler.onDropped].
  */
 class OutboxProcessor(
     private val store: OutboxStore,
@@ -90,11 +97,11 @@ class OutboxProcessor(
                 store.delete(item.id)
                 Outcome.DONE
             }
-            is ApiResult.Failure -> onFailure(item, result.error, crashed)
+            is ApiResult.Failure -> onFailure(item, handler, result.error, crashed)
         }
     }
 
-    private suspend fun onFailure(item: OutboxEntity, error: ApiError, crashed: Boolean): Outcome {
+    private suspend fun onFailure(item: OutboxEntity, handler: OutboxHandler, error: ApiError, crashed: Boolean): Outcome {
         val reason = "${error.code}: ${error.message}"
         when (error.httpStatus) {
             HTTP_UNAUTHORIZED -> {
@@ -110,10 +117,21 @@ class OutboxProcessor(
         return if (!retryable || item.attempts + 1 >= maxAttempts) {
             log("Dropping outbox item ${item.id} (${item.type}): $reason")
             store.delete(item.id)
+            notifyDropped(item, handler)
             Outcome.DONE
         } else {
             store.markFailed(item.id, reason)
             Outcome.RETRY
+        }
+    }
+
+    private suspend fun notifyDropped(item: OutboxEntity, handler: OutboxHandler) {
+        try {
+            handler.onDropped(item.payloadJson)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            log("Outbox drop callback failed for item ${item.id}: ${e.javaClass.simpleName}")
         }
     }
 

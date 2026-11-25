@@ -38,6 +38,9 @@ interface OutboxDao : OutboxStore {
     @Query("DELETE FROM outbox WHERE dedupe_key = :key")
     suspend fun deleteByDedupeKey(key: String)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM outbox WHERE dedupe_key = :key)")
+    suspend fun hasDedupeKey(key: String): Boolean
+
     @Query("SELECT COUNT(*) FROM outbox")
     fun observeCount(): Flow<Int>
 

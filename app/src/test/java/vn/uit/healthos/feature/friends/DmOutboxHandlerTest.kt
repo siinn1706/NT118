@@ -109,6 +109,47 @@ class DmOutboxHandlerTest {
     }
 
     @Test
+    fun `a send the outbox gives up on is marked failed so it can be retried`() = runTest {
+        val results = RecordingResults()
+        val handler = DmOutboxHandler({ ApiResult.Failure(ApiError(ApiError.NETWORK, "offline")) }, results, json)
+        val store = FakeStore(
+            listOf(OutboxEntity(id = 1, type = OUTBOX_TYPE_DM_SEND, payloadJson = payloadJson, createdAt = 0, attempts = 19)),
+        )
+        val processor = OutboxProcessor(
+            store,
+            mapOf(OUTBOX_TYPE_DM_SEND to handler as OutboxHandler),
+            sessionUserId = { "me" },
+            maxAttempts = 20,
+        )
+
+        assertEquals(OutboxRunResult.SUCCESS, processor.run())
+        assertTrue(store.items.isEmpty())
+        assertEquals(listOf("k1"), results.failed)
+    }
+
+    @Test
+    fun `pending sends with no outbox item are queued again`() = runTest {
+        fun row(clientId: String?, status: String = DmStatus.PENDING) = DmMessageEntity(
+            id = "local:$clientId",
+            conversationId = "c1",
+            senderId = "me",
+            content = "tin $clientId",
+            clientMessageId = clientId,
+            createdAtMs = 0,
+            status = status,
+        )
+        val queued = mutableListOf<DmSendPayload>()
+
+        requeueStrandedSends(
+            pending = listOf(row("stranded"), row("in-outbox"), row(null), row("failed", DmStatus.FAILED)),
+            isQueued = { it == "in-outbox" },
+            enqueue = { queued += it },
+        )
+
+        assertEquals(listOf(DmSendPayload("c1", "tin stranded", "stranded")), queued)
+    }
+
+    @Test
     fun `unreadable payload is reported as a permanent error`() = runTest {
         val handler = DmOutboxHandler({ error("must not be called") }, RecordingResults(), json)
         val result = handler.send("{not json") as ApiResult.Failure
